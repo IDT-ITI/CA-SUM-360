@@ -1,4 +1,5 @@
 # CA-SUM-360
+## Pytorch implementation of CA-SUM-360
 * from **An Integrated System for Spatio-Temporal Summarization of 360 Videos**
 * Written by Evlampios Apostolidis, Ioannis Kontostathis, Vasileios Mezaris
 * The input 360 video is initially subjected to equirectangular projection (ERP).This set of
@@ -13,9 +14,14 @@ produced 2D video is feeded to the CA-SUM-360 that estimates about the importanc
 summary.
 
 ## Data
-For the train process of the Saliency Detection models, we used the reproduced VR-EyeTracking. For the ATSal method, we first trained the attention model with 85 Salient360! images and 22 Sitzman. The total 107 ERP frames, applying methods like rotate,mirroring and flipping, contains 2140 images, where 1840 used for train and 300 for valdidation. Then, we used the 140 videos from VR-EyeTracking for training and 66 for validation. For the train process of the Expert model, cubemap projection used for Expert_Poles with north and south regions, and for Expert_Equator the front,back,left and right regions. The SST-Sal method trained using the 92 static videos from the total 140 VR-EyeTracking and for validaiton, the 55 static videos from the total 66 validation set. For the train process of video summarization model we used 100 2D videos that were produced from the 2D Video Production aglorithm and scores in terms of frame level
+For the train process of the Saliency Detection models, we used the reproduced VR-EyeTracking. For the ATSal method, we first trained the attention model with total 107 ERP frames, applying methods like rotate,mirroring and flipping, contains 2140 images, where 1840 used for train and 300 for valdidation. Then, we used the 140 videos from VR-EyeTracking for training and 66 for validation. For the train process of the Expert model, cubemap projection used for Expert_Poles with north and south regions, and for Expert_Equator the front,back,left and right regions. The SST-Sal method trained using the 92 static videos from the total 140 VR-EyeTracking and for validaiton, the 55 static videos from the total 66 validation set. For the train process of video summarization model we used 100 2D videos that were produced from the 2D Video Production aglorithm and scores in terms of frame level
 saliency using the methods from Saliency Detection. These videos relate to 46 360
 videos of the VR-EyeTracking dataset and 19 from Sports-360 that were captured
 using a fixed camera, and 11, 18 and 6 360 videos of the VR-EyeTracking
 the Sports-360 and the Salient360! datasets, respectively, that were captured by
 a moving camera
+
+## Training
+For the training process of ATSal model, we first trained the attention model with 2140 images reproduced from 107 ERP images of Salient360! and Sitzman. Then we trained the attention model with 140 VR-EyeTracking videos that is included in the [a relative link]data/VR-EyeTracking/train_split.txt
+
+
