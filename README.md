@@ -1,5 +1,5 @@
 # CA-SUM-360
-* from ##An Integrated System for Spatio-Temporal Summarization of 360 Videos
+* from **An Integrated System for Spatio-Temporal Summarization of 360 Videos**
 * Written by Evlampios Apostolidis, Ioannis Kontostathis, Vasileios Mezaris
 * The input 360 video is initially subjected to equirectangular projection (ERP).This set of
 frames is then analysed by a mechanism that makes a decision on whether the
