@@ -26,9 +26,7 @@ For the training process of ATSal model, we first trained the attention model wi
 
 ### Data Structure
 
-markdown
-Copy code
-project/
+'''
 ├── data/
 │ ├── VR-EyeTracking/
 │ │ ├── frames/
@@ -43,6 +41,7 @@ project/
 │ │ | | ├──0000.png
 │ │ | ├── saliency/
 │ │ | | ├──0000.png
+'''
 
 
 
