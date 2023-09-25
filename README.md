@@ -24,4 +24,25 @@ a moving camera
 ## Training
 For the training process of ATSal model, we first trained the attention model with 2140 images reproduced from 107 ERP images of Salient360! and Sitzman. Then we trained the attention model with 140 VR-EyeTracking videos that is included in the [train_split](data/VR-EyeTracking/train_split.txt)
 
+### Data Structure
+
+markdown
+Copy code
+project/
+├── data/
+│ ├── VR-EyeTracking/
+│ │ ├── frames/
+| | | ├──001/
+| | | | ├──0000.png
+│ │ ├── saliency/
+| | | ├── 001/
+| | | | ├──0000.png
+│ ├── Salient360!-Sitzaman/
+│ │ ├── training/
+│ │ | ├── frames/
+│ │ | | ├──0000.png
+│ │ | ├── saliency/
+│ │ | | ├──0000.png
+
+
 
