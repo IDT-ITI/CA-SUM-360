@@ -22,6 +22,6 @@ the Sports-360 and the Salient360! datasets, respectively, that were captured by
 a moving camera
 
 ## Training
-For the training process of ATSal model, we first trained the attention model with 2140 images reproduced from 107 ERP images of Salient360! and Sitzman. Then we trained the attention model with 140 VR-EyeTracking videos that is included in the [a relative link]data/VR-EyeTracking/train_split.txt
+For the training process of ATSal model, we first trained the attention model with 2140 images reproduced from 107 ERP images of Salient360! and Sitzman. Then we trained the attention model with 140 VR-EyeTracking videos that is included in the [train_split](data/VR-EyeTracking/train_split.txt)
 
 
