@@ -2,7 +2,7 @@
 * from **An Integrated System for Spatio-Temporal Summarization of 360 Videos**
 * Written by Evlampios Apostolidis, Ioannis Kontostathis, Vasileios Mezaris
 * The input 360 video is initially subjected to equirectangular projection (ERP).This set of
-frames is then analysed by a mechanism that makes a decision on whether the
+frames is given to the decision mechanism, analyze them and makes a decision on whether the
 360 video has been captured by a static or a moving camera.
 So, based on the output of the decision mechanism the ERP frames are
 subsequently forwarded to one of the integrated methods for saliency detection,
