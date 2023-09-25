@@ -22,7 +22,7 @@ the Sports-360 and the Salient360! datasets, respectively, that were captured by
 a moving camera
 
 ## Training
-For the training process of ATSal model, we first trained the attention model with 2140 images reproduced from 107 ERP images of Salient360! and Sitzman. Then we trained the attention model with 140 VR-EyeTracking videos that is included in the [train_split](data/VR-EyeTracking/train_split.txt)
+For the training process of ATSal model, we first trained the attention model with 2140 images reproduced from 107 ERP images of Salient360! and Sitzman. Then we trained the attention model with 140 VR-EyeTracking videos that is included in the [train_split](data/VR-EyeTracking/train_split.txt) For the fine-tuned train of the Expert models, we used the same videos from VR-EyeTracking but with cube-map projection, applying north and south region to Expert Poles and front,right,back and left to Expert Equator. For the training of SST-Sal, we used 92 static video from VR-EyeTracking named here, and 55 for validation.
 
 ### Data Structure
 
@@ -43,8 +43,13 @@ For the training process of ATSal model, we first trained the attention model wi
 │ │ | | ├──0000.png
 ```
 
+## Train models and inference
 
+## Evaluation Results
 
+# Citation
+
+# Licence
 
 
 
