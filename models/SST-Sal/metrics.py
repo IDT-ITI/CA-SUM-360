@@ -79,12 +79,4 @@ def Metrics(saliency_map1, saliency_map2):
 
 
 
-# Step 3: Sample Saliency Values
-
-
-def KLD(p, q):
-    p = normalize(p, method='sum')
-    q = normalize(q, method='sum')
-    return np.sum(np.where(p != 0, p * np.log(EPSILON + p/(q + EPSILON)), 0))
-
 
