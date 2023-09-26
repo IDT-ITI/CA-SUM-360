@@ -8,7 +8,7 @@ from Extract_2D_Video import extract_2d_videos
 import os
 import shutil
 
-# Replace 'path_to_folder' with the path to the folder containing subfolders with files you want to delete.
+
 
 
 def run(saliency_maps_path,frames_path,intensity_value,dbscan_distance,spatial_distance,fill_loss,resolution,path_to_folder):
@@ -33,17 +33,17 @@ def run(saliency_maps_path,frames_path,intensity_value,dbscan_distance,spatial_d
     list_of_saliency_paths = os.listdir(saliency_maps_path)
     length = len(list_of_saliency_paths)
     salient_regions = []
-    for i in range(length-100):  # Replace  with the total number of frames
+    for i in range(length):  # Replace  with the total number of frames
 
 
-        saliency_map = cv2.imread(saliency_maps_path + "/" + f"{i+20:04d}.png", cv2.IMREAD_GRAYSCALE)
+        saliency_map = cv2.imread(saliency_maps_path + "/" + f"{i:04d}.png", cv2.IMREAD_GRAYSCALE)
         saliency_map = cv2.resize(saliency_map, (resolution[1], resolution[0]))
 
 
         bounding_boxes,salient_scores = extract_salient_regions(saliency_map,intensity_value,dbscan_distance,resolution=[resolution[0],resolution[1]])
 
 
-        salient_regions.append((f"{i+20:04d}", bounding_boxes,salient_scores))
+        salient_regions.append((f"{i:04d}", bounding_boxes,salient_scores))
 
     frame_number = [item[0] for item in salient_regions]
     # Example usage:
