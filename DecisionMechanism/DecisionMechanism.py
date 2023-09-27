@@ -3,7 +3,7 @@ import numpy as np
 import os
 
 
-def is_camera_moving(frame_folder_path, parameter_1=0.25, resolution=[320,640]):
+def is_camera_moving(frame_folder_path, parameter_1=0.5, resolution=[320,640]):
     frames = [os.path.join(frame_folder_path, frame_name) for frame_name in os.listdir(frame_folder_path) if
               frame_name.lower().endswith(('.png','.jpg'))]
     frames.sort()
@@ -14,7 +14,7 @@ def is_camera_moving(frame_folder_path, parameter_1=0.25, resolution=[320,640]):
 
 
     for i, frame_path in enumerate(frames):
-        if i > 20 and i + 30 < len(frames):
+        if i > 20 and i + 20 < len(frames): #avoid first 20 frames and last 20 because some videos starts with black screen, something that affects the final result
             #if i>160:
             #print(frame_path)
             if frame_path.lower().endswith(('.png','.jpg')):
@@ -82,7 +82,7 @@ if __name__ == "__main__":
 
     folder_path = r'D:\Program Files\IoanProjects\VRvaldata3\\frames'
     list_videos = os.listdir(folder_path)
-    print(list_videos)
+    #print(list_videos)
     for item in list_videos:
 
         path = folder_path + "/" + item
