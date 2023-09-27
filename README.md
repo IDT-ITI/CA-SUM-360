@@ -48,7 +48,18 @@ For the training process of ATSal model, we first trained the attention model wi
 ```
 
 ## Train models and inference
+ATSal attention model initialization :
+* [[intitial (374 MB)]](https://drive.google.com/file/d/1qT4tALLSGmsRfqf_dJ-1nhS_3iT4fFMg/view?usp=sharing)
 
+ATSal attention model trained on Salient360! and VR-EyeTracking video dataset:
+* [[ATSal-attention (374 MB)]](https://drive.google.com/drive/folders/1fTMrH00alyZ_hP7CaYenkzIkFevRRVz8)
+
+ATSal expert models fine-tuned on VR-EyeTracking video dataset:
+* [[ATSal-experts-Poles (364 MB)]](https://drive.google.com/drive/folders/1fTMrH00alyZ_hP7CaYenkzIkFevRRVz8)
+* [[ATSal-experts-Equator (364 MB)]](https://drive.google.com/drive/folders/1fTMrH00alyZ_hP7CaYenkzIkFevRRVz8)
+
+SST-Sal model trained on Static-VR-EyeTracking dataset
+* [[SST-Sal]](https://drive.google.com/drive/folders/1fTMrH00alyZ_hP7CaYenkzIkFevRRVz8)
 ## Evaluation Results
 
 # Citation
