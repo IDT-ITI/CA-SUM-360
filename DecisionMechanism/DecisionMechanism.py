@@ -1,9 +1,13 @@
 import cv2
 import numpy as np
 import os
+from configs import args
 
+def is_camera_moving(**kwargs):
+    parameter_1 = kwargs['parameter_1']
+    resolution = kwargs['resolution']
+    frame_folder_path= kwargs['frames_folder_path']
 
-def is_camera_moving(frame_folder_path, parameter_1=0.5, resolution=[320,640]):
     frames = [os.path.join(frame_folder_path, frame_name) for frame_name in os.listdir(frame_folder_path) if
               frame_name.lower().endswith(('.png','.jpg'))]
     frames.sort()
@@ -15,8 +19,7 @@ def is_camera_moving(frame_folder_path, parameter_1=0.5, resolution=[320,640]):
 
     for i, frame_path in enumerate(frames):
         if i > 20 and i + 20 < len(frames): #avoid first 20 frames and last 20 because some videos starts with black screen, something that affects the final result
-            #if i>160:
-            #print(frame_path)
+
             if frame_path.lower().endswith(('.png','.jpg')):
                 frame = cv2.imread(frame_path)
                 frame = cv2.resize(frame, (resolution[1],resolution[0]))
@@ -80,16 +83,12 @@ def is_camera_moving(frame_folder_path, parameter_1=0.5, resolution=[320,640]):
 
 if __name__ == "__main__":
 
-    folder_path = r'D:\Program Files\IoanProjects\VRvaldata3\\frames'
-    list_videos = os.listdir(folder_path)
-    #print(list_videos)
-    for item in list_videos:
-
-        path = folder_path + "/" + item
+    parser = args()
+    args = parser.parse_args()
 
 
-        is_moving = is_camera_moving(path,parameter_1=0.5,resolution=[320,640])
+    is_moving = is_camera_moving(**vars(args))
 
-        if is_moving:
-            print(item)
-            print("The camera is moving.")
+    if is_moving:
+
+        print("The camera is moving.")
