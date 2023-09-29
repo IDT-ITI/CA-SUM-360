@@ -6,7 +6,7 @@ from torch.utils.data import DataLoader
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 from models import SST_Sal
 
-
+from configs import training_args
 
 def load_model(pt_model, new_model):
     temp = torch.load("weights/"+pt_model+'.pth')
@@ -105,26 +105,36 @@ def train_(train_loader, val_loader, model, device, criterion, optimizer, EPOCHS
 
 
 if __name__ == '__main__':
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    print("The model will be running on", device, "device")
 
     # Train SST-Sal
+    args = training_args().parse_args()
+    gpu = args.gpu
+    hidden_layers = args.hidden_layers
+    path_to_frames_folder = args.path_to_frames_folder
+    path_to_frames_validation_folder = args.path_to_frames_validation_folder
+    process = args.process
+    resolution = args.resolution
+    clip_size = args.clip_size
+    batch_size = args.batch_size
+    epochs = args.epochs
+    lr = args.lr
+    save_model_path = args.save_model_path
+
+
+    device = torch.device(gpu if torch.cuda.is_available() else "cpu")
+    print("The model will be running on", device, "device")
 
     #model = torch.load("weights/SST-Sal", map_location=device)
-    model = SST_Sal(hidden_dim=9)
+    model = SST_Sal(hidden_dim=hidden_layers)
 
     criterion = KLWeightedLossSequence()
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 
-    frames_path = r"D:\Program Files\IoanProjects\StaticVR\frames"
-    val_path = r"D:\Program Files\IoanProjects\StaticVRval\frames"
-
-
-    train_data = RGB(frames_path,process="train",frames_per_data=20,resolution=[240,320])
+    train_data = RGB(path_to_frames_folder,process=process,frames_per_data=clip_size,resolution=resolution)
     train_loader = DataLoader(train_data, batch_size=1, shuffle=True, drop_last=True)
 
-    validation_data = RGB(val_path,process="train",frames_per_data=20,resolution=[240,320])
+    validation_data = RGB(path_to_frames_validation_folder,process=process,frames_per_data=clip_size,resolution=resolution)
     validation_loader = DataLoader(validation_data, batch_size=1,shuffle=False,drop_last=True)
 
-    model = train_(train_loader, validation_loader, model, device, criterion,optimizer,EPOCHS = 100,save_model_path="weights")
+    model = train_(train_loader, validation_loader, model, device, criterion,optimizer,EPOCHS = epochs,save_model_path=save_model_path)
 
