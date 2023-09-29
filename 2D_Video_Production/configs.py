@@ -19,7 +19,7 @@ def args():
                         default=r'C:\Users\ioankont\PycharmProjects\SalientRegionExtractor\summaryFolder',
                         help='Path to save subvideos frames')
     parser.add_argument('--resolution', type=int, nargs=2, default=[1024, 2048], help='Resolution parameter')
-    # Your code here
+  
     return parser
 if __name__ == '__main__':
     args = args()
