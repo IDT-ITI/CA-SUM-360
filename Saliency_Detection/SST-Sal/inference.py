@@ -8,6 +8,7 @@ from torch.utils.data import DataLoader
 import cv2
 from metrics import Metrics
 
+from configs import inference_args
 
 
 
@@ -75,14 +76,22 @@ def test(test_data, model ,device,output_path):
 
 if __name__ == "__main__":
 
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    inference_frames_folder = os.path.join(r'D:\Program Files\IoanProjects\StaticVRval', 'frames') # path with frames. check the structure of data in readme.md file
-    model = torch.load("weights/SST_Sal.pth", map_location=device)
+    args = inference_args().parse_args()
+    gpu = args.gpu
+    sst_sal = args.sst_sal
+    path_to_frames_validation_folder = args.path_to_frames_validation_folder
+    process = args.process
+    resolution = args.resolution
+    clip_size = args.clip_size
+    batch_size = args.batch_size
+    save_outputs_path = args.save_path
+    device = torch.device(gpu if torch.cuda.is_available() else "cpu")
+
+    model = torch.load(sst_sal, map_location=device)
+ 
+
+    test_video_dataset = RGB(path_to_frames_validation_folder,process=process,frames_per_data=clip_size,resolution=resolution)
+    test_data = DataLoader(test_video_dataset, batch_size=batch_size, drop_last=True)
 
 
-    test_video_dataset = RGB(inference_frames_folder,process="test",frames_per_data=20,resolution=[240,320])
-    test_data = DataLoader(test_video_dataset, batch_size=1, drop_last=True)
-
-
-    output_path = "path_to_save_the_predicted_saliency_maps"
-    test(test_data, model, device, output_path)
+    test(test_data, model, device,save_outputs_path)
