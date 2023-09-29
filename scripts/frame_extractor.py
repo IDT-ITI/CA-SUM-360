@@ -1,8 +1,8 @@
 import cv2
 import os
 
-my_path = r'D:\Program Files\IoanProjects\VR\DatasetVideos' #path .mp4 videos
-out_path = r'D:\Program Files\IoanProjects\StaticVRval\frames1' #path to save each video's frames
+my_path = r'relative_path_to_your_video\video.mp4' #path .mp4 videos
+out_path = r'relative_Path\CA-SUM-360\output_frames' #path to save each video's frames
 #os.mkdir(out_path)
 for vid in os.listdir(my_path):
     # Read the video from specified path if your videos are in other format change extention .mp4
