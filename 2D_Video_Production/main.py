@@ -1,19 +1,19 @@
-import os
-
 import cv2
-import numpy as np
 from Extract_Salient_Regions import extract_salient_regions
 from Create_Subvolumes import group_salient_regions
 from Extract_2D_Video import extract_2d_videos
 import os
-import shutil
+from configs import args
 
-
-
-
-def run(saliency_maps_path,frames_path,intensity_value,dbscan_distance,spatial_distance,fill_loss,resolution,path_to_folder):
-
-
+def run(**kwargs):
+    dbscan_distance = kwargs['dbscan_distance']
+    fill_loss = kwargs['fill_loss']
+    frames_path = kwargs['frames_path']
+    intensity_value = kwargs['intensity_value']
+    path_to_folder = kwargs['path_to_folder']
+    resolution = kwargs['resolution']
+    saliency_maps_path = kwargs['saliency_maps_path']
+    spatial_distance = kwargs['spatial_distance']
     # a function to delete all files in a subfolder.
     def delete_files_in_subfolder(subfolder_path):
         for filename in os.listdir(subfolder_path):
@@ -33,17 +33,17 @@ def run(saliency_maps_path,frames_path,intensity_value,dbscan_distance,spatial_d
     list_of_saliency_paths = os.listdir(saliency_maps_path)
     length = len(list_of_saliency_paths)
     salient_regions = []
-    for i in range(length):  # Replace  with the total number of frames
+    for i in range(length-200):  # Replace  with the total number of frames
 
 
-        saliency_map = cv2.imread(saliency_maps_path + "/" + f"{i:04d}.png", cv2.IMREAD_GRAYSCALE)
+        saliency_map = cv2.imread(saliency_maps_path + "/" + f"{i+21:04d}.png", cv2.IMREAD_GRAYSCALE)
         saliency_map = cv2.resize(saliency_map, (resolution[1], resolution[0]))
 
 
         bounding_boxes,salient_scores = extract_salient_regions(saliency_map,intensity_value,dbscan_distance,resolution=[resolution[0],resolution[1]])
 
 
-        salient_regions.append((f"{i:04d}", bounding_boxes,salient_scores))
+        salient_regions.append((f"{i+21:04d}", bounding_boxes,salient_scores))
 
     frame_number = [item[0] for item in salient_regions]
     # Example usage:
@@ -58,18 +58,9 @@ def run(saliency_maps_path,frames_path,intensity_value,dbscan_distance,spatial_d
     extract_2d_videos(result_lists,frames,saliency_scores,frames_path,output_path=path_to_folder,resolution=resolution)
 
 if __name__ == '__main__':
-    frames_path = r"D:\Program Files\IoanProjects\StaticVRval\frames1\180"  # Specify the directory path of your frames
-    saliency_maps_path = r"D:\Program Files\IoanProjects\StaticVRval\saliency1\180"  # Specify the directory path of your saliency maps
-
-    # Definition of 4 parameters
-    intensity_value = 150
-    dbscan_distance = 1.2
-    resolution = [1024, 2048]
-    spatial_distance = 100
-    fill_loss = 100
 
 
-    # path to save the subvideos frames
-    path_to_folder = r'C:\Users\ioankont\PycharmProjects\SalientRegionExtractor\summaryFolder'
-    run(saliency_maps_path,frames_path,intensity_value,dbscan_distance,spatial_distance,fill_loss,resolution,path_to_folder)
+    parser = args()
+    args = parser.parse_args()
 
+    run(**vars(args))
