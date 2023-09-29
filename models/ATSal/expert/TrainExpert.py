@@ -200,11 +200,11 @@ if __name__ == '__main__':
 
     print("Commencing training on dataset")
 
-    train_set = Multiexpert_dataset(root_path=path_to_frames_folder,process=process,frames_per_data=clip_size)
+    train_set = Multiexpert_dataset(root_path=path_to_frames_folder,process=process,frames_per_data=clip_size,resolution)
     print("Size of train set is {}".format(len(train_set)))
     train_loader = data.DataLoader(train_set,batch_size=batch_size,shuffle=True,drop_last=True)
 
-    val_set = Multiexpert_dataset(root_path=path_to_frames_validation_folder, process=process, frames_per_data=clip_size)
+    val_set = Multiexpert_dataset(root_path=path_to_frames_validation_folder, process=process, frames_per_data=clip_size,resolution)
     print("Size of validation set is {}".format(len(val_set)))
     val_loader = data.DataLoader(val_set,batch_size=batch_size,drop_last=True)
 
