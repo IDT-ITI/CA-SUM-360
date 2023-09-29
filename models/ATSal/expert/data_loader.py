@@ -14,12 +14,12 @@ from torch import nn
 
 class Multiexpert_dataset(Dataset):
 
-    def __init__(self, root_path,process,frames_per_data):
+    def __init__(self, root_path,process,frames_per_data,resolution):
 
         self.root_path = root_path
         self.process = process
         self.frames_per_data = frames_per_data
-
+        self.resolution = resolution
         self.video_list = []
         self.dataset = []
         self.ImageNet_mean = [103.939, 116.779, 123.68]
@@ -27,31 +27,31 @@ class Multiexpert_dataset(Dataset):
         if self.process=="train":
 
             for i, file in enumerate(video_names):
-                if i==0:
-                    png_files = []
+            
+                png_files = []
 
-                    frame_folder = os.path.join(self.root_path, file)
-                    frames = os.listdir(frame_folder)
-                    for j, fram in enumerate(frames):
+                frame_folder = os.path.join(self.root_path, file)
+                frames = os.listdir(frame_folder)
+                for j, fram in enumerate(frames):
 
-                        # if count % 3 == 0:
-                        if fram.lower().endswith(('.png', '.jpg')):
-                            png_files.append(frame_folder + "/" + fram)
-                        # count += 1
+                    # if count % 3 == 0:
+                    if fram.lower().endswith(('.png', '.jpg')):
+                        png_files.append(frame_folder + "/" + fram)
+                    # count += 1
 
-                    png_files = sorted(png_files)
+                png_files = sorted(png_files)
 
-                    fpd = self.frames_per_data+20  #skip first 20 frames for train process because observers were exploring the 360 video from a fixed starting point
+                fpd = self.frames_per_data+20  #skip first 20 frames for train process because observers were exploring the 360 video from a fixed starting point
 
-                    datast = []
+                datast = []
 
-                    for j in range(20, len(png_files),frames_per_data):
+                for j in range(20, len(png_files),frames_per_data):
 
-                        #datast.append(png_files[j:fpd])
-                        self.dataset.append(png_files[j:fpd])
-                        fpd = fpd + frames_per_data
+                    #datast.append(png_files[j:fpd])
+                    self.dataset.append(png_files[j:fpd])
+                    fpd = fpd + frames_per_data
 
-                        #self.dataset.append(datast)
+                    #self.dataset.append(datast)
         else:
             for i, file in enumerate(video_names):
 
@@ -112,7 +112,7 @@ class Multiexpert_dataset(Dataset):
 
                 X = cv2.imread(path_to_frame)
                 # if self.resolution!=None:
-                #  X = cv2.resize(X, (self.resolution[1], self.resolution[0]), interpolation=cv2.INTER_AREA)
+                X = cv2.resize(X, (self.resolution[1], self.resolution[0]), interpolation=cv2.INTER_AREA)
                 X = X.astype(np.float32)
                 X -= self.ImageNet_mean
                 # X = (X-np.min(X))/(np.max(X)-np.min(X))
@@ -127,7 +127,7 @@ class Multiexpert_dataset(Dataset):
 
                 y = cv2.imread(path_to_gt, 0)  # Load as grayscale
                 # if self.resolution!=None:
-                #  y = cv2.resize(y, (self.resolution[1], self.resolution[0]), interpolation=cv2.INTER_AREA)
+                y = cv2.resize(y, (self.resolution[1], self.resolution[0]), interpolation=cv2.INTER_AREA)
                 if y.max() != 0.0:
                     y = (y - np.min(y)) / (np.max(y) - np.min(y))
                 y = torch.FloatTensor(y)
