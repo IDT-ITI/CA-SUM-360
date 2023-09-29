@@ -1,7 +1,7 @@
 import argparse
 
 def args():
-    parser = argparse.ArgumentParser(description='Your script description here.')
+    parser = argparse.ArgumentParser(description='Args for the 2D video production task')
     parser.add_argument('--saliency_maps_path', type=str,
                         default=r"D:\Program Files\IoanProjects\StaticVRval\saliency1\180",
                         help='Directory path of saliency maps')
