@@ -3,7 +3,6 @@ import numpy as np
 from model import Sal_based_Attention_module
 
 import torch
-from metrics import Metrics
 
 from data_loader import RGB_dataset
 
@@ -74,9 +73,7 @@ def train(train_loader,validation_loader,optimizer,criterion, model,device,epoch
         val_avg_loss = 0
         val_avg_nss = 0
         val_counter = 0
-        cc_metric = []
-        sim_metric = []
-        kld_metric = []
+ 
         for i, video in enumerate(validation_loader):
 
 
@@ -101,10 +98,6 @@ def train(train_loader,validation_loader,optimizer,criterion, model,device,epoch
 
                         loss = loss.item() + total_loss
 
-                        cc,sim,kld = Metrics(saliency_map.cpu(),gtruth[r][0].cpu())
-                        cc_metric.append(cc)
-                        sim_metric.append(sim)
-                        kld_metric.append(kld)
 
 
 
@@ -115,10 +108,7 @@ def train(train_loader,validation_loader,optimizer,criterion, model,device,epoch
         print(f'Epoch {epoch+1} finished with')
         print("Train loss", np.mean(losses))
         print("Val loss", np.mean(val_losses))
-        print("CC metric",np.mean(cc_metric))
-        print("SIM metric",np.mean(sim_metric))
-        print("KLD metric",np.mean(kld_metric))
-        torch.save(model.state_dict(), f'weights/att_{epoch+1}.pt')
+        torch.save(model.state_dict(), saved_model_path+"/"+f'attention_{epoch}.pt')
 
 
 
