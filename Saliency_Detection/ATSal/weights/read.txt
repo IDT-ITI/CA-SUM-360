@@ -1,0 +1,1 @@
+Put the downloaded weights for attention model, for expert poles and expert equator here
