@@ -63,7 +63,7 @@ SST-Sal model trained on Static-VR-EyeTracking dataset
 To run an inference of Saliency Detection method to produce saliency maps, you should first download the weights of the models to the weights folder in each of ATSal,SST-Sal you want to run and execute the following command (example for ATSal):
 ```
 cd Saliency_Detection/ATSal
-python inference --path_to_frames_folder "CA-SUM-360/data/VR-EyeTracking/validation/frames" --load_gt "False" --path_to_save_saliency_maps "CA-SUM-360/outputs_folder"
+python inference.py --path_to_frames_folder "CA-SUM-360/data/VR-EyeTracking/validation/frames" --load_gt "False" --path_to_save_saliency_maps "CA-SUM-360/outputs_folder"
 
 ```
 ## Evaluation Results
