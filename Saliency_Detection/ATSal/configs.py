@@ -6,12 +6,12 @@ def inference_args():
     # Model parameters
     parser.add_argument('--gpu', type=str, default="cuda:0",
                         help='Use of gpu, if not available chooses "cpu"')
-    parser.add_argument('--attention_model', type=str, default="attention/weights/attention3_7.pt",
-                        help='Attention model weights path, Default attention/weights/attention.pt')
-    parser.add_argument('--expertPoles_model', type=str, default="attention/weights/Poles.pt",
-                        help='Expert Poles model weights path, Default expert/weights/Poles.pt')
-    parser.add_argument('--expertEquator_model', type=str, default="attention/weights/Equator.pt",
-                        help='Expert Equator model weights path, Default expert/weights/Equator.pt')
+    parser.add_argument('--attention_model', type=str, default="weights/attention.pt",
+                        help='Attention model weights path, Default weights/attention.pt')
+    parser.add_argument('--expertPoles_model', type=str, default="weights/Poles.pt",
+                        help='Expert Poles model weights path, Default weights/Poles.pt')
+    parser.add_argument('--expertEquator_model', type=str, default="weights/Equator.pt",
+                        help='Expert Equator model weights path, Default weights/Equator.pt')
 
 
     #Data loader parameters
