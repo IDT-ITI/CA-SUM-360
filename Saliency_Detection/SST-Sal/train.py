@@ -130,10 +130,22 @@ if __name__ == '__main__':
     criterion = KLWeightedLossSequence()
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 
-    train_data = RGB(path_to_frames_folder,process=process,frames_per_data=clip_size,resolution=resolution)
+    with open('CA-SUM-360/data/Static-VR-EyeTracking/train_split.txt', 'r') as file:
+        # Read the content of the file and split it by commas
+        content = file.read()
+        values = content.split(',')
+    static_videos = [value.strip() for value in values]
+    
+    with open('CA-SUM-360/data/Static-VR-EyeTracking/val_split.txt', 'r') as file:
+        # Read the content of the file and split it by commas
+        content = file.read()
+        values = content.split(',')
+    static_val_videos = [value.strip() for value in values]
+    
+    train_data = RGB(path_to_frames_folder,,static_videos,process=process,frames_per_data=clip_size,resolution=resolution)
     train_loader = DataLoader(train_data, batch_size=1, shuffle=True, drop_last=True)
 
-    validation_data = RGB(path_to_frames_validation_folder,process=process,frames_per_data=clip_size,resolution=resolution)
+    validation_data = RGB(path_to_frames_validation_folder,static_val_videos,process=process,frames_per_data=clip_size,resolution=resolution)
     validation_loader = DataLoader(validation_data, batch_size=1,shuffle=False,drop_last=True)
 
     model = train_(train_loader, validation_loader, model, device, criterion,optimizer,EPOCHS = epochs,save_model_path=save_model_path)
