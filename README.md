@@ -33,18 +33,20 @@ For the training process of ATSal model, we first trained the attention model wi
 ```
 ├── data/
 │ ├── VR-EyeTracking/
-│ │ ├── frames/
-| | | ├──001/
-| | | | ├──0000.png
-│ │ ├── saliency/
-| | | ├── 001/
-| | | | ├──0000.png
-│ ├── Salient360!-Sitzaman/
 │ │ ├── training/
-│ │ | ├── frames/
-│ │ | | ├──0000.png
+│ │ │ ├── frames/
+| | | | ├── 001/
+| | | | | ├── 0000.png
 │ │ | ├── saliency/
-│ │ | | ├──0000.png
+| | | | ├── 127/
+| | | | | ├── 0000.png
+│ │ ├── validation/
+│ │ │ ├── frames/
+| | | | ├── 001/
+| | | | | ├── 0000.png
+│ │ | ├── saliency/
+| | | | ├── 127/
+| | | | | ├── 0000.png
 ```
 
 ## Train models and inference
@@ -61,12 +63,20 @@ ATSal expert models fine-tuned on VR-EyeTracking video dataset:
 SST-Sal model trained on Static-VR-EyeTracking dataset
 * [[SST-Sal]](https://drive.google.com/drive/folders/1fTMrH00alyZ_hP7CaYenkzIkFevRRVz8)
 
-To run an inference of Saliency Detection method to produce saliency maps, you should first download the weights of the models to the weights folder in each of ATSal,SST-Sal you want to run and execute the following command (example for ATSal):
+To run an inference of Saliency Detection method to produce saliency maps, you should first download the weights of the models to the weights folder in each of ATSal, SST-Sal you want to run and execute the following command (example for ATSal):
 ```
 cd Saliency_Detection/ATSal
-python inference.py --path_to_frames_folder "CA-SUM-360/data/VR-EyeTracking/validation/frames" --load_gt "False" --path_to_save_saliency_maps "CA-SUM-360/outputs_folder"
-
 ```
+```
+python inference.py --path_to_frames_folder "CA-SUM-360/data/VR-EyeTracking/validation/frames" --load_gt "False" --path_to_save_saliency_maps "CA-SUM-360/outputs_folder"
+```
+To train the SST-Sal method, follow the following commands
+```
+cd Saliency_Detection/SST-Sal
+```
+```
+python train.py --gpu "cuda:0" --hidden_layers 9 --path_to_training_folder "CA-SUM-360/data/VR-EyeTracking/training/frames" --path_to_validation_folder = "CA-SUM-360/data/VR-EyeTracking/validation/frames" --save_model_path "CA-SUM-360/Saliency_Detection/SST-Sal/weights"
+``` 
 ## Evaluation Results
 
 # Citation
