@@ -60,6 +60,7 @@ ATSal expert models fine-tuned on VR-EyeTracking video dataset:
 
 SST-Sal model trained on Static-VR-EyeTracking dataset
 * [[SST-Sal]](https://drive.google.com/drive/folders/1fTMrH00alyZ_hP7CaYenkzIkFevRRVz8)
+
 To run an inference of Saliency Detection method to produce saliency maps, you should first download the weights of the models to the weights folder in each of ATSal,SST-Sal you want to run and execute the following command (example for ATSal):
 ```
 cd Saliency_Detection/ATSal
