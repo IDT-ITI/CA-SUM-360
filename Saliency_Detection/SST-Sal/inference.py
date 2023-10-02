@@ -88,9 +88,13 @@ if __name__ == "__main__":
     device = torch.device(gpu if torch.cuda.is_available() else "cpu")
 
     model = torch.load(sst_sal, map_location=device)
- 
-
-    test_video_dataset = RGB(path_to_frames_validation_folder,process=process,frames_per_data=clip_size,resolution=resolution)
+    with open('CA-SUM-360/data/Static-VR-EyeTracking/val_split.txt', 'r') as file:
+        # Read the content of the file and split it by commas
+        content = file.read()
+        videos = content.split(',')
+    static_val_videos = [video.strip() for video in videos]
+    
+    test_video_dataset = RGB(path_to_frames_validation_folder,static_val_videos,process=process,frames_per_data=clip_size,resolution=resolution)
     test_data = DataLoader(test_video_dataset, batch_size=batch_size, drop_last=True)
 
 
