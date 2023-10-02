@@ -14,9 +14,11 @@ produced 2D video is feeded to the CA-SUM-360 that estimates about the importanc
 summary.
 ## Main dependencies
 Saliency Detection models, checked and verified on an `Windows 11` PC with an `NVIDIA GeForce GTX 1080Ti` GPU and an `i5-12600K` CPU. Main packages required:
+<p align="center">
 |`Python` | `PyTorch` | `CUDA Version` | `cudatoolkit Version` | `Numpy` | `Opencv` |
 :---:|:---:|:---:|:---:|:---:|:---:|
 3.8 | 1.7.0 | 11.7 | 11.0.221 | 1.24.3 | 4.6.0 
+</p>
 ## Data
 For the train process of the Saliency Detection models, we used the reproduced VR-EyeTracking. For the ATSal method, we first trained the attention model with total 107 ERP frames, applying methods like rotate,mirroring and flipping, contains 2140 images, where 1840 used for train and 300 for valdidation. Then, we used the 140 videos from VR-EyeTracking for training and 66 for validation. For the train process of the Expert model, cubemap projection used for Expert_Poles with north and south regions, and for Expert_Equator the front,back,left and right regions. The SST-Sal method trained using the 92 static videos from the total 140 VR-EyeTracking and for validaiton, the 55 static videos from the total 66 validation set. For the train process of video summarization model we used 100 2D videos that were produced from the 2D Video Production aglorithm and scores in terms of frame level
 saliency using the methods from Saliency Detection. These videos relate to 46 360
