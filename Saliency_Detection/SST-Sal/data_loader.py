@@ -7,15 +7,16 @@ import numpy as np
 
 
 class RGB(Dataset):
-    def __init__(self, path_to_frames, process,frames_per_data,resolution=[240, 320]):
+    def __init__(self, path_to_frames,static_videos, process,frames_per_data,resolution=[240, 320]):
         self.path_to_frames = path_to_frames
+        self.video_names = static_videos
         self.resolution = resolution
         self.dataset = []
         self.frames_per_data = frames_per_data
         self.process = process
-        video_names = os.listdir(self.path_to_frames)
+        #video_names = os.listdir(self.path_to_frames)
         if self.process=="train":
-            for i, file in enumerate(video_names):
+            for i, file in enumerate(self.video_names):
 
                 img_files = []
 
@@ -36,7 +37,7 @@ class RGB(Dataset):
                     fpd = fpd+ self.frames_per_data
 
         else:
-            for i, file in enumerate(video_names):
+            for i, file in enumerate(self.video_names):
 
 
                 img_files = []
