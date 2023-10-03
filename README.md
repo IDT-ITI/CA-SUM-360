@@ -99,7 +99,7 @@ To train the SST-Sal method run the following commands:
 cd Saliency_Detection/SST-Sal
 ```
 ```
-python train.py --path_to_frames_folder "CA-SUM-360/data/VR-EyeTracking/training/frames" --save_model_path "CA-SUM-360/Saliency_Detection/SST-Sal/weights"
+python train.py python train.py --gpu "cuda:0" --hidden_layers 9 --path_to_training_folder "CA-SUM-360/data/VR-EyeTracking/training/frames" --path_to_validation_folder = "CA-SUM-360/data/VR-EyeTracking/validation/frames" --save_model_path "CA-SUM-360/Saliency_Detection/SST-Sal/weights"
 ```
 SST-Sal model trained on Static-VR-EyeTracking dataset
 * [[SST-Sal]](https://drive.google.com/drive/folders/1fTMrH00alyZ_hP7CaYenkzIkFevRRVz8)
@@ -111,14 +111,6 @@ cd Saliency_Detection/ATSal
 ```
 python inference.py --path_to_frames_folder "CA-SUM-360/data/VR-EyeTracking/validation/frames" --load_gt "False" --path_to_save_saliency_maps "CA-SUM-360/outputs_folder"
 ```
-To train the SST-Sal method, follow the following commands
-```
-cd Saliency_Detection/SST-Sal
-```
-```
-python train.py --gpu "cuda:0" --hidden_layers 9 --path_to_training_folder "CA-SUM-360/data/VR-EyeTracking/training/frames" --path_to_validation_folder = "CA-SUM-360/data/VR-EyeTracking/validation/frames" --save_model_path "CA-SUM-360/Saliency_Detection/SST-Sal/weights"
-``` 
-
 
 # Citation
 
