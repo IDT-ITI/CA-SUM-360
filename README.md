@@ -121,7 +121,7 @@ cd Saliency_Detection/SST-Sal
 ```
 ```
 python inference.py --gpu "cuda:0" --path_to_frames_validation_folder "CA-SUM-360/data/VR-EyeTracking/validation/frames" --path_to_save_saliency_maps "CA-SUM-360/outputs_folder"
-
+```
 
 # Citation
 
