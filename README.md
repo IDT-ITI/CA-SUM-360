@@ -95,6 +95,7 @@ python TrainExpert.py --path_to_frames_folder "CA-SUM-360/data/cube-VR-EyeTracki
 ```
 * [[ATSal-experts-Equator (364 MB)]](https://drive.google.com/drive/folders/1fTMrH00alyZ_hP7CaYenkzIkFevRRVz8)
 * [[ATSal-experts-Poles (364 MB)]](https://drive.google.com/drive/folders/1fTMrH00alyZ_hP7CaYenkzIkFevRRVz8)
+
 To train the SST-Sal method run the following commands: 
 ```
 cd Saliency_Detection/SST-Sal
