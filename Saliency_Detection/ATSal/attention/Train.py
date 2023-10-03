@@ -117,33 +117,41 @@ def train(train_loader,validation_loader,optimizer,criterion, model,device,epoch
 
 if __name__ == "__main__":
     torch.cuda.empty_cache()
+    
+    args = training_args().parse_args()
+    gpu = args.gpu
+    attention_model_path = args.attention_model
+    path_to_train_frames = args.path_to_frames_folder
+    path_to_val_frames = path_to_train_frames.replace('training', 'validation')
+    process = args.process
+    resolution = args.resolution
+    clip_size= args.clip_size
+    batch_size = args.batch_size
+    path_to_save_weights = args.path_to_save_weights
+    epochs = args.epochs
+    lr =args.lr
+    weight_decay = args.weight_decay
+
 
     att_model = Sal_based_Attention_module()
 
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    # load weight
-
+    device = torch.device(gpu if torch.cuda.is_available() else "cpu")
 
     print("The model will be running on", device, "device")
 
+    model = load_attention(attention_model_path, att_model,device)
 
-    # device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    # print(device)
-    # load weight
-    model = load_attention("train_attention_scratch_37", att_model,device)
-    train_folder = r"D:\Program Files\IoanProjects\Vrdata3\frames"
-    val_folder = r"D:\Program Files\IoanProjects\VRvaldata3\frames"
-    train_set = RGB_dataset(train_folder, process="train", frames_per_data=10)
-    train_loader = data.DataLoader(train_set, batch_size=10,shuffle=True,drop_last=True)
-    #train_loader=0
-    validation_set = RGB_dataset(val_folder,process="train",frames_per_data=10)
-    validation_loader = data.DataLoader(validation_set, batch_size=10,drop_last=True)
+    train_set = RGB_dataset(path_to_train_frames, process=process, frames_per_data=clip_size)
+    train_loader = data.DataLoader(train_set, batch_size=batch_size,shuffle=True,drop_last=True)
 
-    optimizer = torch.optim.Adam(att_model.parameters(),lr=1e-5,weight_decay=1e-5)
+    validation_set = RGB_dataset(path_to_val_frames, process=process, frames_per_data=clip_size)
+    validation_loader = data.DataLoader(validation_set, batch_size=batch_size,drop_last=True)
+
+    optimizer = torch.optim.Adam(att_model.parameters(),lr=lr,weight_decay=weight_decay)
     criterion = LOSS()
 
 
-    train(train_loader,validation_loader,optimizer,criterion,model,device,epochs=30,saved_model_path="weights")
+    train(train_loader,validation_loader,optimizer,criterion,model,device,epochs=epochs,saved_model_path=path_to_save_weights)
 
 
 
