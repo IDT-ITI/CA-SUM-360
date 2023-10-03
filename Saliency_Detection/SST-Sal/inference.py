@@ -84,7 +84,7 @@ if __name__ == "__main__":
     resolution = args.resolution
     clip_size = args.clip_size
     batch_size = args.batch_size
-    save_outputs_path = args.save_path
+    save_outputs_path = args.path_to_save_saliency_maps
     device = torch.device(gpu if torch.cuda.is_available() else "cpu")
 
     model = torch.load(sst_sal, map_location=device)
