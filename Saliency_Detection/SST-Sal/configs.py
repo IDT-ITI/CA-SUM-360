@@ -61,7 +61,7 @@ def inference_args():
 
 
     # Output_path
-    parser.add_argument('--save_path', type=str,
+    parser.add_argument('--path_to_save_saliency_maps', type=str,
                         default=r'relative_path/CA-SUM-360/outputs/output_saliency_maps',
                         help='Path to the folder for saving saliency maps')
 
