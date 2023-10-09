@@ -14,7 +14,7 @@ def args():
     parser.add_argument('--fill_loss', type=int, default=25, help='Fill loss parameter')
 
     parser.add_argument('--path_to_folder', type=str,
-                        default=r'CA-SUM360/2D_Video_Production/outputs_fovs',
+                        default=r'CA-SUM-360/2D_Video_Production/outputs_fovs',
                         help='Path to save subvideos frames')
     parser.add_argument('--resolution', type=int, nargs=2, default=[1080, 1920], help='Resolution parameter')
     # Your code here
