@@ -1,21 +1,14 @@
-import math
-from PIL import Image
 import cv2
 import numpy as np
 
 import os
 import re
-# Parameters
-fps = 30
-
-alpha = 0.00 # Transition blending factor
-interpolation_steps = 0
 
 
 def videoCreator(output_path):
     folder_path = output_path
-    list = os.listdir(folder_path)
 
+    fps=30
     def extract_numerical_part(folder_name):
         if isinstance(folder_name, str):
             match = re.search(r'\d+', folder_name)
@@ -23,52 +16,21 @@ def videoCreator(output_path):
                 return int(match.group())
         return float('inf')
 
-    list = sorted(list, key=extract_numerical_part)
-    # print(list)
-    # Output video file path
-    output_path = "2Dvideo.mp4"
-    frames = []
-    for item in list:
 
-        frame_files = os.listdir(folder_path + "/" + item)
+    output_path = f"2Dvideo.mp4"
 
-        frames.append(frame_files)
-
+    frames = os.listdir(folder_path)
+    frames = sorted(frames, key=extract_numerical_part)
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-    video_writer = cv2.VideoWriter(output_path, fourcc, 30, (480, 320))
+    video_writer = cv2.VideoWriter(output_path, fourcc, fps, (480, 360))
+    #print(frames)
+    for frame_file in frames:
 
-    for k, frame in enumerate(frames):
+        current_frame = cv2.imread(os.path.join(folder_path, frame_file))
+        video_writer.write(current_frame)
 
-        previous_frame = None
-
-        for frame_file in frame:
-
-            current_frame = cv2.imread(os.path.join(folder_path + "/" + f"Out{k}", frame_file))
-            current_frame = cv2.resize(current_frame, (480, 320))
-
-            if previous_frame is not None:
-
-                # Filter and interpolate intermediate frames
-                for i in range(1, interpolation_steps + 1):
-                    alpha_interpolation = i / (interpolation_steps + 1)
-                    interpolated_frame = cv2.addWeighted(previous_frame, 1 - alpha_interpolation, current_frame,
-                                                         alpha_interpolation, 0)
-
-                    # Write the interpolated frame to the video file
-                    video_writer.write(interpolated_frame)
-
-                # Write the current frame to the video file
-            video_writer.write(current_frame)
-
-            previous_frame = current_frame
-        previous_frame = None
-        # Release the video writer and destroy any remaining windows
-    video_writer.release()
     cv2.destroyAllWindows()
-
-
 def smooth_transition(prev_frame, current_frame, next_frame, alpha):
-
     prev_frame = prev_frame.astype(np.float32)
     current_frame = current_frame.astype(np.float32)
     next_frame = next_frame.astype(np.float32)
@@ -81,272 +43,223 @@ def smooth_transition(prev_frame, current_frame, next_frame, alpha):
     interpolated_frame = np.clip(interpolated_frame, 0, 255).astype(np.uint8)
 
     return interpolated_frame
-def smooth_bounding_box_transition(bbox_frame1, bbox_frame2,cc,resolution):
+def xyz2lonlat(xyz):
+    atan2 = np.arctan2
+    asin = np.arcsin
+
+    norm = np.linalg.norm(xyz, axis=-1, keepdims=True)
+    xyz_norm = xyz / norm
+    x = xyz_norm[..., 0:1]
+    y = xyz_norm[..., 1:2]
+    z = xyz_norm[..., 2:]
+
+    lon = atan2(x, z)
+    lat = asin(y)
+    lst = [lon, lat]
+
+    out = np.concatenate(lst, axis=-1)
+    return out
+
+
+def lonlat2XY(lonlat, shape):
+    X = (lonlat[..., 0:1] / (2 * np.pi) + 0.5) * (shape[1] - 1)
+    Y = (lonlat[..., 1:] / (np.pi) + 0.5) * (shape[0] - 1)
+    lst = [X, Y]
+    out = np.concatenate(lst, axis=-1)
+
+    return out
+
+
+class Equirectangular:
+    def __init__(self, img_name):
+        #print(img_name)
+        self._img = cv2.imread(img_name, cv2.IMREAD_COLOR)
+        self._img = cv2.resize(self._img,(1080,1920))
+
+        [self._height, self._width,_] =  self._img.shape
+
+
+    def GetPerspective(self, FOV, THETA, PHI, height, width):
+        #
+        # THETA is left/right angle, PHI is up/down angle, both in degree
+        #
+
+        f = 0.5 * width * 1 / np.tan(0.5 * FOV / 180.0 * np.pi)
+        cx = (width - 1) / 2.0
+        cy = (height - 1) / 2.0
+        K = np.array([
+            [f, 0, cx],
+            [0, f, cy],
+            [0, 0, 1],
+        ], np.float32)
+        K_inv = np.linalg.inv(K)
+
+        x = np.arange(width)
+        y = np.arange(height)
+        x, y = np.meshgrid(x, y)
+        z = np.ones_like(x)
+        xyz = np.concatenate([x[..., None], y[..., None], z[..., None]], axis=-1)
+        xyz = xyz @ K_inv.T
+
+        y_axis = np.array([0.0, 1.0, 0.0], np.float32)
+        x_axis = np.array([1.0, 0.0, 0.0], np.float32)
+        R1, _ = cv2.Rodrigues(y_axis * np.radians(THETA))
+        R2, _ = cv2.Rodrigues(np.dot(R1, x_axis) * np.radians(PHI))
+        R = R2 @ R1
+        xyz = xyz @ R.T
+
+        lonlat = xyz2lonlat(xyz)
+        XY = lonlat2XY(lonlat, shape=self._img.shape).astype(np.float32)
+        persp = cv2.remap(self._img, XY[..., 0], XY[..., 1], cv2.INTER_CUBIC, borderMode=cv2.BORDER_WRAP)
+
+        return persp
+
+
+def fov_extractor(centers,img_path,resolution,output_path):
+    image_height, image_width = resolution
+
+    fovs = []
+    for k, items in enumerate(centers):
+        fov = []
+        for j, item in enumerate(items):
+            equ = Equirectangular(img_path[k][j])  # Load equirectangular image
+
+            x = item[0]
+            y = item[1]
+            y = image_height - y
+
+            longitude = (x / image_width) * 360 - 180
+            latitude = (y / image_height) * 180 - 90
+
+            img = equ.GetPerspective(80, longitude, latitude, 360,
+                                     480)  # Specify parameters(FOV, theta, phi, height, width)
+
+            fov.append(img)
+        fovs.append(fov)
+    count = 0
+    for r1, frames in enumerate(fovs):
+        for r, frame in enumerate(frames):
+            if r + 3 < len(frames):
+
+                prev_frame = frames[r]
+                current_frame = frames[r + 1]
+                next_frame = frames[r + 2]
+
+                transition_frame = smooth_transition(prev_frame, current_frame, next_frame, 0.2)
+
+            else:
+                transition_frame = frame
+            if not os.path.exists(output_path):
+                # If it doesn't exist, create it
+                os.makedirs(output_path)
+            cv2.imwrite(output_path +"/"+{count:06d}.png', transition_frame)
+            count += 1
+
+
+def smooth_centers_transition(bbox_frame1, bbox_frame2,cc,resolution):
 
     interpolation_factor = 0.03
-
-
+    interpolation_factor1 = 0.04
 
     #if (abs(2048-max(bbox_frame1[0],bbox_frame2[0])+min(bbox_frame1[0],bbox_frame2[0]))>=400):
     if (abs(bbox_frame1[0]-bbox_frame2[0])<1000):
 
         x = int(bbox_frame1[0] + interpolation_factor * (bbox_frame2[0] - bbox_frame1[0]))
-        y = int(bbox_frame1[1] + interpolation_factor * (bbox_frame2[1] - bbox_frame1[1]))
+        y = int(bbox_frame1[1] + interpolation_factor1 * (bbox_frame2[1] - bbox_frame1[1]))
         w = int(bbox_frame1[2] + interpolation_factor * (bbox_frame2[2] - bbox_frame1[2]))
-        h = int(bbox_frame1[3] + interpolation_factor * (bbox_frame2[3] - bbox_frame1[3]))
+        h = int(bbox_frame1[3] + interpolation_factor1 * (bbox_frame2[3] - bbox_frame1[3]))
 
     else:
         if max(bbox_frame1[0],bbox_frame2[0]) == bbox_frame1[0]:
             if bbox_frame2[0]>resolution[1]:
                 bbox_frame2[0] = resolution[1]-bbox_frame2[0]
                 x = int(bbox_frame1[0] + interpolation_factor * (bbox_frame2[0] - bbox_frame1[0]))
-                y = int(bbox_frame1[1] + interpolation_factor * (bbox_frame2[1] - bbox_frame1[1]))
+                y = int(bbox_frame1[1] + interpolation_factor1 * (bbox_frame2[1] - bbox_frame1[1]))
                 w = int(bbox_frame1[2] + interpolation_factor * (bbox_frame2[2] - bbox_frame1[2]))
-                h = int(bbox_frame1[3] + interpolation_factor * (bbox_frame2[3] - bbox_frame1[3]))
+                h = int(bbox_frame1[3] + interpolation_factor1 * (bbox_frame2[3] - bbox_frame1[3]))
             else:
                 x = int(bbox_frame1[0] + interpolation_factor * (bbox_frame2[0] + 2048 - bbox_frame1[0]))
-                y = int(bbox_frame1[1] + interpolation_factor * (bbox_frame2[1] - bbox_frame1[1]))
+                y = int(bbox_frame1[1] + interpolation_factor1 * (bbox_frame2[1] - bbox_frame1[1]))
                 w = int(bbox_frame1[2] + interpolation_factor * (bbox_frame2[2] - bbox_frame1[2]))
-                h = int(bbox_frame1[3] + interpolation_factor * (bbox_frame2[3] - bbox_frame1[3]))
+                h = int(bbox_frame1[3] + interpolation_factor1 * (bbox_frame2[3] - bbox_frame1[3]))
 
         else:
             if bbox_frame1[0]<0:
                 bbox_frame1[0] = resolution[1]+bbox_frame1[0]
                 x = int(bbox_frame1[0] + interpolation_factor * (bbox_frame2[0]- bbox_frame1[0]))
-                y = int(bbox_frame1[1] + interpolation_factor * (bbox_frame2[1] - bbox_frame1[1]))
+                y = int(bbox_frame1[1] + interpolation_factor1 * (bbox_frame2[1] - bbox_frame1[1]))
                 w = int(bbox_frame1[2] + interpolation_factor * (bbox_frame2[2] - bbox_frame1[2]))
-                h = int(bbox_frame1[3] + interpolation_factor * (bbox_frame2[3] - bbox_frame1[3]))
+                h = int(bbox_frame1[3] + interpolation_factor1 * (bbox_frame2[3] - bbox_frame1[3]))
             else:
                 x = int(bbox_frame1[0] + interpolation_factor * (bbox_frame2[0] - resolution[1]- bbox_frame1[0]))
-                y = int(bbox_frame1[1] + interpolation_factor * (bbox_frame2[1] - bbox_frame1[1]))
+                y = int(bbox_frame1[1] + interpolation_factor1 * (bbox_frame2[1] - bbox_frame1[1]))
                 w = int(bbox_frame1[2] + interpolation_factor * (bbox_frame2[2] - bbox_frame1[2]))
-                h = int(bbox_frame1[3] + interpolation_factor * (bbox_frame2[3] - bbox_frame1[3]))
+                h = int(bbox_frame1[3] + interpolation_factor1 * (bbox_frame2[3] - bbox_frame1[3]))
 
     cc+=1
-
-
     center_x = int((x+x+w)/2)
 
     center_y = int((y+y+h)/2)
+
     if center_x>resolution[1]:
         center_x = center_x - resolution[1]
-    r = center_y+fov_y2
-    if r>resolution[0]:
-        center_y = resolution[0]-fov_y2
+
     return center_x,center_y,x,y,w,h
 
 
 
-fov_radius = 240
-fov_y1 = 160
-fov_y2 = 160
 center = [0, 1]
 
-count = 0
-fov = []
-alpha = 0.2
-alpha1 = 0.05
+
 
 def extract_2d_videos(lists_of_results,lists_frames,scores,frames_path,output_path,resolution):
+    counter = 0
 
-
-
-    file_path = "Subshots_video_.txt"
-    file_path1 = "scores_video_.txt"
-    c = 0
-    transition_frames = []
+    file_path = f"Subshots_video_.txt"
+    file_path1 = f"scores_video_.txt"
+    file_path2 = f"distances_.txt"
+    distances = []
+    list_centers = []
+    frame_paths = []
     for i,bounding_boxes in enumerate(lists_of_results):
-
         count =0
         cc = 0
-        fov = []
-
+        centers = []
+        paths = []
         for j,(x,y,w,h) in enumerate(bounding_boxes):
-            a=1
-
-            frame1 = cv2.imread(frames_path + "/" + f"{lists_frames[i][j]:04d}.png")  # Load the frame
-
-
-            frame1 = cv2.resize(frame1, (resolution[1],resolution[0]))
-            img = frame1
-
-
-            if c == 0:
-                previous=[x, y, w, h]
-
-                fov_min_row = int((x+x+w)/2 - fov_radius)
-                fov_max_row = int((x+x+w)/2 + fov_radius)
-                fov_min_col = int((y+y+h)/2 - fov_y1)
-                fov_max_col = int((y+y+h)/2 + fov_y2)
-                if fov_min_row < 0:
-
-                    extra_cols = -fov_min_row
-
-                    fov_min_row = img.shape[1] - extra_cols  # 2048 - extra rows
-
-
-                    # Extract the field of view from the image
-                    fov_left = img[fov_min_col:fov_max_col, fov_min_row:img.shape[1]]
-                    fov_right = img[fov_min_col:fov_max_col, 0:fov_max_row]
-
-                    # Combine the FOV from the left and right sides
-                    fov_new = np.concatenate((fov_left, fov_right), axis=1)
-                elif fov_max_row > resolution[1]:
-                    extra_cols = fov_max_row -resolution[1]
-
-                    fov_max_left = extra_cols
-                    fov_right = img[fov_min_col:fov_max_col, 0:fov_max_left]
-                    fov_left = img[fov_min_col:fov_max_col, fov_min_row:resolution[1]]
-                    fov_new = np.concatenate((fov_left, fov_right), axis=1)
-                else:
-
-                    fov_new = img[fov_min_col:fov_max_col, fov_min_row:fov_max_row]
-
-                fov_previous = fov_new
-
-
-            elif c!=0:
-
-
-
-                current = [x,y,w,h]
-
-                count+=1
-
-
-                center[0], center[1], xnew, ynew, wnew, hnew = smooth_bounding_box_transition(previous,current,cc,resolution)
-
-                previous = [xnew, ynew, wnew, hnew]
-                fov_min_row = int(center[0] - fov_radius)
-                fov_max_row = int( center[0] + fov_radius)
-                fov_min_col = int( center[1] - fov_y1)
-                fov_max_col = int(center[1] + fov_y2)
-
-
-
-                
-
-
-                #Case when the FOV extends beyond the left-right boundary
-                if fov_min_row < 0:
-
-
-                    extra_cols = -fov_min_row
-
-                    # Adjust the minimum and maximum column values
-                    fov_min_row = img.shape[1]-extra_cols #2048 - extra rows
-
-
-                    # Extract the field of view from the image
-                    fov_left = img[fov_min_col:fov_max_col, fov_min_row:img.shape[1]]
-                    fov_right = img[fov_min_col:fov_max_col, 0:fov_max_row]
-
-                    # Combine the FOV from the left and right sides
-                    fov_new = np.concatenate((fov_left, fov_right), axis=1)
-                elif fov_max_row>resolution[1]:
-
-                    extra_cols = fov_max_row-resolution[1]
-
-                    fov_max_left = extra_cols
-                    fov_right = img[fov_min_col:fov_max_col,0:fov_max_left]
-                    fov_left = img[fov_min_col:fov_max_col,fov_min_row:resolution[1]]
-                    fov_new = np.concatenate((fov_left, fov_right), axis=1)
-                else:
-
-                    fov_new = img[fov_min_col:fov_max_col,fov_min_row:fov_max_row]
-
-
-                count=0
+            center_x1 = int((x + x + w) / 2)
+            center_y1 = int((y + y + h) / 2)
+            if center_x1>resolution[2]-100:
+                center_x1 = resolution[2]-center_x1
+                distance = np.sqrt((center_x1**2)+(center_y1**2))
             else:
+                distance = np.sqrt((center_x1 ** 2) + (center_y1 ** 2))
+            distances.append(distance)
+            if j == 0:
+                previous=[x, y, w, h]
+                center_x = int((x+x+w)/2)
+                center_y = int((y+y+h)/2)
+
+            else:
+                current = [x,y,w,h]
+                count+=1
+                center_x, center_y, xnew, ynew, wnew, hnew = smooth_centers_transition(previous,current,cc,resolution)
+                previous = [xnew,ynew,wnew,hnew]
+            centers.append([center_x,center_y])
+            img_path = frames_path + "/" + f"{lists_frames[i][j]:04d}.png"
+            paths.append(img_path)
+        #print("1",centers)
+        for l,item in enumerate(centers):
+            if (l+3<len(centers)):
+                if (centers[l][0]>centers[l+1][0] and centers[l][0]<centers[l+2][0]) or (centers[l][0]<centers[l+1][0] and centers[l][0]>centers[l+2][0]):
+                    centers[l+1][0] = centers[l][0]
+        #print("2",centers)
+        list_centers.append(centers)
+        frame_paths.append(paths)
 
 
 
-
-                center[0], center[1], xnew, ynew, wnew, hnew = smooth_bounding_box_transition(previous,current,cc,resolution)
-
-                previous = [x, y, w, h]
-
-                fov_min_row = int(center[0] - fov_radius)
-                fov_max_row = int(center[0] + fov_radius)
-                fov_min_col = int(center[1] - fov_y1)
-                fov_max_col = int(center[1] + fov_y2)
-
-
-                # Handle the case when the FOV extends beyond the left-right boundary
-                if fov_min_row < 0:
-                    # Calculate the additional columns on the right side
-                    extra_cols = -fov_min_row
-
-
-                    fov_min_row = img.shape[1] - extra_cols  # 2048 - extra rows
-
-
-
-                    fov_left = img[fov_min_col:fov_max_col, fov_min_row:img.shape[1]]
-                    fov_right = img[fov_min_col:fov_max_col, 0:fov_max_row]
-
-                    # Combine the FOV from the left and right sides
-                    fov_new = np.concatenate((fov_left, fov_right), axis=1)
-                elif fov_max_row > resolution[1]:
-                    extra_cols = fov_max_row -resolution[1]
-                    fov_min_left = 0
-                    fov_max_left = extra_cols
-                    fov_right = img[fov_min_col:fov_max_col, 0:fov_max_left]
-                    fov_left = img[fov_min_col:fov_max_col, fov_min_row:resolution[1]]
-                    fov_new = np.concatenate((fov_left, fov_right), axis=1)
-                else:
-                    # Calculate the top-left and bottom-right coordinates of the field of view
-                    fov_new = img[fov_min_col:fov_max_col, fov_min_row:fov_max_row]
-
-
-
-            if c>=1:
-                #print(fov_new)
-
-                prev_frame = fov_previous.astype(np.float32)
-
-                prev_frame = cv2.resize(prev_frame, (480,320))
-
-                current_frame = fov_new.astype(np.float32)
-                current_frame = cv2.resize(current_frame, (480,320))
-
-                interpolated_frame = (1 - alpha) * (current_frame - prev_frame)
-                interpolated_frame = prev_frame + interpolated_frame
-
-
-                interpolated_frame = np.clip(interpolated_frame, 0, 255).astype(np.uint8)
-
-                fov.append(interpolated_frame)
-                fov_previous = interpolated_frame
-
-            c+=1
-
-            prev_frame = frame1.copy()
-        for k, fvs in enumerate(fov):
-            if k + 3 < len(fov):
-                prev_frame = fov[k]
-                current_frame = fov[k + 1]
-                next_frame = fov[k + 2]
-                prev_frame = cv2.resize(prev_frame, (480,320))
-                current_frame = cv2.resize(current_frame, (480,320))
-                next_frame = cv2.resize(next_frame, (480,320))
-
-                transition_frame = smooth_transition(prev_frame, current_frame, next_frame, alpha1)
-                transition_frames.append(transition_frame)
-
-        fov = []
-
-        c = 0
-        for r, fr in enumerate(transition_frames):
-            path = output_path + "/" + f"Out{i}"
-            if not os.path.exists(path):
-                os.mkdir(path)
-
-
-            cv2.imwrite(os.path.join(path, f"{r:04d}.png"), (fr).astype(np.uint8))
-                    #cv2.imshow('Smooth Transition', fr)
-                    #cv2.waitKey(0)
-        transition_frames = []
+    fov_extractor(list_centers,frame_paths,resolution,output_path)
 
     count = 0
     with open(file_path, "w") as file:
@@ -354,18 +267,23 @@ def extract_2d_videos(lists_of_results,lists_frames,scores,frames_path,output_pa
         for i,frame in enumerate(lists_frames):
 
             if i==0:
-                file.write(f"0000 {(len(frame)-5):04d}\n")
-                count = len(frame)-4
+                file.write(f"0000 {(len(frame)-1):04d}\n")
+                count = len(frame)
             else:
-                file.write(f"{(count):04d} {(count+len(frame)-5):04d}\n")
-                count+=len(frame)-4
+                file.write(f"{(count):04d} {(count+len(frame)-1):04d}\n")
+                count+=len(frame)
     with open(file_path1, "w") as file:
-        count=0
+        count1=0
         for i,frame in enumerate(lists_frames):
-            count1 = 0
             for j,fr in enumerate(frame):
-                if j>3:
-                    file.write(f"{scores[i][j]}\n")
-                    count+=1
-    #y = ccc
+
+                file.write(f"{scores[i][j]}\n")
+                count1+=1
+    with open(file_path2, "w") as file:
+        count2=0
+        for i,dist in enumerate(distances):
+            file.write(f"{dist}\n")
+            count2+=1
+
+
     videoCreator(output_path)
