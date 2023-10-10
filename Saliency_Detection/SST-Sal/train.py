@@ -5,9 +5,14 @@ from LossFunction import KLWeightedLossSequence
 from torch.utils.data import DataLoader
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 from models import SST_Sal
-
+import os
 from configs import training_args
+current_script_path = os.path.abspath(__file__)
 
+# Navigate to the parent directory (one level up)
+parent_directory = os.path.dirname(current_script_path)
+grant_parent_directory = os.path.dirname(parent_directory)
+grant_parent_directory = os.path.dirname(grant_parent_directory)
 def load_model(pt_model, new_model):
     temp = torch.load("weights/"+pt_model+'.pth')
 
@@ -129,22 +134,25 @@ if __name__ == '__main__':
 
     criterion = KLWeightedLossSequence()
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
-
-    with open('CA-SUM-360/data/Static-VR-EyeTracking/train_split.txt', 'r') as file:
+    val_path_txt = os.path.join(grant_parent_directory, "data/Static-VR-EyeTracking/val_split.txt")
+    train_path_txt = os.path.join(grant_parent_directory,"data/Static-VR-EyeTracking/train_split.txt")
+    with open(train_path_txt, 'r') as file:
         # Read the content of the file and split it by commas
         content = file.read()
         values = content.split(',')
     static_videos = [value.strip() for value in values]
     
-    with open('CA-SUM-360/data/Static-VR-EyeTracking/val_split.txt', 'r') as file:
+    with open(val_path_txt, 'r') as file:
         # Read the content of the file and split it by commas
         content = file.read()
         values = content.split(',')
     static_val_videos = [value.strip() for value in values]
-    
-    train_data = RGB(path_to_frames_folder,,static_videos,process=process,frames_per_data=clip_size,resolution=resolution)
+
+    path_to_frames_folder = os.path.join(grant_parent_directory,path_to_frames_folder)
+    train_data = RGB(path_to_frames_folder,static_videos,process=process,frames_per_data=clip_size,resolution=resolution)
     train_loader = DataLoader(train_data, batch_size=1, shuffle=True, drop_last=True)
 
+    path_to_frames_validation_folder = os.path.join(grant_parent_directory,path_to_frames_validation_folder)
     validation_data = RGB(path_to_frames_validation_folder,static_val_videos,process=process,frames_per_data=clip_size,resolution=resolution)
     validation_loader = DataLoader(validation_data, batch_size=1,shuffle=False,drop_last=True)
 
