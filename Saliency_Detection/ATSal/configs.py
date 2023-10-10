@@ -16,7 +16,7 @@ def inference_args():
 
     #Data loader parameters
     parser.add_argument('--path_to_frames_folder', type=str,
-                        default=r'relative_path/CA-SUM-360/outputs/output_frames',
+                        default=r'data/VR-EyeTracking/validation/frames',
                         help='Path to the folder with the extracted ERP frames')
     parser.add_argument('--load_gt', type=str,
                         default='False',
@@ -27,7 +27,7 @@ def inference_args():
 
     #Output_path
     parser.add_argument('--path_to_save_saliency_maps', type=str,
-                        default=r'relative_path/CA-SUM-360/outputs/output_saliency_maps',
+                        default=r'outputs',
                         help='Path to the folder for the extracted saliency_maps')
 
     return parser
