@@ -9,12 +9,16 @@ from data_loader import RGB_dataset
 
 from LossFunction import LOSS
 from torch.utils import data
+from configs import training_args
+current_script_path = os.path.abspath(__file__)
 
-
-
-
+# Navigate to the parent directory (one level up)
+parent_directory = os.path.dirname(current_script_path)
+parent_directory = os.path.dirname(parent_directory)
+grant_parent_directory = os.path.dirname(parent_directory)
+grant_parent_directory = os.path.dirname(grant_parent_directory)
 def load_attention(pt_model, new_model, device):
-    temp = torch.load("weights/" + pt_model + '.pt', map_location=device)
+    temp = torch.load(pt_model, map_location=device)
 
     new_model.load_state_dict(temp)
     return new_model
@@ -35,8 +39,6 @@ def train(train_loader,validation_loader,optimizer,criterion, model,device,epoch
         avg_nss = 0
         counter = 0
         for i, video in enumerate(train_loader):
-
-
             for j,(frames,gtruth,fixation) in enumerate(video):
 
                 #print(frames.shape)
@@ -105,7 +107,7 @@ def train(train_loader,validation_loader,optimizer,criterion, model,device,epoch
 
                 val_losses.append(val_avg_loss.cpu() / val_counter)
 
-        print(f'Epoch {epoch+1} finished with')
+        print(f'Epoch {epoch} finished with')
         print("Train loss", np.mean(losses))
         print("Val loss", np.mean(val_losses))
         torch.save(model.state_dict(), saved_model_path+"/"+f'attention_{epoch}.pt')
@@ -139,17 +141,23 @@ if __name__ == "__main__":
 
     print("The model will be running on", device, "device")
 
+    attention_model_path =os.path.join(parent_directory, attention_model_path)
+
     model = load_attention(attention_model_path, att_model,device)
 
+
+    path_to_train_frames = os.path.join(grant_parent_directory,path_to_train_frames)
     train_set = RGB_dataset(path_to_train_frames, process=process, frames_per_data=clip_size)
     train_loader = data.DataLoader(train_set, batch_size=batch_size,shuffle=True,drop_last=True)
 
+    path_to_val_frames = os.path.join(grant_parent_directory, path_to_val_frames)
     validation_set = RGB_dataset(path_to_val_frames, process=process, frames_per_data=clip_size)
     validation_loader = data.DataLoader(validation_set, batch_size=batch_size,drop_last=True)
 
     optimizer = torch.optim.Adam(att_model.parameters(),lr=lr,weight_decay=weight_decay)
     criterion = LOSS()
 
+    path_to_save_weights = os.path.join(grant_parent_directory,path_to_save_weights)
 
     train(train_loader,validation_loader,optimizer,criterion,model,device,epochs=epochs,saved_model_path=path_to_save_weights)
 
