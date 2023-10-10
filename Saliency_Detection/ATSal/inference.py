@@ -14,6 +14,13 @@ from data_loader import RGB_dataset
 from configs import inference_args
 
 from torch.utils import data
+current_script_path = os.path.abspath(__file__)
+
+# Navigate to the parent directory (one level up)
+parent_directory = os.path.dirname(current_script_path)
+grant_parent_directory = os.path.dirname(parent_directory)
+grant_parent_directory = os.path.dirname(grant_parent_directory)
+
 def repackage_hidden(h):
     """Wraps hidden states in new Tensors, to detach them from their history."""
     if isinstance(h, torch.Tensor):
@@ -108,7 +115,7 @@ def test(loader,model,output_path,load_gt):
                         out_predict[face_key] = np.array(out_face.astype(np.uint8))
                         out_state[face_key] = state
 
-                    second_stream = (attention.projection_methods.c2e(out_predict, h=320, w=640, mode='bilinear', cube_format='dict')).reshape(320, 640)
+                    second_stream = (projection_methods.c2e(out_predict, h=320, w=640, mode='bilinear', cube_format='dict')).reshape(320, 640)
 
                     second_stream = torch.from_numpy(second_stream/255)
 
@@ -177,7 +184,7 @@ def test(loader,model,output_path,load_gt):
                         out_predict[face_key] = np.array(out_face.astype(np.uint8))
                         out_state[face_key] = state
 
-                    second_stream = (attention.projection_methods.c2e(out_predict, h=320, w=640, mode='bilinear',
+                    second_stream = (projection_methods.c2e(out_predict, h=320, w=640, mode='bilinear',
                                                                       cube_format='dict')).reshape(320, 640)
 
                     second_stream = torch.from_numpy(second_stream / 255)
@@ -229,9 +236,13 @@ if __name__ =="__main__":
 
     model = {"attention": att_model, "poles": Poles, "equator": Equator}
 
-    #path_to_frames_folder = r"D:\Program Files\IoanProjects\StaticVRval\frames"
-    #path_to_save_saliency_maps= "attention/outputs" # outputpath for saliency maps
 
+    path_to_frames_folder = os.path.join(grant_parent_directory,path_to_frames_folder)
+
+    if os.path.exists(path_to_save_saliency_maps):
+        print(path_to_save_saliency_maps+"exists")
+    else:
+        os.mkdir(path_to_save_saliency_maps)
     train_set = RGB_dataset(path_to_frames_folder,load_gt=load_gt,frames_per_data=clip_size)
     loader = data.DataLoader(train_set, batch_size=batch_size)
     with torch.no_grad():
