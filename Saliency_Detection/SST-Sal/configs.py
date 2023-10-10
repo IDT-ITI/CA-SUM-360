@@ -10,10 +10,10 @@ def training_args():
 
     #Data loader parameters
     parser.add_argument('--path_to_frames_folder', type=str,
-                        default=r'relative_path/CA-SUM-360/VR-EyeTracking/Training/frames',
+                        default=r'data/VR-EyeTracking/training/frames',
                         help='Path to the folder with the extracted ERP training frames')
     parser.add_argument('--path_to_frames_validation_folder', type=str,
-                        default=r'relative_path/CA-SUM-360/VR-EyeTracking/Validation/frames',
+                        default=r'data/VR-EyeTracking/validation/frames',
                         help='Path to the folder with the extracted ERP validation frames')
     parser.add_argument('--process', type=str,
                         default='train',
@@ -30,7 +30,7 @@ def training_args():
 
     #Output_path
     parser.add_argument('--save_model_path', type=str,
-                        default=r'relative_path/CA-SUM-360/Saliency_Detection/SST-Sal/weights',
+                        default=r'weights',
                         help='Path to the folder for the saved model per epoch')
 
     return parser
@@ -48,7 +48,7 @@ def inference_args():
     # Data loader parameters
 
     parser.add_argument('--path_to_frames_validation_folder', type=str,
-                        default=r'relative_path/CA-SUM-360/VR-EyeTracking/Validation/frames',
+                        default=r'data/VR-EyeTracking/validation/frames',
                         help='Path to the folder with the extracted ERP validation frames')
     parser.add_argument('--process', type=str,
                         default='test',
@@ -62,7 +62,7 @@ def inference_args():
 
     # Output_path
     parser.add_argument('--path_to_save_saliency_maps', type=str,
-                        default=r'relative_path/CA-SUM-360/outputs/output_saliency_maps',
+                        default=r'outputs',
                         help='Path to the folder for saving saliency maps')
 
 
