@@ -6,12 +6,12 @@ def training_args():
     # Model parameters
     parser.add_argument('--gpu', type=str, default="cuda:0",
                         help='Use of gpu, if not available chooses "cpu"')
-    parser.add_argument('--attention_model', type=str, default="attention/weights/initial.pt",
+    parser.add_argument('--attention_model', type=str, default="weights/initial.pt",
                         help='Attention model weights path, Default attention/weights/initial.pt')
 
     # Data loader parameters
     parser.add_argument('--path_to_frames_folder', type=str,
-                        default=r'CA-SUM-360/data/Salient360-Sitzman/training/frames',
+                        default=r'data/VR-EyeTracking/training/frames',
                         help='Path to the folder with the extracted ERP frames')
     parser.add_argument('--process', type=str,
                         default='train',
@@ -28,7 +28,7 @@ def training_args():
     parser.add_argument('--epochs', type=int, default=90, help='90 epochs for train on Salient360-Sitzman dataset,10 for VR-EyeTracking')
     # Output_path
     parser.add_argument('--path_to_save_weights', type=str,
-                        default=r'CA-SUM-360/Saliency_Detection/ATSal/attention/weights',
+                        default=r'Saliency_Detection/ATSal/weights',
                         help='Path to save the checkpoint_weights')
 
     return parser
