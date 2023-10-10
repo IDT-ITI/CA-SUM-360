@@ -17,47 +17,53 @@ class RGB(Dataset):
         #video_names = os.listdir(self.path_to_frames)
         if self.process=="train":
             for i, file in enumerate(self.video_names):
-
-                img_files = []
-
                 frame_folder = os.path.join(self.path_to_frames, file)
-                frames = os.listdir(frame_folder)
 
-                for j, fram in enumerate(frames):
-                    if fram.lower().endswith(('.png','.jpg')):
-                        img_files.append(frame_folder + "/" + fram)
+                if os.path.exists(frame_folder):
+
+                    img_files = []
 
 
-                img_files = sorted(img_files)
-                fpd = 20 + self.frames_per_data
+                    frames = os.listdir(frame_folder)
 
-                for j in range(20, len(img_files),self.frames_per_data):
+                    for j, fram in enumerate(frames):
+                        if fram.lower().endswith(('.png','.jpg')):
+                            img_files.append(frame_folder + "/" + fram)
 
-                    self.dataset.append(img_files[j:fpd])
-                    fpd = fpd+ self.frames_per_data
+
+                    img_files = sorted(img_files)
+                    fpd = 20 + self.frames_per_data
+
+                    for j in range(20, len(img_files),self.frames_per_data):
+
+                        self.dataset.append(img_files[j:fpd])
+                        fpd = fpd+ self.frames_per_data
 
         else:
             for i, file in enumerate(self.video_names):
 
-
-                img_files = []
-
                 frame_folder = os.path.join(self.path_to_frames, file)
-                frames = os.listdir(frame_folder)
+                print(frame_folder)
+                if os.path.exists(frame_folder):
 
-                for j, fram in enumerate(frames):
-                    if fram.lower().endswith(('.png', '.jpg')):
-                        img_files.append(frame_folder + "/" + fram)
+                    img_files = []
 
 
-                img_files = sorted(img_files)
-                fpd = self.frames_per_data+20
-                data=[]
-                for j in range(20, len(img_files), self.frames_per_data-4): #apply this -4 factor to have smoother results in the final saliency maps, as SST-Sal predicts in sequences of 20 frames
-                    data.append(img_files[j:fpd])
+                    frames = os.listdir(frame_folder)
 
-                    fpd = fpd + self.frames_per_data-4
-                self.dataset.append(data)
+                    for j, fram in enumerate(frames):
+                        if fram.lower().endswith(('.png', '.jpg')):
+                            img_files.append(frame_folder + "/" + fram)
+
+
+                    img_files = sorted(img_files)
+                    fpd = self.frames_per_data+20
+                    data=[]
+                    for j in range(20, len(img_files), self.frames_per_data-4): #apply this -4 factor to have smoother results in the final saliency maps, as SST-Sal predicts in sequences of 20 frames
+                        data.append(img_files[j:fpd])
+
+                        fpd = fpd + self.frames_per_data-4
+                    self.dataset.append(data)
 
 
 
