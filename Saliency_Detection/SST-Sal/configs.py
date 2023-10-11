@@ -58,6 +58,7 @@ def inference_args():
     parser.add_argument('--clip_size', type=int, default=20,
                         help='Frames per data for data loader ')
     parser.add_argument('--batch_size', type=int, default=1, help='Batch size for data loader')
+    parser.add_argument('--load_gt', type=str,default="True",help='True for evaluating,False for inference')
 
 
     # Output_path
