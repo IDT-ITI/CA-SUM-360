@@ -120,7 +120,23 @@ then run the commands:
 cd Saliency_Detection/SST-Sal
 ```
 ```
-python inference.py --gpu "cuda:0" --path_to_frames_validation_folder "CA-SUM-360/data/VR-EyeTracking/validation/frames" --path_to_save_saliency_maps "CA-SUM-360/outputs_folder"
+python inference.py --gpu "cuda:0" --path_to_frames_validation_folder "CA-SUM-360/data/VR-EyeTracking/validation/frames" --load_gt "False" --path_to_save_saliency_maps "CA-SUM-360/outputs_folder"
+```
+# Evaluation
+By following the above Data Structure and placing the dataset,weights in the data,weights folder:
+To evaluate the ATSal model, run the following command:
+```
+cd Saliency_Detection/ATSal
+```
+```
+python inference.py --gpu "cuda:0" --path_to_frames_folder "CA-SUM-360/data/VR-EyeTracking/validation/frames" --load_gt "True" --path_to_save_saliency_maps "CA-SUM-360/outputs_folder"
+```
+To evaluate SST-Sal, run the following command:
+```
+cd Saliency_Detection/SST-Sal
+```
+```
+python inference.py --gpu "cuda:0" --path_to_frames_validation_folder "CA-SUM-360/data/VR-EyeTracking/validation/frames" --load_gt "True" --path_to_save_saliency_maps "CA-SUM-360/outputs_folder"
 ```
 
 # Citation
