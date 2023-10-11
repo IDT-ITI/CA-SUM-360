@@ -95,6 +95,7 @@ python TrainExpert.py --gpu "cuda:0" --path_to_frames_folder "CA-SUM-360/data/cu
 ```
 * [[ATSal-experts-Equator (364 MB)]](https://drive.google.com/drive/folders/1fTMrH00alyZ_hP7CaYenkzIkFevRRVz8)
 * [[ATSal-experts-Poles (364 MB)]](https://drive.google.com/drive/folders/1fTMrH00alyZ_hP7CaYenkzIkFevRRVz8)
+
 To run an inference of ATSal method to produce saliency maps, you should run and execute the following command (example for ATSal):
 ```
 cd Saliency_Detection/ATSal
@@ -131,6 +132,7 @@ cd Saliency_Detection/ATSal
 ```
 python inference.py --gpu "cuda:0" --path_to_frames_folder "CA-SUM-360/data/VR-EyeTracking/validation/frames" --load_gt "True" --path_to_save_saliency_maps "CA-SUM-360/outputs_folder"
 ```
+
 To evaluate SST-Sal, run the following command:
 ```
 cd Saliency_Detection/SST-Sal
