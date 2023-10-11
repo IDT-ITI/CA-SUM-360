@@ -75,14 +75,14 @@ To train the attention model from scratch, you download the initial weights for 
 cd Saliency_Detection/ATSal/attention
 ```
 ```
-python train.py --gpu "cuda:0" --path_to_frames_folder "CA-SUM-360/data/Salient360-Sitzman/training/frames" --path_to_save_model "CA-SUM-360/Saliency_Detection/ATSal/attention/weights" --batch_size 40
+python train.py --gpu "cuda:0" --path_to_frames_folder "data/Salient360-Sitzman/training/frames" --path_to_save_model "Saliency_Detection/ATSal/attention/weights" --batch_size 40
 ```
 The other paramaters are in default mode for the training. To train the model on VR-EyeTracking dataset download the pretrained model weights below: 
 ATSal attention model trained on Salient360! and VR-EyeTracking video dataset:
 * [[ATSal-Atention-pretrained]](https://drive.google.com/drive/folders/1fTMrH00alyZ_hP7CaYenkzIkFevRRVz8)
 save them in the folder [weights](Saliency_Detection/ATSal/attention/weights) and run the follow command in the same folder "attention":
 ```
-python train.py --gpu "cuda:0" --path_to_frames_folder "CA-SUM-360/data/VR-EyeTracking/training/frames" --attention_model "weights/pretrained.pt" --path_to_save_model "CA-SUM-360/Saliency_Detection/ATSal/attention/weights" --batch_size 10 --weight_decay=1e-5
+python train.py --gpu "cuda:0" --path_to_frames_folder "data/VR-EyeTracking/training/frames" --attention_model "weights/pretrained.pt" --path_to_save_model "Saliency_Detection/ATSal/attention/weights" --batch_size 10 --weight_decay=1e-5
 ```
 To train the expert models download the weight below and place it in this folder [weights](Saliency_Detection/ATSal/expert/weights) and the cube VR-EyeTracking dataset to data folder, 
 * [[ATSal-experts-SalEMA30]](https://drive.google.com/drive/folders/1fTMrH00alyZ_hP7CaYenkzIkFevRRVz8)
@@ -91,7 +91,7 @@ and run the following command line (example for equator):
 cd Saliency_Detection/ATSal/expert
 ```
 ```
-python TrainExpert.py --gpu "cuda:0" --path_to_frames_folder "CA-SUM-360/data/cube-VR-EyeTracking/Equator/training/frames" --clip_size 10 --save_model_path "Saliency_Detection/ATSal/expert/weights"
+python TrainExpert.py --gpu "cuda:0" --path_to_frames_folder "data/cube-VR-EyeTracking/Equator/training/frames" --clip_size 10 --save_model_path "Saliency_Detection/ATSal/expert/weights"
 ```
 * [[ATSal-experts-Equator (364 MB)]](https://drive.google.com/drive/folders/1fTMrH00alyZ_hP7CaYenkzIkFevRRVz8)
 * [[ATSal-experts-Poles (364 MB)]](https://drive.google.com/drive/folders/1fTMrH00alyZ_hP7CaYenkzIkFevRRVz8)
@@ -101,7 +101,7 @@ To run an inference of ATSal method to produce saliency maps, you should run and
 cd Saliency_Detection/ATSal
 ```
 ```
-python inference.py --gpu "cuda:0" --path_to_frames_folder "CA-SUM-360/data/VR-EyeTracking/validation/frames" --load_gt "False" --path_to_save_saliency_maps "CA-SUM-360/outputs_folder"
+python inference.py --gpu "cuda:0" --path_to_frames_folder "data/VR-EyeTracking/validation/frames" --load_gt "False" --path_to_save_saliency_maps "outputs"
 ```
 ### Train-Inference SST-Sal
 
@@ -110,7 +110,7 @@ To train the SST-Sal method run the following commands:
 cd Saliency_Detection/SST-Sal
 ```
 ```
-python train.py python train.py --gpu "cuda:0" --hidden_layers 9 --path_to_training_folder "CA-SUM-360/data/VR-EyeTracking/training/frames" --path_to_validation_folder = "CA-SUM-360/data/VR-EyeTracking/validation/frames" --save_model_path "CA-SUM-360/Saliency_Detection/SST-Sal/weights"
+python train.py python train.py --gpu "cuda:0" --hidden_layers 9 --path_to_training_folder "data/VR-EyeTracking/training/frames" --path_to_validation_folder = "data/VR-EyeTracking/validation/frames" --save_model_path "Saliency_Detection/SST-Sal/weights"
 ```
 SST-Sal model trained on Static-VR-EyeTracking dataset
 * [[SST-Sal weights]](https://drive.google.com/drive/folders/1fTMrH00alyZ_hP7CaYenkzIkFevRRVz8)
@@ -121,7 +121,7 @@ then run the commands:
 cd Saliency_Detection/SST-Sal
 ```
 ```
-python inference.py --gpu "cuda:0" --path_to_frames_validation_folder "CA-SUM-360/data/VR-EyeTracking/validation/frames" --load_gt "False" --path_to_save_saliency_maps "CA-SUM-360/outputs_folder"
+python inference.py --gpu "cuda:0" --path_to_frames_validation_folder "data/VR-EyeTracking/validation/frames" --load_gt "False" --path_to_save_saliency_maps "outputs"
 ```
 # Evaluation
 By following the above Data Structure and placing the dataset,weights in the data,weights folder:
@@ -131,7 +131,7 @@ To evaluate the ATSal model, run the following command:
 cd Saliency_Detection/ATSal
 ```
 ```
-python inference.py --gpu "cuda:0" --path_to_frames_folder "CA-SUM-360/data/VR-EyeTracking/validation/frames" --load_gt "True" --path_to_save_saliency_maps "CA-SUM-360/outputs_folder"
+python inference.py --gpu "cuda:0" --path_to_frames_folder "data/VR-EyeTracking/validation/frames" --load_gt "True" --path_to_save_saliency_maps "outputs"
 ```
 
 To evaluate SST-Sal, run the following command:
@@ -139,7 +139,7 @@ To evaluate SST-Sal, run the following command:
 cd Saliency_Detection/SST-Sal
 ```
 ```
-python inference.py --gpu "cuda:0" --path_to_frames_validation_folder "CA-SUM-360/data/VR-EyeTracking/validation/frames" --load_gt "True" --path_to_save_saliency_maps "CA-SUM-360/outputs_folder"
+python inference.py --gpu "cuda:0" --path_to_frames_validation_folder "data/VR-EyeTracking/validation/frames" --load_gt "True" --path_to_save_saliency_maps "outputs"
 ```
 
 # Citation
