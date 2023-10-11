@@ -8,9 +8,16 @@ from metrics import Metrics
 from ExpertModel import Poles,Equator
 from torch import nn
 import math
+import os
 from configs import training_args
 mean = lambda x: sum(x) / len(x)
+current_script_path = os.path.abspath(__file__)
 
+# Navigate to the parent directory (one level up)
+parent_directory = os.path.dirname(current_script_path)
+parent_directory = os.path.dirname(parent_directory)
+grant_parent_directory = os.path.dirname(parent_directory)
+grant_parent_directory = os.path.dirname(grant_parent_directory)
 def load_weights(pt_model, device='cpu'):
     temp = torch.load(pt_model, map_location=device)['state_dict']
     from collections import OrderedDict
@@ -199,12 +206,12 @@ if __name__ == '__main__':
 
 
     print("Commencing training on dataset")
-
-    train_set = Multiexpert_dataset(root_path=path_to_frames_folder,process=process,frames_per_data=clip_size,resolution)
+    path_to_frames_folder = os.path.join(grant_parent_directory,path_to_frames_folder)
+    train_set = Multiexpert_dataset(root_path=path_to_frames_folder,process=process,frames_per_data=clip_size,resolution=resolution)
     print("Size of train set is {}".format(len(train_set)))
     train_loader = data.DataLoader(train_set,batch_size=batch_size,shuffle=True,drop_last=True)
-
-    val_set = Multiexpert_dataset(root_path=path_to_frames_validation_folder, process=process, frames_per_data=clip_size,resolution)
+    path_to_frames_validation_folder = os.path.join(grant_parent_directory, path_to_frames_validation_folder)
+    val_set = Multiexpert_dataset(root_path=path_to_frames_validation_folder, process=process, frames_per_data=clip_size,resolution=resolution)
     print("Size of validation set is {}".format(len(val_set)))
     val_loader = data.DataLoader(val_set,batch_size=batch_size,drop_last=True)
 
@@ -221,6 +228,7 @@ if __name__ == '__main__':
     optimizer = torch.optim.Adam([
         {'params': model.salgan.parameters(), 'lr': lr, 'weight_decay': weight_decay},
         {'params': model.alpha, 'lr': 0.1}])
+    expert_model = os.path.join(parent_directory, expert_model)
     checkpoint = load_weights(expert_model,device='cpu')
     model.load_state_dict(checkpoint, strict=False)
 
@@ -236,5 +244,5 @@ if __name__ == '__main__':
     train_losses = []
     val_losses = []
     print(model.salgan.parameters())
-
+    save_model_path = os.path.join(grant_parent_directory,save_model_path)
     main(train_loader,val_loader,model,criterion,optimizer,temporal,dtype,save_model_path,epochs)
