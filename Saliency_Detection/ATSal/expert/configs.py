@@ -14,10 +14,10 @@ def training_args():
 
     #Data loader parameters
     parser.add_argument('--path_to_frames_folder', type=str,
-                        default=r'relative_path/CA-SUM-360/VR-EyeTracking/Training/frames',
+                        default=r'data/cube-VR-EyeTracking/Equator/training/frames',
                         help='Path to the folder with the extracted CMP training frames')
     parser.add_argument('--path_to_frames_validation_folder', type=str,
-                        default=r'relative_path/CA-SUM-360/VR-EyeTracking/Validation/frames',
+                        default=r'data/cube-VR-EyeTracking/Equator/validation/frames',
                         help='Path to the folder with the extracted CMP validation frames')
     parser.add_argument('--process', type=str,
                         default='train',
@@ -35,7 +35,7 @@ def training_args():
 
     #Output_path
     parser.add_argument('--save_model_path', type=str,
-                        default=r'relative_path/CA-SUM-360/Saliency_Detection/ATSal/Expert/weights',
+                        default=r'weights',
                         help='Path to the folder for the saved model per epoch')
 
     return parser
