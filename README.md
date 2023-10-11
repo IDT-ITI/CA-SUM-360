@@ -125,6 +125,7 @@ python inference.py --gpu "cuda:0" --path_to_frames_validation_folder "CA-SUM-36
 ```
 # Evaluation
 By following the above Data Structure and placing the dataset,weights in the data,weights folder:
+
 To evaluate the ATSal model, run the following command:
 ```
 cd Saliency_Detection/ATSal
