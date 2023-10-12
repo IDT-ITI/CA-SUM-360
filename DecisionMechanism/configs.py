@@ -2,7 +2,7 @@ import argparse
 def args():
     parser = argparse.ArgumentParser(description='Description for Decision Mechanism parameters')
     parser.add_argument('--frames_folder_path', type=str,
-                        default=r'CA-SUM-360\output_frames',
+                        default=r'data/VR-EyeTracking/validation/frames',
                         help='Directory path to equirectangular (ERP) frames')
     parser.add_argument('--resolution', type=int, nargs=2, default=[320, 640], help='Resolution parameter')
 
