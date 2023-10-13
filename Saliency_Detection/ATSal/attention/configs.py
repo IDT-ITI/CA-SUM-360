@@ -1,7 +1,7 @@
 import argparse
 
 def training_args():
-    parser = argparse.ArgumentParser(description='Description for args of train.py ATSal model')
+    parser = argparse.ArgumentParser(description='Description for args of train.py attention model')
 
     # Model parameters
     parser.add_argument('--gpu', type=str, default="cuda:0",
