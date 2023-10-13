@@ -1,6 +1,6 @@
 import argparse
 def training_args():
-    parser = argparse.ArgumentParser(description='Description for args of inference.py ATSal model')
+    parser = argparse.ArgumentParser(description='Description for args of train expert model')
 
     # Model parameters
     parser.add_argument('--gpu', type=str, default="cuda:0",
