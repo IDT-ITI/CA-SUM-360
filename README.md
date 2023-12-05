@@ -1,4 +1,4 @@
-# CA-SUM-360
+# CA-SUM-360: 360-degrees video summarization
 ## Pytorch implementation of CA-SUM-360
 * from **An Integrated System for Spatio-Temporal Summarization of 360 Videos**
 * Written by Ioannis Kontostathis, Evlampios Apostolidis, Vasileios Mezaris
@@ -142,9 +142,28 @@ cd Saliency_Detection/SST-Sal
 python inference.py --gpu "cuda:0" --path_to_frames_validation_folder "data/VR-EyeTracking/validation/frames" --load_gt "True" --path_to_save_saliency_maps "outputs"
 ```
 
-# Citation
+## License
+This code is provided for academic, non-commercial use only. Please also check for any restrictions applied in the code parts and datasets used here from other sources. For the materials not covered by any such restrictions, redistribution and use in source and binary forms, with or without modification, are permitted for academic non-commercial use provided that the following conditions are met:
 
-# Licence
+Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation provided with the distribution. 
 
+This software is provided by the authors "as is" and any express or implied warranties, including, but not limited to, the implied warranties of merchantability and fitness for a particular purpose are disclaimed. In no event shall the authors be liable for any direct, indirect, incidental, special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability, whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use of this software, even if advised of the possibility of such damage.
+
+## Acknowledgements
+This work was supported by the EU's Horizon Europe and Horizon 2020 research and innovation programmes under grant agreements 101070109 TransMIXR and 951911 AI4Media, respectively.
+
+## Citation
+If you find our method useful in your work or you use some materials provided in this repo, please cite the following publication where our method and materials were presented: 
+
+* Exploring Multi-Modal Fusion for Image Manipulation Detection and Localization
+````
+@inproceedings{kontostathis2024summarization,
+    title={An Integrated System for Spatio-Temporal Summarization of 360-degrees Videos},
+    author={Kontostathis, Ioannis and Apostolidis, Evlampios and Mezaris, Vasileios},
+    year={2024},
+    month={Jan.-Feb.},
+    booktitle={Proc. 30th Int. Conf. on MultiMedia Modeling (MMM 2024)}
+}
+````
 
 
