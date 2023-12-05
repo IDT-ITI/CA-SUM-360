@@ -155,7 +155,6 @@ This work was supported by the EU's Horizon Europe and Horizon 2020 research and
 ## Citation
 If you find our method useful in your work or you use some materials provided in this repo, please cite the following publication where our method and materials were presented: 
 
-* Exploring Multi-Modal Fusion for Image Manipulation Detection and Localization
 ````
 @inproceedings{kontostathis2024summarization,
     title={An Integrated System for Spatio-Temporal Summarization of 360-degrees Videos},
