@@ -1,6 +1,6 @@
 # CA-SUM-360: 360-degrees video summarization
 ## Pytorch implementation of CA-SUM-360
-* from **An Integrated System for Spatio-Temporal Summarization of 360 Videos**
+* from **An Integrated System for Spatio-Temporal Summarization of 360-degrees Videos**
 * Written by Ioannis Kontostathis, Evlampios Apostolidis, Vasileios Mezaris
 * The input 360 video is initially subjected to equirectangular projection (ERP).This set of
 frames is given to the decision mechanism, analyze them and makes a decision on whether the
