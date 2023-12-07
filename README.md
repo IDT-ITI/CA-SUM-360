@@ -23,6 +23,7 @@ Saliency Detection models, checked and verified on an `Windows 11` PC with an `N
       <th>cudatoolkit Version</th>
       <th>Numpy</th>
       <th>Opencv</th>
+      <th>imageio-ffmpeg</th>
     </tr>
     <tr>
       <td>3.8</td>
@@ -31,6 +32,7 @@ Saliency Detection models, checked and verified on an `Windows 11` PC with an `N
       <td>11.0.221</td>
       <td>1.24.3</td>
       <td>4.6.0</td>
+      <td>0.4.9</td>
     </tr>
   </table>
 </div>
