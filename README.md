@@ -48,11 +48,12 @@ a moving camera
 ```
 cd CA-SUM-360-main/scripts
 ```
-To convert your 360 videos to ERP frames, run the following commands, 
+(we recommend you to save the frames in the by default option "data/output" folder, for easier use of the next levels)
+To convert your 360 videos to ERP frames, run the following command: 
 ```
 python frames_extractor.py python --video_input_type="360" --input_video_path "PATH/path_containing_the_360_videos" --output_folder "data/output"
 ```
-If your videos are already in ERP format, the run the following command
+If your videos are already in ERP format, the run the following command:
 ```
 python frames_extractor.py python --video_input_type="erp" --input_video_path "PATH/path_containing_the_erp_videos" --output_folder "data/output_frames"
 ```
