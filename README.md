@@ -44,7 +44,7 @@ videos of the VR-EyeTracking dataset and 19 from Sports-360 that were captured
 using a fixed camera, and 11, 18 and 6 360 videos of the VR-EyeTracking
 the Sports-360 and the Salient360! datasets, respectively, that were captured by
 a moving camera
-## 360 videos OR ERP videos to frames
+### Frames Extraction
 ```
 cd CA-SUM-360-main/scripts
 ```
