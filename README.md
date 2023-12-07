@@ -44,7 +44,18 @@ videos of the VR-EyeTracking dataset and 19 from Sports-360 that were captured
 using a fixed camera, and 11, 18 and 6 360 videos of the VR-EyeTracking
 the Sports-360 and the Salient360! datasets, respectively, that were captured by
 a moving camera
-
+## 360 videos OR ERP videos to frames
+```
+cd CA-SUM-360-main/scripts
+```
+To convert your 360 videos to ERP frames, run the following commands, 
+```
+python frames_extractor.py python --video_input_type="360" --input_video_path "PATH/path_containing_the_360_videos" --output_folder "data/output"
+```
+If your videos are already in ERP format, the run the following command
+```
+python frames_extractor.py python --video_input_type="erp" --input_video_path "PATH/path_containing_the_erp_videos" --output_folder "data/output_frames"
+```
 ## Training
 For the training process of ATSal model, we first trained the attention model with 2140 images reproduced from 107 ERP images of Salient360! and Sitzman. Then we trained the attention model with 140 VR-EyeTracking videos that is included in the [train_split](data/VR-EyeTracking/train_split.txt) For the fine-tuned train of the Expert models, we used the same videos from VR-EyeTracking but with cube-map projection, applying north and south region to Expert Poles and front,right,back and left to Expert Equator. For the training of SST-Sal, we used 92 static video from VR-EyeTracking named [here](data/Static-VR-EyeTracking), and 55 for validation.
 
