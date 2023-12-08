@@ -72,16 +72,16 @@ The used data for training the video summarization model are available within th
 ```
 </div>
 
-### Frames Extraction
-```
-cd CA-SUM-360-main/scripts
-```
-(we recommend you to save the frames in the by default option "data/output" folder, for easier use of the next levels)
-To convert your 360 videos to ERP frames, run the following command: 
+## Processing Steps
+
+### Decomposition of 360-degrees video into ERP frames
+To decompose a 360-degrees video into a set of ERP frames use the frames_extractor.py script that is available here, and run one of the following commands (we recommend to store the extracted ERP frames in the default path ("data/output_frames"), for easier reference to these frames during the following processing steps):
+
+If your 360-degrees video is in MP4 format, run the following command: 
 ```
 python frames_extractor.py --video_input_type="360" --input_video_path "PATH/path_containing_the_360_videos" --output_folder "data/output_frames"
 ```
-If your videos are already in ERP format, the run the following command:
+If your 360-degrees video is in ERP format, run the following command:
 ```
 python frames_extractor.py --video_input_type="erp" --input_video_path "PATH/path_containing_the_erp_videos" --output_folder "data/output_frames"
 ```
