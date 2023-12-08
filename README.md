@@ -182,6 +182,12 @@ cd Saliency_Detection/SST-Sal
 ```
 python inference.py --gpu "cuda:0" --path_to_frames_validation_folder "data/VR-EyeTracking/validation/frames" --load_gt "False" --path_to_save_saliency_maps "outputs"
 ```
+### 2D_Video_Production
+To create the 2D video, run the following command:
+```
+python main.py --frames_folder_path "data/VR-EyeTracking/frames" --saliency_maps_path "data/VR-EyeTracking/saliency" --intensity_value 150 --dbscan_distance 1.2 --spatial_distance 100 --fill_loss 100
+```
+  
 # Evaluation
 By following the above Data Structure and placing the dataset,weights in the data,weights folder:
 
