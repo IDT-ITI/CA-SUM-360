@@ -51,15 +51,27 @@ cd CA-SUM-360-main/scripts
 (we recommend you to save the frames in the by default option "data/output" folder, for easier use of the next levels)
 To convert your 360 videos to ERP frames, run the following command: 
 ```
-python frames_extractor.py python --video_input_type="360" --input_video_path "PATH/path_containing_the_360_videos" --output_folder "data/output"
+python frames_extractor.py --video_input_type="360" --input_video_path "PATH/path_containing_the_360_videos" --output_folder "data/output_frames"
 ```
 If your videos are already in ERP format, the run the following command:
 ```
-python frames_extractor.py python --video_input_type="erp" --input_video_path "PATH/path_containing_the_erp_videos" --output_folder "data/output_frames"
+python frames_extractor.py --video_input_type="erp" --input_video_path "PATH/path_containing_the_erp_videos" --output_folder "data/output_frames"
+```
+### Camera Motion Detection Algorithm
+To run and use the camera motion detection algorithm, run the following commands:
+```
+cd CA-SUM-360-main/camera_motion_detection_algorithm
+```
+```
+python cmda.py --frames_folder_path "data\output_frames" --parameter_1 0.5 
 ```
 ## Training
 For the training process of ATSal model, we first trained the attention model with 2140 images reproduced from 107 ERP images of Salient360! and Sitzman. Then we trained the attention model with 140 VR-EyeTracking videos that is included in the [train_split](data/VR-EyeTracking/train_split.txt) For the fine-tuned train of the Expert models, we used the same videos from VR-EyeTracking but with cube-map projection, applying north and south region to Expert Poles and front,right,back and left to Expert Equator. For the training of SST-Sal, we used 92 static video from VR-EyeTracking named [here](data/Static-VR-EyeTracking), and 55 for validation.
-
+### Dataset
+The Salient!360 dataset can be downloaded from [here](https://salient360.ls2n.fr/datasets/training-dataset/) by following the instructions via FTP client
+The Sitzman dataset can be downloaded from [here](https://drive.google.com/drive/folders/1EJgxC6SzjehWi3bu8PRVHWJrkeZbAiqD)
+The reproduced VR-EyeTracking dataset is available [here](https://mtliba.github.io/Reproduced-VR-EyeTracking/)
+The Sport-360 dataset is available [here](https://www.terabox.com/sharing/init?surl=nmn4Pb_wmceMmO7QHSiB9Q), with password:4p8t
 ### Data Structure
 
 ```
