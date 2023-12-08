@@ -68,13 +68,13 @@ python cmda.py --frames_folder_path "data\output_frames" --parameter_1 0.5
 ## Training
 For the training process of ATSal model, we first trained the attention model with 2140 images reproduced from 107 ERP images of Salient360! and Sitzman. Then we trained the attention model with 140 VR-EyeTracking videos that is included in the [train_split](data/VR-EyeTracking/train_split.txt) For the fine-tuned train of the Expert models, we used the same videos from VR-EyeTracking but with cube-map projection, applying north and south region to Expert Poles and front,right,back and left to Expert Equator. For the training of SST-Sal, we used 92 static video from VR-EyeTracking named [here](data/Static-VR-EyeTracking), and 55 for validation.
 ### Dataset
-The Salient!360 dataset can be downloaded from [here](https://salient360.ls2n.fr/datasets/training-dataset/) by following the instructions via FTP client
-
-The Sitzman dataset can be downloaded from [here](https://drive.google.com/drive/folders/1EJgxC6SzjehWi3bu8PRVHWJrkeZbAiqD)
-
-The reproduced VR-EyeTracking dataset is available [here](https://mtliba.github.io/Reproduced-VR-EyeTracking/)
-
-The Sport-360 dataset is available [here](https://www.terabox.com/sharing/init?surl=nmn4Pb_wmceMmO7QHSiB9Q), with password:4p8t
+The Salient!360 and Sitzman dataset used for training attention model of ATSal method:
+*[Salient!360](https://salient360.ls2n.fr/datasets/training-dataset/) by following the instructions via FTP client.
+*[Sitzman](https://drive.google.com/drive/folders/1EJgxC6SzjehWi3bu8PRVHWJrkeZbAiqD) 
+The reproduced VR-EyeTracking dataset used for training ATSal and SST-Sal:
+*[Vr-EyeTracking](https://mtliba.github.io/Reproduced-VR-EyeTracking/)
+The Sport-360 dataset used for testing:
+*[Sport-360](https://www.terabox.com/sharing/init?surl=nmn4Pb_wmceMmO7QHSiB9Q), with password:4p8t
 ### Data Structure
 
 ```
