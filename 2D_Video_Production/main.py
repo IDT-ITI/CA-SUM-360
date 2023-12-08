@@ -9,13 +9,13 @@ current_script_path = os.path.abspath(__file__)
 # Navigate to the parent directory (one level up)
 parent_directory = os.path.dirname(current_script_path)
 grant_parent_directory = os.path.dirname(parent_directory)
-grant_parent_directory = os.path.dirname(grant_parent_directory)
+
 def run(**kwargs):
     dbscan_distance = kwargs['dbscan_distance']
     fill_loss = kwargs['fill_loss']
-    frames_path = kwargs['frames_path']
+    frames_path = kwargs['frames_folder_path']
     intensity_value = kwargs['intensity_value']
-    path_to_folder = kwargs['path_to_folder']
+    path_to_folder = kwargs['fov_output_path']
     resolution = kwargs['resolution']
     saliency_maps_path = kwargs['saliency_maps_path']
     spatial_distance = kwargs['spatial_distance']
@@ -41,12 +41,7 @@ def run(**kwargs):
             salient_regions.append((f"{i:04d}", bounding_boxes))
 
         frame_number = [item[0] for item in salient_regions]
-
-
         salient_regions_list = [item[1] for item in salient_regions]
-
-
-
 
         result_lists,frames= group_salient_regions(salient_regions_list,frame_number,path_to_video_saliency_maps,spatial_distance,fill_loss,resolution=[resolution[0],resolution[1]])
 
