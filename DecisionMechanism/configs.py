@@ -5,10 +5,7 @@ def args():
                         default=r'data/VR-EyeTracking/validation/frames',
                         help='Directory path to equirectangular (ERP) frames')
     parser.add_argument('--resolution', type=int, nargs=2, default=[320, 640], help='Resolution parameter')
-
-
-    parser.add_argument('--parameter_1', type=int, default=0.5, help='Parameter for moving threshold')
-
+    parser.add_argument('--parameter_1', type=float, default=0.5, help='Parameter for moving threshold')
 
     return parser
 if __name__ == '__main__':
