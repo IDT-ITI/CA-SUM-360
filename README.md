@@ -70,8 +70,6 @@ The used data for training the video summarization model are available within th
     /picks                    1D-array with shape (n_steps, 1) with the indices of the sampled frames
     /saliency scores          1D-array with shape (n_steps, 1) with the computed saliency scores for the sampled frames
 ```
-Original videos and annotations for each dataset are also available in the dataset providers' webpages: 
-- <a href="https://github.com/yalesong/tvsum" target="_blank"><img align="center" src="https://img.shields.io/badge/Dataset-TVSum-green"/></a> <a href="https://gyglim.github.io/me/vsum/index.html#benchmark" target="_blank"><img align="center" src="https://img.shields.io/badge/Dataset-SumMe-blue"/></a>
 </div>
 
 ### Frames Extraction
