@@ -28,7 +28,7 @@ def is_camera_moving(**kwargs):
         moving = False
 
         for i, frame in enumerate(frames):
-            if i > 20 and i + 20 < len(frames): #avoid first 20 frames and last 20 because some videos starts with black screen, something that affects the final result
+            if i > 50 and i + 50 < len(frames): #avoid first 50 frames and last 20 because some videos starts with black screen, something that affects the final result
 
                 if frame.lower().endswith(('.png','.jpg')):
                     frame_path = path +"/"+frame
@@ -83,16 +83,16 @@ def is_camera_moving(**kwargs):
                         count+=1
 
 
-                    if count == 15:
+                    if count == 30:
 
                         moving = True
                         break
 
                     prev = curr.copy()
         if moving== True:
-            print("the video is moving")
+            print(f"the {video} is moving")
         else:
-            print("the video is static")
+            print(f"the {video}is static")
 
 
 
