@@ -5,9 +5,7 @@ import os
 import re
 
 
-def videoCreator(output_path):
-    folder_path = output_path
-
+def videoCreator(folder_path,video,final_resolution):
     fps=30
     def extract_numerical_part(folder_name):
         if isinstance(folder_name, str):
@@ -16,33 +14,23 @@ def videoCreator(output_path):
                 return int(match.group())
         return float('inf')
 
+    width = int(final_resolution[1] * 75 / 360)
+    height = int(width * 3 / 4)
 
-    output_path = f"2Dvideo.mp4"
+    output_path =f"2Dvideo_{video}.mp4"
 
     frames = os.listdir(folder_path)
     frames = sorted(frames, key=extract_numerical_part)
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-    video_writer = cv2.VideoWriter(output_path, fourcc, fps, (480, 360))
-    #print(frames)
+    video_writer = cv2.VideoWriter(output_path, fourcc, fps, (width, height))
+
     for frame_file in frames:
 
         current_frame = cv2.imread(os.path.join(folder_path, frame_file))
         video_writer.write(current_frame)
 
     cv2.destroyAllWindows()
-def smooth_transition(prev_frame, current_frame, next_frame, alpha):
-    prev_frame = prev_frame.astype(np.float32)
-    current_frame = current_frame.astype(np.float32)
-    next_frame = next_frame.astype(np.float32)
 
-
-    interpolated_frame = (1 - alpha) * (current_frame - prev_frame) + alpha * (next_frame - current_frame)
-    interpolated_frame = prev_frame + interpolated_frame
-
-
-    interpolated_frame = np.clip(interpolated_frame, 0, 255).astype(np.uint8)
-
-    return interpolated_frame
 def xyz2lonlat(xyz):
     atan2 = np.arctan2
     asin = np.arcsin
@@ -71,10 +59,10 @@ def lonlat2XY(lonlat, shape):
 
 
 class Equirectangular:
-    def __init__(self, img_name):
-        #print(img_name)
+    def __init__(self, img_name,final_resolution):
+
         self._img = cv2.imread(img_name, cv2.IMREAD_COLOR)
-        self._img = cv2.resize(self._img,(1080,1920))
+        self._img = cv2.resize(self._img,(final_resolution[0],final_resolution[1]))
 
         [self._height, self._width,_] =  self._img.shape
 
@@ -83,7 +71,6 @@ class Equirectangular:
         #
         # THETA is left/right angle, PHI is up/down angle, both in degree
         #
-
         f = 0.5 * width * 1 / np.tan(0.5 * FOV / 180.0 * np.pi)
         cx = (width - 1) / 2.0
         cy = (height - 1) / 2.0
@@ -103,6 +90,7 @@ class Equirectangular:
 
         y_axis = np.array([0.0, 1.0, 0.0], np.float32)
         x_axis = np.array([1.0, 0.0, 0.0], np.float32)
+
         R1, _ = cv2.Rodrigues(y_axis * np.radians(THETA))
         R2, _ = cv2.Rodrigues(np.dot(R1, x_axis) * np.radians(PHI))
         R = R2 @ R1
@@ -114,176 +102,267 @@ class Equirectangular:
 
         return persp
 
+def fov_extractor(centers,img_path,final_resolution,output_path,video):
+    scores_txt = f"saliency_scores_{video}.txt"
+    counters=0
+    scores = []
 
-def fov_extractor(centers,img_path,resolution,output_path):
-    image_height, image_width = resolution
-
-    fovs = []
     for k, items in enumerate(centers):
         fov = []
+
+        width = int(final_resolution[1] * 75 / 360) # 75 angle for the fov
+        height = int(width * 3 / 4)
+
         for j, item in enumerate(items):
-            equ = Equirectangular(img_path[k][j])  # Load equirectangular image
+            equ = Equirectangular(img_path[k][j],final_resolution)  # Load equirectangular image
+            path2 = img_path[k][j].replace('frames', 'saliency') # load erp saliecy map to extract the saliency scores
+            equ2 = Equirectangular(path2, final_resolution)
 
             x = item[0]
             y = item[1]
-            y = image_height - y
+            y = final_resolution[0] - y
 
-            longitude = (x / image_width) * 360 - 180
-            latitude = (y / image_height) * 180 - 90
+            longitude = (x / final_resolution[1]) * 360 - 180
+            latitude = (y / final_resolution[0]) * 180 - 90
 
-            img = equ.GetPerspective(80, longitude, latitude, 360,
-                                     480)  # Specify parameters(FOV, theta, phi, height, width)
+            img = equ.GetPerspective(75, longitude, latitude, height,width)  # Specify parameters(FOV, theta, phi, height, width)
+
+            img2 = equ2.GetPerspective(75, longitude, latitude, height/2, width/2)
+
+            img2 = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
+            saliency_map_filtered = img2.copy()
+            saliency_map_filtered[img2 <= 150] = 0
+            contours, _ = cv2.findContours(saliency_map_filtered, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+            scores1 = []
+
+            for contour in contours:
+                x, y, w, h = cv2.boundingRect(contour)
+                if not np.isnan(img2[y:y + h, x:x + w].mean()):
+                    scores1.append(img2[y:y + h, x:x + w].mean())
+                else:
+                    scores1.append(0.05)
+            if not np.isnan(np.mean(scores1)):
+                scores.append(np.mean(scores1) / 255)
+            else:
+                scores.append(0.05)
+            # scoress.append(np.mean(img2)/255)
+
+
 
             fov.append(img)
-        fovs.append(fov)
-    count = 0
-    for r1, frames in enumerate(fovs):
-        for r, frame in enumerate(frames):
-            if r + 3 < len(frames):
+        for r, frame in enumerate(fov):
+            transition_frame = frame
 
-                prev_frame = frames[r]
-                current_frame = frames[r + 1]
-                next_frame = frames[r + 2]
-
-                transition_frame = smooth_transition(prev_frame, current_frame, next_frame, 0.2)
-
-            else:
-                transition_frame = frame
             if not os.path.exists(output_path):
                 # If it doesn't exist, create it
                 os.makedirs(output_path)
-            cv2.imwrite(output_path +"/"+{count:06d}.png', transition_frame)
-            count += 1
+            cv2.imwrite(output_path + '/' + f'{counters:06d}.png', frame)
+            counters += 1
+        with open(scores_txt, "w") as file:
+            count1 = 0
+            for i, frame in enumerate(scores):
+                file.write(f"{frame}\n")
+                count1 += 1
 
 
 def smooth_centers_transition(bbox_frame1, bbox_frame2,cc,resolution):
 
-    interpolation_factor = 0.03
-    interpolation_factor1 = 0.04
+    interpolation_factor = 0.1
+    interpolation_factor1 = 0.02
 
     #if (abs(2048-max(bbox_frame1[0],bbox_frame2[0])+min(bbox_frame1[0],bbox_frame2[0]))>=400):
-    if (abs(bbox_frame1[0]-bbox_frame2[0])<1000):
+    if (abs(bbox_frame1[0]-bbox_frame2[0])<resolution[1]/2):
 
-        x = int(bbox_frame1[0] + interpolation_factor * (bbox_frame2[0] - bbox_frame1[0]))
-        y = int(bbox_frame1[1] + interpolation_factor1 * (bbox_frame2[1] - bbox_frame1[1]))
-        w = int(bbox_frame1[2] + interpolation_factor * (bbox_frame2[2] - bbox_frame1[2]))
-        h = int(bbox_frame1[3] + interpolation_factor1 * (bbox_frame2[3] - bbox_frame1[3]))
+        x = bbox_frame1[0] + interpolation_factor * (bbox_frame2[0] - bbox_frame1[0])
+        y = bbox_frame1[1] + interpolation_factor1 * (bbox_frame2[1] - bbox_frame1[1])
+        w = bbox_frame1[2] + interpolation_factor * (bbox_frame2[2] - bbox_frame1[2])
+        h = bbox_frame1[3] + interpolation_factor1 * (bbox_frame2[3] - bbox_frame1[3])
 
     else:
         if max(bbox_frame1[0],bbox_frame2[0]) == bbox_frame1[0]:
             if bbox_frame2[0]>resolution[1]:
                 bbox_frame2[0] = resolution[1]-bbox_frame2[0]
-                x = int(bbox_frame1[0] + interpolation_factor * (bbox_frame2[0] - bbox_frame1[0]))
-                y = int(bbox_frame1[1] + interpolation_factor1 * (bbox_frame2[1] - bbox_frame1[1]))
-                w = int(bbox_frame1[2] + interpolation_factor * (bbox_frame2[2] - bbox_frame1[2]))
-                h = int(bbox_frame1[3] + interpolation_factor1 * (bbox_frame2[3] - bbox_frame1[3]))
+                x = bbox_frame1[0] + interpolation_factor * (bbox_frame2[0] - bbox_frame1[0])
+                y = bbox_frame1[1] + interpolation_factor1 * (bbox_frame2[1] - bbox_frame1[1])
+                w = bbox_frame1[2] + interpolation_factor * (bbox_frame2[2] - bbox_frame1[2])
+                h = bbox_frame1[3] + interpolation_factor1 * (bbox_frame2[3] - bbox_frame1[3])
             else:
-                x = int(bbox_frame1[0] + interpolation_factor * (bbox_frame2[0] + 2048 - bbox_frame1[0]))
-                y = int(bbox_frame1[1] + interpolation_factor1 * (bbox_frame2[1] - bbox_frame1[1]))
-                w = int(bbox_frame1[2] + interpolation_factor * (bbox_frame2[2] - bbox_frame1[2]))
-                h = int(bbox_frame1[3] + interpolation_factor1 * (bbox_frame2[3] - bbox_frame1[3]))
+                x = bbox_frame1[0] + interpolation_factor * (bbox_frame2[0] + resolution[1]- bbox_frame1[0])
+                y = bbox_frame1[1] + interpolation_factor1 * (bbox_frame2[1] - bbox_frame1[1])
+                w = bbox_frame1[2] + interpolation_factor * (bbox_frame2[2] - bbox_frame1[2])
+                h = bbox_frame1[3] + interpolation_factor1 * (bbox_frame2[3] - bbox_frame1[3])
 
         else:
             if bbox_frame1[0]<0:
                 bbox_frame1[0] = resolution[1]+bbox_frame1[0]
-                x = int(bbox_frame1[0] + interpolation_factor * (bbox_frame2[0]- bbox_frame1[0]))
-                y = int(bbox_frame1[1] + interpolation_factor1 * (bbox_frame2[1] - bbox_frame1[1]))
-                w = int(bbox_frame1[2] + interpolation_factor * (bbox_frame2[2] - bbox_frame1[2]))
-                h = int(bbox_frame1[3] + interpolation_factor1 * (bbox_frame2[3] - bbox_frame1[3]))
+                x = bbox_frame1[0] + interpolation_factor * (bbox_frame2[0]- bbox_frame1[0])
+                y = bbox_frame1[1] + interpolation_factor1 * (bbox_frame2[1] - bbox_frame1[1])
+                w = bbox_frame1[2] + interpolation_factor * (bbox_frame2[2] - bbox_frame1[2])
+                h = bbox_frame1[3] + interpolation_factor1 * (bbox_frame2[3] - bbox_frame1[3])
             else:
-                x = int(bbox_frame1[0] + interpolation_factor * (bbox_frame2[0] - resolution[1]- bbox_frame1[0]))
-                y = int(bbox_frame1[1] + interpolation_factor1 * (bbox_frame2[1] - bbox_frame1[1]))
-                w = int(bbox_frame1[2] + interpolation_factor * (bbox_frame2[2] - bbox_frame1[2]))
-                h = int(bbox_frame1[3] + interpolation_factor1 * (bbox_frame2[3] - bbox_frame1[3]))
+                x = bbox_frame1[0] + interpolation_factor * (bbox_frame2[0] - resolution[1]- bbox_frame1[0])
+                y = bbox_frame1[1] + interpolation_factor1 * (bbox_frame2[1] - bbox_frame1[1])
+                w = bbox_frame1[2] + interpolation_factor * (bbox_frame2[2] - bbox_frame1[2])
+                h = bbox_frame1[3] + interpolation_factor1 * (bbox_frame2[3] - bbox_frame1[3])
 
     cc+=1
-    center_x = int((x+x+w)/2)
+    if x>resolution[1]:
+        x = x-resolution[1]
+    if x<0:
+        x=resolution[1]-x
+    center_x = (x+x+w)/2
 
-    center_y = int((y+y+h)/2)
+    center_y = (y+y+h)/2
 
     if center_x>resolution[1]:
         center_x = center_x - resolution[1]
 
     return center_x,center_y,x,y,w,h
+def final_smooth_centers_transition(bbox_frame1, bbox_frame2,cc,final_resolution):
+    if abs(bbox_frame1[0]-bbox_frame2[0])<final_resolution[1]/2 and abs(bbox_frame1[0]-bbox_frame2[0])>int(final_resolution[1]/15):
 
+        interpolation_factor = 0.05
+        interpolation_factor1 = 0.025
+    else:
+        interpolation_factor = 0.03
+        interpolation_factor1 = 0.02
 
+    if (abs(bbox_frame1[0]-bbox_frame2[0])<final_resolution[1]/2):
+
+        x = bbox_frame1[0] + interpolation_factor * (bbox_frame2[0] - bbox_frame1[0])
+        y = bbox_frame1[1] + interpolation_factor1 * (bbox_frame2[1] - bbox_frame1[1])
+        w = bbox_frame1[2] + interpolation_factor * (bbox_frame2[2] - bbox_frame1[2])
+        h = bbox_frame1[3] + interpolation_factor1 * (bbox_frame2[3] - bbox_frame1[3])
+
+    else:
+
+        if max(bbox_frame1[0],bbox_frame2[0]) == bbox_frame1[0]:
+            if bbox_frame2[0]>final_resolution[1]:
+                bbox_frame2[0] = final_resolution[1]-bbox_frame2[0]
+                x = bbox_frame1[0] + interpolation_factor * (bbox_frame2[0] - bbox_frame1[0])
+                y = bbox_frame1[1] + interpolation_factor1 * (bbox_frame2[1] - bbox_frame1[1])
+                w = bbox_frame1[2] + interpolation_factor * (bbox_frame2[2] - bbox_frame1[2])
+                h = bbox_frame1[3] + interpolation_factor1 * (bbox_frame2[3] - bbox_frame1[3])
+            else:
+                x = bbox_frame1[0] + interpolation_factor * (bbox_frame2[0] + final_resolution[1]- bbox_frame1[0])
+                y = bbox_frame1[1] + interpolation_factor1 * (bbox_frame2[1] - bbox_frame1[1])
+                w = bbox_frame1[2] + interpolation_factor * (bbox_frame2[2] - bbox_frame1[2])
+                h = bbox_frame1[3] + interpolation_factor1 * (bbox_frame2[3] - bbox_frame1[3])
+
+        else:
+            if bbox_frame1[0]<0:
+                bbox_frame1[0] = final_resolution[1]+bbox_frame1[0]
+                x = bbox_frame1[0] + interpolation_factor * (bbox_frame2[0]- bbox_frame1[0])
+                y = bbox_frame1[1] + interpolation_factor1 * (bbox_frame2[1] - bbox_frame1[1])
+                w = bbox_frame1[2] + interpolation_factor * (bbox_frame2[2] - bbox_frame1[2])
+                h = bbox_frame1[3] + interpolation_factor1 * (bbox_frame2[3] - bbox_frame1[3])
+            else:
+                x = bbox_frame1[0] + interpolation_factor * (bbox_frame2[0] -final_resolution[1]- bbox_frame1[0])
+                y = bbox_frame1[1] + interpolation_factor1 * (bbox_frame2[1] - bbox_frame1[1])
+                w = bbox_frame1[2] + interpolation_factor * (bbox_frame2[2] - bbox_frame1[2])
+                h = bbox_frame1[3] + interpolation_factor1 * (bbox_frame2[3] - bbox_frame1[3])
+
+    if x<0:
+        x = final_resolution[1]+x
+    cc+=1
+    center_x = (x+x+w)/2
+
+    center_y = (y+y+h)/2
+
+    if center_x>final_resolution[1]:
+        #print("centerx",center_x)
+        center_x = center_x - final_resolution[1]
+
+    return center_x,center_y,x,y,w,h
 
 center = [0, 1]
 
+def extract_2d_videos(lists_of_results,lists_frames,frames_path,output_path,resolution,video):
 
-
-def extract_2d_videos(lists_of_results,lists_frames,scores,frames_path,output_path,resolution):
-    counter = 0
-
-    file_path = f"Subshots_video_.txt"
-    file_path1 = f"scores_video_.txt"
-    file_path2 = f"distances_.txt"
     distances = []
     list_centers = []
     frame_paths = []
+    centers_past = []
+    frames1=[]
     for i,bounding_boxes in enumerate(lists_of_results):
         count =0
         cc = 0
-        centers = []
+        centers1 = []
         paths = []
+
+
         for j,(x,y,w,h) in enumerate(bounding_boxes):
-            center_x1 = int((x + x + w) / 2)
-            center_y1 = int((y + y + h) / 2)
-            if center_x1>resolution[2]-100:
-                center_x1 = resolution[2]-center_x1
+            center_x1 = (x + x + w) / 2
+            center_y1 = (y + y + h) / 2
+            if center_x1>resolution[1]:
+                center_x1 = resolution[1]-center_x1
                 distance = np.sqrt((center_x1**2)+(center_y1**2))
             else:
                 distance = np.sqrt((center_x1 ** 2) + (center_y1 ** 2))
             distances.append(distance)
             if j == 0:
                 previous=[x, y, w, h]
-                center_x = int((x+x+w)/2)
-                center_y = int((y+y+h)/2)
+
+                xnew = previous[0]
+                ynew = previous[1]
+                wnew = previous[2]
+                hnew = previous[3]
 
             else:
                 current = [x,y,w,h]
                 count+=1
                 center_x, center_y, xnew, ynew, wnew, hnew = smooth_centers_transition(previous,current,cc,resolution)
                 previous = [xnew,ynew,wnew,hnew]
-            centers.append([center_x,center_y])
+            centers1.append([xnew,ynew,wnew,hnew])
             img_path = frames_path + "/" + f"{lists_frames[i][j]:04d}.png"
+            frames1.append(lists_frames[i][j])
+            if i == 0:
+
+                image = cv2.imread(img_path)
+                a = image.shape[1]
+                b = int(a*0.5)
+                final_resolution = (b,a)
+
+                multiplier = final_resolution[1]/resolution[1]
             paths.append(img_path)
-        #print("1",centers)
-        for l,item in enumerate(centers):
-            if (l+3<len(centers)):
-                if (centers[l][0]>centers[l+1][0] and centers[l][0]<centers[l+2][0]) or (centers[l][0]<centers[l+1][0] and centers[l][0]>centers[l+2][0]):
-                    centers[l+1][0] = centers[l][0]
+
+        for l,item in enumerate(centers1):
+            if (l+3<len(centers1)):
+                if (centers1[l][0]>centers1[l+1][0] and centers1[l][0]<centers1[l+2][0]) or (centers1[l][0]<centers1[l+1][0] and centers1[l][0]>centers1[l+2][0]):
+                    centers1[l+1][0] = centers1[l][0]
+        centers = []
+
+
+        for l,current in enumerate(centers1):
+            center_x = int((current[0]  + current[0]  + current[2])  / 2)
+            center_y = int((current[1]  + current[1]  + current[3] ) / 2)
+            centers_past.append((center_x,center_y))
+        for l,current in enumerate(centers1):
+            if l==0:
+
+                center_x = int((current[0]*multiplier+current[0]*multiplier+current[2]*multiplier)/2)
+                center_y = int((current[1]*multiplier+current[1]*multiplier+current[3]*multiplier)/2)
+                previous = [current[0]*multiplier,current[1]*multiplier,current[2]*multiplier,current[3]*multiplier]
+
+            else:
+
+                current = [current[0]*multiplier,current[1]*multiplier,current[2]*multiplier,current[3]*multiplier]
+
+                center_x, center_y, xnew, ynew, wnew, hnew = final_smooth_centers_transition(previous, current, cc,final_resolution)
+
+                previous = [xnew,ynew,wnew,hnew]
+
+            centers.append([int(center_x),int(center_y)])
+
         #print("2",centers)
         list_centers.append(centers)
         frame_paths.append(paths)
 
 
 
-    fov_extractor(list_centers,frame_paths,resolution,output_path)
-
-    count = 0
-    with open(file_path, "w") as file:
-
-        for i,frame in enumerate(lists_frames):
-
-            if i==0:
-                file.write(f"0000 {(len(frame)-1):04d}\n")
-                count = len(frame)
-            else:
-                file.write(f"{(count):04d} {(count+len(frame)-1):04d}\n")
-                count+=len(frame)
-    with open(file_path1, "w") as file:
-        count1=0
-        for i,frame in enumerate(lists_frames):
-            for j,fr in enumerate(frame):
-
-                file.write(f"{scores[i][j]}\n")
-                count1+=1
-    with open(file_path2, "w") as file:
-        count2=0
-        for i,dist in enumerate(distances):
-            file.write(f"{dist}\n")
-            count2+=1
+    fov_extractor(list_centers,frame_paths,final_resolution,output_path,video)
 
 
-    videoCreator(output_path)
+
+
+    videoCreator(output_path,video,final_resolution)
