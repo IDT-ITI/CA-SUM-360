@@ -40,6 +40,7 @@ def train_(train_loader, val_loader, model, device, criterion, optimizer, EPOCHS
         avg_loss_val = 0.
         counter_train = 0
         counter_val = 0
+
         for k,video in enumerate(train_loader):
             for (x, y) in video:
 
@@ -68,16 +69,15 @@ def train_(train_loader, val_loader, model, device, criterion, optimizer, EPOCHS
 
         # Evaluate on validation set
         with torch.no_grad():
-
-
             for video in val_loader:
-                    for (x, y) in video:
 
-                        counter_val += 1
-                        pred = model(x.to(device))
-                        loss = criterion(pred[:, :, 0, :, :], y[:, :, 0, :, :].to(device))
-                        avg_loss_val += loss.sum().item()
-                        batch_size, Nframes, _, _ = pred[:, :, 0, :, :].shape
+                for (x, y) in video:
+
+                    counter_val += 1
+                    pred = model(x.to(device))
+                    loss = criterion(pred[:, :, 0, :, :], y[:, :, 0, :, :].to(device))
+                    avg_loss_val += loss.sum().item()
+                    batch_size, Nframes, _, _ = pred[:, :, 0, :, :].shape
 
 
 
@@ -87,24 +87,13 @@ def train_(train_loader, val_loader, model, device, criterion, optimizer, EPOCHS
 
         scheduler.step(avg_loss_val / counter_val)
 
-        # Save checkpoint and model
+        # Save model
 
-        torch.save(model, save_model_path+ '/' + str(epoch) + '_model.pth')
-        torch.save({
-            'epoch': epoch,
-            'model_state_dict': model.state_dict(),
-            'optimizer_state_dict': optimizer.state_dict(),
-            'loss': loss,
-        },  save_model_path+ '/'+ 'model.pth')
+        torch.save(model, save_model_path+ '/' + str(epoch) + '_model.pt')
 
-    # Save final model and checkpoints
-    torch.save(model,save_model_path+ '/' + str(epoch) + '_model.pth')
-    torch.save({
-        'epoch': epoch,
-        'model_state_dict': model.state_dict(),
-        'optimizer_state_dict': optimizer.state_dict(),
-        'loss': loss,
-    }, save_model_path+'/'+ '_model.pth')
+
+
+
 
 
 
@@ -116,7 +105,6 @@ if __name__ == '__main__':
     gpu = args.gpu
     hidden_layers = args.hidden_layers
     path_to_frames_folder = args.path_to_frames_folder
-    path_to_frames_validation_folder = args.path_to_frames_validation_folder
     process = args.process
     resolution = args.resolution
     clip_size = args.clip_size
@@ -124,18 +112,20 @@ if __name__ == '__main__':
     epochs = args.epochs
     lr = args.lr
     save_model_path = args.save_model_path
+    load_gt = args.load_gt
 
 
     device = torch.device(gpu if torch.cuda.is_available() else "cpu")
     print("The model will be running on", device, "device")
 
-    #model = torch.load("weights/SST-Sal", map_location=device)
+
     model = SST_Sal(hidden_dim=hidden_layers)
 
     criterion = KLWeightedLossSequence()
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
-    val_path_txt = os.path.join(grant_parent_directory, "data/Static-VR-EyeTracking/val_split.txt")
-    train_path_txt = os.path.join(grant_parent_directory,"data/Static-VR-EyeTracking/train_split.txt")
+
+    train_path_txt = os.path.join(grant_parent_directory,"data/VR-EyeTracking/train_split.txt")
+    val_path_txt = os.path.join(grant_parent_directory, "data/VR-EyeTracking/val_split.txt")
     with open(train_path_txt, 'r') as file:
         # Read the content of the file and split it by commas
         content = file.read()
@@ -143,17 +133,16 @@ if __name__ == '__main__':
     static_videos = [value.strip() for value in values]
     
     with open(val_path_txt, 'r') as file:
-        # Read the content of the file and split it by commas
         content = file.read()
         values = content.split(',')
     static_val_videos = [value.strip() for value in values]
-
+    print(static_val_videos)
     path_to_frames_folder = os.path.join(grant_parent_directory,path_to_frames_folder)
-    train_data = RGB(path_to_frames_folder,static_videos,process=process,frames_per_data=clip_size,resolution=resolution)
+    train_data = RGB(path_to_frames_folder,static_videos,load_gt,process=process,frames_per_data=clip_size,resolution=resolution)
     train_loader = DataLoader(train_data, batch_size=1, shuffle=True, drop_last=True)
 
-    path_to_frames_validation_folder = os.path.join(grant_parent_directory,path_to_frames_validation_folder)
-    validation_data = RGB(path_to_frames_validation_folder,static_val_videos,process=process,frames_per_data=clip_size,resolution=resolution)
+    path_to_frames_validation_folder = os.path.join(grant_parent_directory,path_to_frames_folder)
+    validation_data = RGB(path_to_frames_folder,static_val_videos,load_gt,process=process,frames_per_data=clip_size,resolution=resolution)
     validation_loader = DataLoader(validation_data, batch_size=1,shuffle=False,drop_last=True)
 
     model = train_(train_loader, validation_loader, model, device, criterion,optimizer,EPOCHS = epochs,save_model_path=save_model_path)
