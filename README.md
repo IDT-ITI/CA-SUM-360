@@ -2,7 +2,7 @@
 ## Pytorch implementation of CA-SUM-360
 * from **An Integrated System for Spatio-Temporal Summarization of 360-degrees Videos**
 * Written by Ioannis Kontostathis, Evlampios Apostolidis, Vasileios Mezaris
-* This software can be used for training the deep-learning models for saliency detection and video summarization that are integrated in our method for spatio-temporal summarization of 360-degrees videos, and perform the analysis of a given 360-degrees video in an end-to-end manner. In particular, the 360-degrees video is initially subjected to equirectangular projection (ERP) to form a set of omnidirectional planar (ERP) frames. This set of frames is then analysed by a camera motion detection mechanism (CMDM) which decides on whether the 360-degrees video was captured by a static or a moving camera. Based on this mechanism’s output, the ERP frames are then forwarded to one of the integrated methods for saliency detection (ATSal, SST-Sal), which produce a set of frame-level saliency maps. The ERP frames and the extracted saliency maps are given as input to a component that detects salient events (related to different parts of one or more activities shown in the 360◦ video), computes a saliency score per frame, and produces a 2D video presenting the detected events. The 2D video along with its frames’ saliency scores are fed to a video summarization method (variant of [CA-SUM](https://github.com/e-apostolidis/CA-SUM)) which estimates the importance of each event and forms the video summary.
+* This software can be used for training the deep-learning models for saliency detection and video summarization that are integrated in our method for spatio-temporal summarization of 360-degrees videos, and perform the analysis of a given 360-degrees video in an end-to-end manner. In particular, the 360-degrees video is initially subjected to equirectangular projection (ERP) to form a set of omnidirectional planar (ERP) frames. This set of frames is then analysed by a camera motion detection mechanism (CMDM) which decides on whether the 360-degrees video was captured by a static or a moving camera. Based on this mechanism’s output, the ERP frames are then forwarded to one of the integrated methods for saliency detection ([ATSal](https://github.com/mtliba/ATSal/tree/master), [SST-Sal](https://github.com/edurnebernal/SST-Sal)), which produce a set of frame-level saliency maps. The ERP frames and the extracted saliency maps are given as input to a component that detects salient events (related to different parts of one or more activities shown in the 360◦ video), computes a saliency score per frame, and produces a 2D video presenting the detected events. The 2D video along with its frames’ saliency scores are fed to a video summarization method (variant of [CA-SUM](https://github.com/e-apostolidis/CA-SUM)) which estimates the importance of each event and forms the video summary.
 ## Main dependencies
 The code for training and evaluating the utilized saliency detection models ([ATSal](https://github.com/mtliba/ATSal/tree/master), [SST-Sal](https://github.com/edurnebernal/SST-Sal)), was checked and verified on a `Windows 11` PC with an `NVIDIA GeForce GTX 1080Ti` GPU and an `i5-12600K` CPU. Main packages required:
 <div align="center">
@@ -61,7 +61,7 @@ To train and evaluate the saliency detection models, we used the following datas
 * The Salient360! dataset, that is publicly-available [here](https://salient360.ls2n.fr/datasets/training-dataset/) (follow the instruction to download the dataset using an FTP client)
 * The Sitzman dataset that, is publicly-available [here](https://drive.google.com/drive/folders/1EJgxC6SzjehWi3bu8PRVHWJrkeZbAiqD)
 * A re-produced version of the VR-EyeTraking dataset, that is publicly-available [here](https://mtliba.github.io/Reproduced-VR-EyeTracking/)
-* The Sport-360 dataset (only for testing), that is publicly-available [here](https://www.terabox.com/sharing/init?surl=nmn4Pb_wmceMmO7QHSiB9Q) (use password:4p8t)
+* The Sport-360 dataset (only for testing), that is publicly-available [here](https://www.terabox.com/sharing/init?surl=nmn4Pb_wmceMmO7QHSiB9Q) (password:4p8t)
 
 To train the video summarization model, we used the data stored in [CA-SUM-360.h5](.....). The HDF5 file has the following structure:
 ```Text
@@ -78,7 +78,7 @@ To train the video summarization model, we used the data stored in [CA-SUM-360.h
 ## Processing Steps
 
 ### ERP frame extraction and transformation
-To extract the ERP frames from a 360-degrees video use the frames_extractor.py script that is available [here](https://github.com/IDT-ITI/CA-SUM-360/tree/main/scripts) and run one of the following commands (we recommend to store the extracted ERP frames in the default path ("data/output_frames"), for easier reference to these frames during the following processing steps):
+To extract the ERP frames from a 360-degrees video use the [frames_extractor.py](https://github.com/IDT-ITI/CA-SUM-360/blob/main/scripts/frames_extractor.py) script and run one of the following commands (we recommend to store the extracted ERP frames in the default path ("data/output_frames"), for easier reference to these frames during the following processing steps):
 
 If the 360-degrees video is in MP4 format, run the following command: 
 ```
@@ -89,14 +89,14 @@ If the 360-degrees video is in ERP format, run the following command:
 python frames_extractor.py --video_input_type="erp" --input_video_path "PATH/path_containing_the_erp_videos" --output_folder "data/output_frames"  
 ```
   
-To produce the cubemap (CMP) frames and saliency maps that are utilized by the SalEMA expert model of ATSal, use the erp_to_cube.py script that is available [here](https://github.com/IDT-ITI/CA-SUM-360/tree/main/scripts) and run the following commands:  
+To produce the cubemap (CMP) frames and saliency maps that are utilized by the SalEMA expert model of ATSal, use the [erp_to_cube.py](https://github.com/IDT-ITI/CA-SUM-360/blob/main/scripts/erp_to_cube.py) script and run the following commands:  
 ```
 python erp_to_cube.py --path_to_erp_video_frames "data/VR-EyeTracking/frames" --equator_save_path "data/Cube_Folder/Equator/frames" --poles_save_path ""data/Cube_Folder/Poles/frames"
 python erp_to_cube.py --path_to_erp_video_frames "data/VR-EyeTracking/saliency" --equator_save_path "data/Cube_Folder/Equator/saliency" --poles_save_path ""data/Cube_Folder/Poles/saliency"  
 ```
 
 ### Camera motion detection
-To run the camera motion detection mechanism (CMDM) on the extracted ERP frames, use the cmdm.py script that is available [here](https://github.com/IDT-ITI/CA-SUM-360/tree/main/camera_motion_detection_algorithm) and run the following command:
+To run the camera motion detection mechanism (CMDM) on the extracted ERP frames, use the [cmdm.py](https://github.com/IDT-ITI/CA-SUM-360/blob/main/camera_motion_detection_algorithm/cmdm.py) script and run the following command:
 ```
 python cmdm.py --frames_folder_path "data\output_frames" --parameter_1 0.5 
 ```
@@ -115,9 +115,9 @@ python inference.py --gpu "cuda:0" --path_to_ERP_frames ".../data/<dataset-name>
 
 ### Salient event detection and 2D video production
 
-To detect the salient events in the 360-degrees video, and formulate the conventional 2D video that contains these events, use the main.py script and run the following command:
+To detect the salient events in the 360-degrees video, and formulate the conventional 2D video that contains these events, use the [main.py](https://github.com/IDT-ITI/CA-SUM-360/blob/main/2D_Video_Production/main.py) script and run the following command:
 ```
-python main.py --path_to_ERP_frames ".../data/<dataset-name>/ERP_frames" --path_to_extracted_saliency_maps "...data/VR-EyeTracking/extracted_saliency_maps" --intensity_value 150 --dbscan_distance 1.2 --spatial_distance 100 --fill_loss 100
+python main.py --path_to_ERP_frames ".../data/<dataset-name>/ERP_frames" --path_to_extracted_saliency_maps "...data/<dataset-name>/extracted_saliency_maps" --intensity_value 150 --dbscan_distance 1.2 --spatial_distance 100 --fill_loss 100
 ```
 The produced MPEG-4 video file and the computed saliency scores for its frames, will be stored in ...
 
