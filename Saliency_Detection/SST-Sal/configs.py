@@ -9,7 +9,7 @@ def training_args():
                         help='The number of hidden layers of the model')
 
     #Data loader parameters
-    parser.add_argument('--path_to_frames_folder', type=str,
+    parser.add_argument('--path_to_ERP_frames', type=str,
                         default=r'data/VR-EyeTracking/frames',
                         help='Path to the folder with the extracted ERP training frames')
     parser.add_argument('--process', type=str,
@@ -44,7 +44,7 @@ def inference_args():
 
     # Data loader parameters
 
-    parser.add_argument('--path_to_frames_validation_folder', type=str,
+    parser.add_argument('--path_to_ERP_frames', type=str,
                         default=r'data/VR-EyeTracking/validation/frames',
                         help='Path to the folder with the extracted ERP validation frames')
     parser.add_argument('--process', type=str,
@@ -59,7 +59,7 @@ def inference_args():
 
 
     # Output_path
-    parser.add_argument('--path_to_save_saliency_maps', type=str,
+    parser.add_argument('--path_to_extracted_saliency_maps', type=str,
                         default=r'outputs',
                         help='Path to the folder for saving saliency maps')
 
