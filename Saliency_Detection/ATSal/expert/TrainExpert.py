@@ -199,25 +199,19 @@ if __name__ == '__main__':
     save_model_path = args.save_model_path
     epochs = args.epochs
 
-    #path_to_frames_folder =r"D:\Program Files\IoanProjects\cube3\train\Equator\frames"
-    #path_to_frames_validation_folder = r"D:\Program Files\IoanProjects\cube3\validation\Equator\frames"
-    #save_model_path = "weights"
     LEARN_ALPHA_ONLY = False
-
 
     print("Commencing training on dataset")
     path_to_frames_folder = os.path.join(grant_parent_directory,path_to_frames_folder)
-    train_set = Multiexpert_dataset(root_path=path_to_frames_folder,process=process,frames_per_data=clip_size,resolution=resolution)
+    train_videos = os.listdir(path_to_frames_folder)
+    train_set = Multiexpert_dataset(root_path=path_to_frames_folder,video_names=train_videos,process=process,frames_per_data=clip_size,resolution=resolution)
     print("Size of train set is {}".format(len(train_set)))
     train_loader = data.DataLoader(train_set,batch_size=batch_size,shuffle=True,drop_last=True)
-    path_to_frames_validation_folder = os.path.join(grant_parent_directory, path_to_frames_validation_folder)
-    val_set = Multiexpert_dataset(root_path=path_to_frames_validation_folder, process=process, frames_per_data=clip_size,resolution=resolution)
+    validation_videos = os.listdir(path_to_frames_validation_folder)
+    val_set = Multiexpert_dataset(root_path=path_to_frames_validation_folder,video_names=validation_videos, process=process, frames_per_data=clip_size,resolution=resolution)
     print("Size of validation set is {}".format(len(val_set)))
     val_loader = data.DataLoader(val_set,batch_size=batch_size,drop_last=True)
 
-
-
-    # ================ Define Model ===================
 
     temporal = True
     model = Equator(alpha_parameter,ema_loc)
@@ -231,7 +225,6 @@ if __name__ == '__main__':
     expert_model = os.path.join(parent_directory, expert_model)
     checkpoint = load_weights(expert_model,device='cpu')
     model.load_state_dict(checkpoint, strict=False)
-
 
 
     assert torch.cuda.is_available(), \
