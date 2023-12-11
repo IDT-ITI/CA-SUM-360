@@ -120,20 +120,12 @@ The Sport-360 dataset used for testing:
 ```
 ├── data/
 │ ├── VR-EyeTracking/
-│ │ ├── training/
-│ │ │ ├── frames/
-| | | | ├── 001/
-| | | | | ├── 0000.png
-│ │ | ├── saliency/
-| | | | ├── 127/
-| | | | | ├── 0000.png
-│ │ ├── validation/
-│ │ │ ├── frames/
-| | | | ├── 001/
-| | | | | ├── 0000.png
-│ │ | ├── saliency/
-| | | | ├── 127/
-| | | | | ├── 0000.png
+│ │ ├── frames
+│ │ │ ├── 001/
+| | | | ├── 0000.png
+│ │  ├── saliency/
+| | | ├── 001/
+| | | | ├── 0000.png
 ```
 To train or evaluate the Saliency_Detection methods, download the datasets and place them in the folder data
 ### Train-Inference ΑTSal 
