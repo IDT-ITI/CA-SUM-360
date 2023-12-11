@@ -17,7 +17,7 @@ def run(**kwargs):
     intensity_value = kwargs['intensity_value']
     path_to_folder = kwargs['fov_output_path']
     resolution = kwargs['resolution']
-    saliency_maps_path = kwargs['saliency_maps_path']
+    saliency_maps_path = kwargs['path_to_extracted_saliency_maps']
     spatial_distance = kwargs['spatial_distance']
     frames_path = os.path.join(grant_parent_directory, frames_path)
     saliency_maps_path =  os.path.join(grant_parent_directory, saliency_maps_path)
