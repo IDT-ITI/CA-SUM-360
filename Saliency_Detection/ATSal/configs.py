@@ -15,7 +15,7 @@ def inference_args():
 
 
     #Data loader parameters
-    parser.add_argument('--path_to_frames_folder', type=str,
+    parser.add_argument('--path_to_ERP_frames', type=str,
                         default=r'data/VR-EyeTracking/validation/frames',
                         help='Path to the folder with the extracted ERP frames')
     parser.add_argument('--load_gt', type=str,
@@ -26,7 +26,7 @@ def inference_args():
     parser.add_argument('--batch_size', type=int, default=1, help='Batch size for data loader')
 
     #Output_path
-    parser.add_argument('--path_to_save_saliency_maps', type=str,
+    parser.add_argument('--path_to_extracted_saliency_maps', type=str,
                         default=r'outputs',
                         help='Path to the folder for the extracted saliency_maps')
 
