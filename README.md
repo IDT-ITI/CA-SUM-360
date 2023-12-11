@@ -92,6 +92,11 @@ python erp_to_cube.py --path_to_erp_video_frames "data/VR-EyeTracking/frames" --
 python erp_to_cube.py --path_to_erp_video_frames "data/VR-EyeTracking/saliency" --equator_save_path "data/Cube_Folder/Equator/saliency" --poles_save_path ""data/Cube_Folder/Poles/saliency"  
 ```
 
+To produce the augmentated images of Sitzman and Salient360! images that are utilized by the attention model of ATSal, run the following command:
+```
+python augmentation.py --path_to_images "data/sitzman-salient360 --path_to_save_augmented_images "data/sitzman-salient360"
+```
+
 ### Camera Motion Detection Algorithm
 To run and use the camera motion detection algorithm, run the following commands:
 ```
