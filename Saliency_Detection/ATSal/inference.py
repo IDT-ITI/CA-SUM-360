@@ -228,15 +228,33 @@ if __name__ =="__main__":
     Equator = torch.load(expertEquator_model)
     model = {"attention": att_model, "poles": Poles, "equator": Equator}
 
-   
+
     path_to_frames_folder = os.path.join(grant_parent_directory,path_to_frames_folder)
 
     if os.path.exists(path_to_save_saliency_maps):
         print(path_to_save_saliency_maps+" path exists")
     else:
         os.mkdir(path_to_save_saliency_maps)
-    train_set = RGB_dataset(path_to_frames_folder,load_gt=load_gt,frames_per_data=clip_size)
-    loader = data.DataLoader(train_set, batch_size=batch_size)
+        print("path to save the saliency maps", path_to_save_saliency_maps)
+
+    #path_to_frames_folder = r"D:\Program Files\IoanProjects\VRvaldata3\frames"
+
+    if load_gt=="True":
+        #train_path_txt = os.path.join(grant_parent_directory, "data/VR-EyeTracking/train_split.txt")
+        val_path_txt = os.path.join(grant_parent_directory, "data/VR-EyeTracking/validation_data_split.txt")
+
+
+        with open(val_path_txt, 'r') as file:
+            content = file.read()
+            values = content.split(',')
+        val_videos = [value.strip() for value in values]
+
+        videos_set = RGB_dataset(path_to_frames_folder,val_videos,load_gt=load_gt,frames_per_data=clip_size)
+        loader = data.DataLoader(videos_set, batch_size=batch_size)
+    else:
+        video_names = os.listdir(path_to_frames_folder)
+        videos_set = RGB_dataset(path_to_frames_folder,video_names, load_gt=load_gt, frames_per_data=clip_size)
+        loader = data.DataLoader(videos_set, batch_size=batch_size)
     with torch.no_grad():
 
         test(loader, model,output_path=path_to_save_saliency_maps,load_gt=load_gt)
