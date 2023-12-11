@@ -13,7 +13,7 @@ grant_parent_directory = os.path.dirname(parent_directory)
 def run(**kwargs):
     dbscan_distance = kwargs['dbscan_distance']
     fill_loss = kwargs['fill_loss']
-    frames_path = kwargs['frames_folder_path']
+    frames_path = kwargs['path_to_ERP_frames']
     intensity_value = kwargs['intensity_value']
     path_to_folder = kwargs['fov_output_path']
     resolution = kwargs['resolution']
