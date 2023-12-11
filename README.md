@@ -164,7 +164,7 @@ To run an inference of ATSal method to produce saliency maps, you should run and
 cd Saliency_Detection/ATSal
 ```
 ```
-python inference.py --gpu "cuda:0" --path_to_frames_folder "data/VR-EyeTracking/validation/frames" --load_gt "False" --path_to_save_saliency_maps "outputs"
+python inference.py --gpu "cuda:0" --path_to_frames_folder "data/VR-EyeTracking/frames" --load_gt "False" --path_to_save_saliency_maps "outputs"
 ```
 ### Train-Inference SST-Sal
 
@@ -173,7 +173,7 @@ To train the SST-Sal method run the following commands:
 cd Saliency_Detection/SST-Sal
 ```
 ```
-python train.py python train.py --gpu "cuda:0" --hidden_layers 9 --path_to_training_folder "data/VR-EyeTracking/training/frames" --path_to_validation_folder = "data/VR-EyeTracking/validation/frames" --save_model_path "Saliency_Detection/SST-Sal/weights"
+python train.py python train.py --gpu "cuda:0" --hidden_layers 9 --path_to_frames_folder "data/VR-EyeTracking/frames" --save_model_path "Saliency_Detection/SST-Sal/weights"
 ```
 SST-Sal model trained on Static-VR-EyeTracking dataset
 * [[SST-Sal weights]](https://drive.google.com/drive/folders/1fTMrH00alyZ_hP7CaYenkzIkFevRRVz8)
@@ -184,7 +184,7 @@ then run the commands:
 cd Saliency_Detection/SST-Sal
 ```
 ```
-python inference.py --gpu "cuda:0" --path_to_frames_validation_folder "data/VR-EyeTracking/validation/frames" --load_gt "False" --path_to_save_saliency_maps "outputs"
+python inference.py --gpu "cuda:0" --path_to_frames_folder "data/VR-EyeTracking/frames" --load_gt "False" --path_to_save_saliency_maps "outputs"
 ```
 ### 2D_Video_Production
 To create the 2D video, run the following command:
