@@ -88,8 +88,13 @@ python frames_extractor.py --video_input_type="erp" --input_video_path "PATH/pat
   
 To convert your ERP frames to Cube frames, run the following command (This step is necessary only if you want to train the Expert Model of ATSal):  
 ```
-python erp_to_cube.py --path_to_erp_video_frames "D:\Program Files\IoanProjects\VRvaldata3\frames" --equator_save_path "data/Cube_Folder/equator/frames" --poles_save_path ""data/Cube_Folder/Poles/frames"
+python erp_to_cube.py --path_to_erp_video_frames "data/VR-EyeTracking/frames" --equator_save_path "data/Cube_Folder/Equator/frames" --poles_save_path ""data/Cube_Folder/Poles/frames"
 ```
+To convert the erp saliency_maps to cube saliency maps:  
+```
+python erp_to_cube.py --path_to_erp_video_frames "data/VR-EyeTracking/saliency" --equator_save_path "data/Cube_Folder/Equator/saliency" --poles_save_path ""data/Cube_Folder/Poles/saliency"  
+```
+
 ### Camera Motion Detection Algorithm
 To run and use the camera motion detection algorithm, run the following commands:
 ```
