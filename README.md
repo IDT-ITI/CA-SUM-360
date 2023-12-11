@@ -58,7 +58,7 @@ The code for training and evaluating the utilized video summarization model (sal
 
 To train and evaluate the saliency detection models, we used the following datasets:
 
-* The Salient360! dataset, that is publicly-available [here](https://salient360.ls2n.fr/datasets/training-dataset/) (follow the instruction to download the dataset using an FTP client)
+* The Salient360! dataset, that is publicly-available [here](https://salient360.ls2n.fr/datasets/training-dataset/) (follow the instructions to download the dataset using an FTP client)
 * The Sitzman dataset that, is publicly-available [here](https://drive.google.com/drive/folders/1EJgxC6SzjehWi3bu8PRVHWJrkeZbAiqD)
 * A re-produced version of the VR-EyeTraking dataset, that is publicly-available [here](https://mtliba.github.io/Reproduced-VR-EyeTracking/)
 * The Sport-360 dataset (only for testing), that is publicly-available [here](https://www.terabox.com/sharing/init?surl=nmn4Pb_wmceMmO7QHSiB9Q) (password:4p8t)
@@ -128,7 +128,7 @@ To be added
 
 
 ## Training
-The attention model of ATSal is initially trained and evaluated using a dataset of 2140 ERP images, that have been created after applying common data augmentation operations (rotation, cropping, etc.) on 107 ERP images of the Salient360! and Sitzman datasets. 1840 of these images were used for training and the remaining 300 for validation (the corresponding ERP frames are listed [here](link)). To re-create this dataset: i) download the Salient360! dataset from [here](https://salient360.ls2n.fr/datasets/training-dataset/) (follow the instruction to download the dataset using an FTP client), ii) download the Sitzman dataset from [here](https://drive.google.com/drive/folders/1EJgxC6SzjehWi3bu8PRVHWJrkeZbAiqD), and iii) run the "xxx" script to perform the data augmentation process. Store the create data in the .... directory.
+The attention model of ATSal is initially trained and evaluated using a dataset of 2140 ERP images, that have been created after applying common data augmentation operations (rotation, cropping, etc.) on 107 ERP images of the Salient360! and Sitzman datasets. 1840 of these images were used for training and the remaining 300 for validation (the corresponding ERP frames are listed [here](link)). To re-create this dataset: i) download the Salient360! dataset from [here](https://salient360.ls2n.fr/datasets/training-dataset/) (follow the instruction to download the dataset using an FTP client), ii) download the Sitzman dataset from [here](https://drive.google.com/drive/folders/1EJgxC6SzjehWi3bu8PRVHWJrkeZbAiqD), and iii) run the [augmentation.py](https://github.com/IDT-ITI/CA-SUM-360/blob/main/scripts/augmentation.py) script to perform the data augmentation process.
 
 The attention model of ATSal is then trained using the 206 videos from the VR-EyeTracking dataset from [here](https://mtliba.github.io/Reproduced-VR-EyeTracking/). 140 of them were used for training (listed [here](data/VR-EyeTracking/train_split.txt)) and the remaining 66 of them for validation.
 
@@ -140,7 +140,7 @@ For the train process of video summarization model we used 100 2D videos that we
 
 ### Train-Inference ΑTSal 
 ATSal attention model initialization :
-* [[intitial]](https://drive.google.com/file/d/1qT4tALLSGmsRfqf_dJ-1nhS_3iT4fFMg/view?usp=sharing)
+* [[initial]](https://drive.google.com/file/d/1qT4tALLSGmsRfqf_dJ-1nhS_3iT4fFMg/view?usp=sharing)
 To train the attention model from scratch, you download the initial weights for the model and place them in the [weights](Saliency_Detection/ATSal/attention/weights) and run the follow command:
 ```
 cd Saliency_Detection/ATSal/attention
