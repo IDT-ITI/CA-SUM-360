@@ -83,7 +83,7 @@ def is_camera_moving(**kwargs):
                         count+=1
 
 
-                    if count == 30:
+                    if count == 20:
 
                         moving = True
                         break
