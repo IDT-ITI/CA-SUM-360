@@ -18,8 +18,6 @@ grant_parent_directory = os.path.dirname(parent_directory)
 grant_parent_directory = os.path.dirname(grant_parent_directory)
 
 
-
-
 def test(test_data, model,load_gt ,device,output_path):
 
 
@@ -111,7 +109,7 @@ if __name__ == "__main__":
     args = inference_args().parse_args()
     gpu = args.gpu
     sst_sal = args.sst_sal
-    path_to_frames_validation_folder = args.path_to_frames_validation_folder
+    path_to_frames_folder = args.path_to_frames_folder
     process = args.process
     resolution = args.resolution
     clip_size = args.clip_size
@@ -127,12 +125,12 @@ if __name__ == "__main__":
         content = file.read()
         videos = content.split(',')
     static_val_videos = [video.strip() for video in videos]
-    path_to_frames_validation_folder = os.path.join(grant_parent_directory,path_to_frames_validation_folder)
+    path_to_frames_folder = os.path.join(grant_parent_directory,path_to_frames_folder)
     if os.path.exists(path_to_save_saliency_maps):
         print(path_to_save_saliency_maps+"exists")
     else:
         os.mkdir(path_to_save_saliency_maps)
-    test_video_dataset = RGB(path_to_frames_validation_folder,static_val_videos,load_gt,process=process,frames_per_data=clip_size,resolution=resolution)
+    test_video_dataset = RGB(path_to_frames_folder,static_val_videos,load_gt,process=process,frames_per_data=clip_size,resolution=resolution)
     test_data = DataLoader(test_video_dataset, batch_size=batch_size, drop_last=True)
 
 
