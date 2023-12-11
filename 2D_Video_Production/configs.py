@@ -2,10 +2,10 @@ import argparse
 
 def args():
     parser = argparse.ArgumentParser(description='Args for 2D video production algorithm.')
-    parser.add_argument('--saliency_maps_path', type=str,
+    parser.add_argument('--path_to_extracted_saliency_maps', type=str,
                         default=r"data/VR-EyeTracking/saliency",
                         help='Directory path of saliency maps')
-    parser.add_argument('--frames_folder_path', type=str, default=r"data/VR-EyeTracking/frames",
+    parser.add_argument('--path_to_ERP_frames', type=str, default=r"data/VR-EyeTracking/frames",
                         help='Directory path of frames')
 
     parser.add_argument('--intensity_value', type=int, default=150, help='Intensity value parameter')
