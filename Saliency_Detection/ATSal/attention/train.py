@@ -123,8 +123,8 @@ if __name__ == "__main__":
     args = training_args().parse_args()
     gpu = args.gpu
     attention_model_path = args.attention_model
-    path_to_train_frames = args.path_to_frames_folder
-    path_to_val_frames = path_to_train_frames.replace('training', 'validation')
+    path_to_frames = args.path_to_frames_folder
+
     process = args.process
     resolution = args.resolution
     clip_size= args.clip_size
@@ -145,13 +145,22 @@ if __name__ == "__main__":
 
     model = load_attention(attention_model_path, att_model,device)
 
+    val_path_txt = os.path.join(grant_parent_directory, "data/VR-EyeTracking/validation_data_split.txt")
+    train_path_txt = os.path.join(grant_parent_directory, "data/VR-EyeTracking/training_data_split.txt")
+    with open(train_path_txt, 'r') as file:
+        content = file.read()
+        values = content.split(',')
+    train_videos = [value.strip() for value in values]
+    with open(val_path_txt, 'r') as file:
+        content = file.read()
+        values = content.split(',')
+    val_videos = [value.strip() for value in values]
 
-    path_to_train_frames = os.path.join(grant_parent_directory,path_to_train_frames)
-    train_set = RGB_dataset(path_to_train_frames, process=process, frames_per_data=clip_size)
+    path_to_train_frames = os.path.join(grant_parent_directory,path_to_frames)
+    train_set = RGB_dataset(path_to_train_frames,train_videos, process=process, frames_per_data=clip_size)
     train_loader = data.DataLoader(train_set, batch_size=batch_size,shuffle=True,drop_last=True)
 
-    path_to_val_frames = os.path.join(grant_parent_directory, path_to_val_frames)
-    validation_set = RGB_dataset(path_to_val_frames, process=process, frames_per_data=clip_size)
+    validation_set = RGB_dataset(path_to_frames,val_videos, process=process, frames_per_data=clip_size)
     validation_loader = data.DataLoader(validation_set, batch_size=batch_size,drop_last=True)
 
     optimizer = torch.optim.Adam(att_model.parameters(),lr=lr,weight_decay=weight_decay)
@@ -160,6 +169,3 @@ if __name__ == "__main__":
     path_to_save_weights = os.path.join(grant_parent_directory,path_to_save_weights)
 
     train(train_loader,validation_loader,optimizer,criterion,model,device,epochs=epochs,saved_model_path=path_to_save_weights)
-
-
-
