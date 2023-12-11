@@ -92,20 +92,15 @@ python erp_to_cube.py --path_to_erp_video_frames "data/VR-EyeTracking/frames" --
 python erp_to_cube.py --path_to_erp_video_frames "data/VR-EyeTracking/saliency" --equator_save_path "data/Cube_Folder/Equator/saliency" --poles_save_path ""data/Cube_Folder/Poles/saliency"  
 ```
 
-To produce the augmentated images of Sitzman and Salient360! images that are utilized by the attention model of ATSal, run the following command:
+### Camera motion detection
+To run the camera motion detection mechanism (CMDM) on the extracted ERP frames, use the cmdm.py script that is available here and run the following commands:
 ```
-python augmentation.py --path_to_images "data/sitzman-salient360 --path_to_save_augmented_images "data/sitzman-salient360"
+python cmdm.py --frames_folder_path "data\output_frames" --parameter_1 0.5 
 ```
 
-### Camera Motion Detection Algorithm
-To run and use the camera motion detection algorithm, run the following commands:
-```
-cd CA-SUM-360-main/camera_motion_detection_algorithm
-```
-```
-python cmda.py --frames_folder_path "data\output_frames" --parameter_1 0.5 
-```
-## Training
+### Saliency detection
+
+#### Training
 For the training process of ATSal model, we first trained the attention model with 2140 images reproduced from 107 ERP images of Salient360! and Sitzman. Then we trained the attention model with 140 VR-EyeTracking videos that is included in the [train_split](data/VR-EyeTracking/train_split.txt) For the fine-tuned train of the Expert models, we used the same videos from VR-EyeTracking but with cube-map projection, applying north and south region to Expert Poles and front,right,back and left to Expert Equator. For the training of SST-Sal, we used 92 static video from VR-EyeTracking named [here](data/Static-VR-EyeTracking), and 55 for validation.
 ### Dataset
 The Salient!360 and Sitzman dataset used for training attention model of ATSal method:
@@ -138,14 +133,14 @@ To train the attention model from scratch, you download the initial weights for 
 cd Saliency_Detection/ATSal/attention
 ```
 ```
-python train.py --gpu "cuda:0" --path_to_frames_folder "data/sitzman-salient360/training/frames" --path_to_save_model "Saliency_Detection/ATSal/attention/weights" --batch_size 80
+python train.py --gpu "cuda:0" --path_to_frames_folder "data/Salient360-Sitzman/training/frames" --path_to_save_model "Saliency_Detection/ATSal/attention/weights" --batch_size 40
 ```
 The other paramaters are in default mode for the training. To train the model on VR-EyeTracking dataset download the pretrained model weights below: 
 ATSal attention model trained on Salient360! and VR-EyeTracking video dataset:
 * [[ATSal-Atention-pretrained]](https://drive.google.com/drive/folders/1fTMrH00alyZ_hP7CaYenkzIkFevRRVz8)
 save them in the folder [weights](Saliency_Detection/ATSal/attention/weights) and run the follow command in the same folder "attention":
 ```
-python train.py --gpu "cuda:0" --path_to_frames_folder "data/VR-EyeTracking/frames" --attention_model "weights/pretrained.pt" --path_to_save_model "Saliency_Detection/ATSal/attention/weights" --batch_size 10 --weight_decay=1e-5
+python train.py --gpu "cuda:0" --path_to_frames_folder "data/VR-EyeTracking/training/frames" --attention_model "weights/pretrained.pt" --path_to_save_model "Saliency_Detection/ATSal/attention/weights" --batch_size 10 --weight_decay=1e-5
 ```
 To train the expert models download the weight below and place it in this folder [weights](Saliency_Detection/ATSal/expert/weights) and the cube VR-EyeTracking dataset to data folder, 
 * [[ATSal-experts-SalEMA30]](https://drive.google.com/drive/folders/1fTMrH00alyZ_hP7CaYenkzIkFevRRVz8)
@@ -164,7 +159,7 @@ To run an inference of ATSal method to produce saliency maps, you should run and
 cd Saliency_Detection/ATSal
 ```
 ```
-python inference.py --gpu "cuda:0" --path_to_frames_folder "data/VR-EyeTracking/frames" --load_gt "False" --path_to_save_saliency_maps "outputs"
+python inference.py --gpu "cuda:0" --path_to_frames_folder "data/VR-EyeTracking/validation/frames" --load_gt "False" --path_to_save_saliency_maps "outputs"
 ```
 ### Train-Inference SST-Sal
 
@@ -173,7 +168,7 @@ To train the SST-Sal method run the following commands:
 cd Saliency_Detection/SST-Sal
 ```
 ```
-python train.py python train.py --gpu "cuda:0" --hidden_layers 9 --path_to_frames_folder "data/VR-EyeTracking/frames" --save_model_path "Saliency_Detection/SST-Sal/weights"
+python train.py python train.py --gpu "cuda:0" --hidden_layers 9 --path_to_training_folder "data/VR-EyeTracking/training/frames" --path_to_validation_folder = "data/VR-EyeTracking/validation/frames" --save_model_path "Saliency_Detection/SST-Sal/weights"
 ```
 SST-Sal model trained on Static-VR-EyeTracking dataset
 * [[SST-Sal weights]](https://drive.google.com/drive/folders/1fTMrH00alyZ_hP7CaYenkzIkFevRRVz8)
@@ -184,7 +179,7 @@ then run the commands:
 cd Saliency_Detection/SST-Sal
 ```
 ```
-python inference.py --gpu "cuda:0" --path_to_frames_folder "data/VR-EyeTracking/frames" --load_gt "False" --path_to_save_saliency_maps "outputs"
+python inference.py --gpu "cuda:0" --path_to_frames_validation_folder "data/VR-EyeTracking/validation/frames" --load_gt "False" --path_to_save_saliency_maps "outputs"
 ```
 ### 2D_Video_Production
 To create the 2D video, run the following command:
