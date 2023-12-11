@@ -73,14 +73,14 @@ def augment(path,frame_files_sorted,stored_path,slid):
                 a = f"{count:04d}.png"
                 cv2.imwrite(stored_path + "/" + a, full2)
 
-                count += 1
+
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Extract frames from a video.')
     parser.add_argument('--path_to_images', type=str,default=r"data/sitzman-salient360",
                         help='path to Sitzamn and Salient360! images')
-    parser.add_argument('--path_to_save_augmented_images', type=str, default=r'data/sitzman-salient360',
+    parser.add_argument('--path_to_save_augmented_images', type=str, default=r'data/sitzman-salient360/frames',
                         help='Path to save the augmented images')
 
     args = parser.parse_args()
@@ -89,6 +89,7 @@ if __name__ == "__main__":
     path_to_images = args.path_to_images
     output_folder = args.path_to_save_augmented_images
     output_folder = os.path.join(grant_parent_directory, f"{output_folder}")
+
     if os.path.exists(output_folder):
         print(output_folder + " exists")
     else:
@@ -97,8 +98,8 @@ if __name__ == "__main__":
     slid = 8
     frames= os.listdir(path_to_images)
 
-    frame_files_sorted = sorted(os.listdir(), key=lambda x: (x.split(".")[0]))
 
+    print(frames)
     #frame_files_sorted = [img for img in frame_files_sorted if (img.endswith('.jpg') or img.endswith('.png'))]
 
     augment(path_to_images,frames,output_folder,slid=8)
