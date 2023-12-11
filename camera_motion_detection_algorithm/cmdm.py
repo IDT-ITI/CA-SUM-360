@@ -28,7 +28,7 @@ def is_camera_moving(**kwargs):
         moving = False
 
         for i, frame in enumerate(frames):
-            if i > 50 and i + 50 < len(frames): #avoid first 50 frames and last 20 because some videos starts with black screen, something that affects the final result
+            if i > 50 and i + 20 < len(frames): #avoid first 50 frames and last 20 because some videos starts with black screen, something that affects the final result
 
                 if frame.lower().endswith(('.png','.jpg')):
                     frame_path = path +"/"+frame
@@ -77,7 +77,7 @@ def is_camera_moving(**kwargs):
                     left_radius2 = np.sqrt(left_shift2[0] ** 2 + left_shift2[1] ** 2)
                     right_radius2 = np.sqrt(right_shift2[0] ** 2 + right_shift2[1] ** 2)
 
-                    sum = (top_radius+bottom_radius +left_radius1+right_radius1+left_radius2+right_radius2)/6
+                    sum = (top_radius+bottom_radius +left_radius1+right_radius1+left_radius2+right_radius2)/3
                     #check if there is big motion in the specified regions
                     if sum>parameter_1:
                         count+=1
