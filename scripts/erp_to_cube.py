@@ -271,9 +271,9 @@ out_state = {'F':None, 'R':None, 'B':None, 'L':None, 'U':None, 'D':None}
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='erp_to_cube')
     parser.add_argument('--path_to_erp_video_frames',type=str,default=r"D:\Program Files\IoanProjects\VRvaldata3\frames", help='Path to the folder that contains the video folders in erp frames')
-    parser.add_argument('--equator_save_path', type=str,default="data/Cube_Folder/equator/frames",
+    parser.add_argument('--equator_save_path', type=str,default="data/Cube_Folder/Equator/frames",
                         help='Equator path')
-    parser.add_argument('--poles_save_path', type=str, default=r'data/Cube_Folder/poles/frames',
+    parser.add_argument('--poles_save_path', type=str, default=r'data/Cube_Folder/Poles/frames',
                         help='Path to the input videos path')
 
 
