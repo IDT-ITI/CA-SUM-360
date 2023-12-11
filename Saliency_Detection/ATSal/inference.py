@@ -208,14 +208,14 @@ if __name__ =="__main__":
     expertEquator_model = args.expertEquator_model
 
     #Dataloader args
-    path_to_frames_folder = args.path_to_frames_folder
+    path_to_frames_folder = args.path_to_ERP_frames
     load_gt = args.load_gt
     resolution = args.resolution
     clip_size = args.clip_size
     batch_size = args.batch_size
 
     #path to save saliency maps
-    path_to_save_saliency_maps = args.path_to_save_saliency_maps
+    path_to_save_saliency_maps = args.path_to_extracted_saliency_maps
 
     att_model = Sal_based_Attention_module()
     salema_copie = SalEMA()
