@@ -138,14 +138,14 @@ To train the attention model from scratch, you download the initial weights for 
 cd Saliency_Detection/ATSal/attention
 ```
 ```
-python train.py --gpu "cuda:0" --path_to_frames_folder "data/Salient360-Sitzman/training/frames" --path_to_save_model "Saliency_Detection/ATSal/attention/weights" --batch_size 40
+python train.py --gpu "cuda:0" --path_to_frames_folder "data/sitzman-salient360/training/frames" --path_to_save_model "Saliency_Detection/ATSal/attention/weights" --batch_size 80
 ```
 The other paramaters are in default mode for the training. To train the model on VR-EyeTracking dataset download the pretrained model weights below: 
 ATSal attention model trained on Salient360! and VR-EyeTracking video dataset:
 * [[ATSal-Atention-pretrained]](https://drive.google.com/drive/folders/1fTMrH00alyZ_hP7CaYenkzIkFevRRVz8)
 save them in the folder [weights](Saliency_Detection/ATSal/attention/weights) and run the follow command in the same folder "attention":
 ```
-python train.py --gpu "cuda:0" --path_to_frames_folder "data/VR-EyeTracking/training/frames" --attention_model "weights/pretrained.pt" --path_to_save_model "Saliency_Detection/ATSal/attention/weights" --batch_size 10 --weight_decay=1e-5
+python train.py --gpu "cuda:0" --path_to_frames_folder "data/VR-EyeTracking/frames" --attention_model "weights/pretrained.pt" --path_to_save_model "Saliency_Detection/ATSal/attention/weights" --batch_size 10 --weight_decay=1e-5
 ```
 To train the expert models download the weight below and place it in this folder [weights](Saliency_Detection/ATSal/expert/weights) and the cube VR-EyeTracking dataset to data folder, 
 * [[ATSal-experts-SalEMA30]](https://drive.google.com/drive/folders/1fTMrH00alyZ_hP7CaYenkzIkFevRRVz8)
