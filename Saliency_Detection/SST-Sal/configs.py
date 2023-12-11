@@ -10,11 +10,8 @@ def training_args():
 
     #Data loader parameters
     parser.add_argument('--path_to_frames_folder', type=str,
-                        default=r'data/VR-EyeTracking/training/frames',
+                        default=r'data/VR-EyeTracking/frames',
                         help='Path to the folder with the extracted ERP training frames')
-    parser.add_argument('--path_to_frames_validation_folder', type=str,
-                        default=r'data/VR-EyeTracking/validation/frames',
-                        help='Path to the folder with the extracted ERP validation frames')
     parser.add_argument('--process', type=str,
                         default='train',
                         help='Process for data loader for train.py')
@@ -24,7 +21,7 @@ def training_args():
     parser.add_argument('--epochs',type=int, default=200, help='Number of epochs')
 
     #Optimizer
-    parser.add_argument('--lr', type=int, default=1e-3,help='Learning rate for the BCE optimizer')
+    parser.add_argument('--lr', type=int, default=1e-3,help='Learning rate for the ADAM optimizer')
 
 
 
