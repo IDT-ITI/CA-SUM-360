@@ -78,7 +78,7 @@ To train the video summarization model, we used the data stored in [CA-SUM-360.h
 ## Processing Steps
 
 ### ERP frame extraction and transformation
-To extract the ERP frames from a 360-degrees video use the frames_extractor.py script that is available here and run one of the following commands (we recommend to store the extracted ERP frames in the default path ("data/output_frames"), for easier reference to these frames during the following processing steps):
+To extract the ERP frames from a 360-degrees video use the frames_extractor.py script that is available [here](https://github.com/IDT-ITI/CA-SUM-360/tree/main/scripts) and run one of the following commands (we recommend to store the extracted ERP frames in the default path ("data/output_frames"), for easier reference to these frames during the following processing steps):
 
 If the 360-degrees video is in MP4 format, run the following command: 
 ```
@@ -89,21 +89,21 @@ If the 360-degrees video is in ERP format, run the following command:
 python frames_extractor.py --video_input_type="erp" --input_video_path "PATH/path_containing_the_erp_videos" --output_folder "data/output_frames"  
 ```
   
-To produce the cubemap (CMP) frames and saliency maps that are utilized by the SalEMA expert model of ATSal, use the erp_to_cube.py script that is available here and run the following commands:  
+To produce the cubemap (CMP) frames and saliency maps that are utilized by the SalEMA expert model of ATSal, use the erp_to_cube.py script that is available [here](https://github.com/IDT-ITI/CA-SUM-360/tree/main/scripts) and run the following commands:  
 ```
 python erp_to_cube.py --path_to_erp_video_frames "data/VR-EyeTracking/frames" --equator_save_path "data/Cube_Folder/Equator/frames" --poles_save_path ""data/Cube_Folder/Poles/frames"
 python erp_to_cube.py --path_to_erp_video_frames "data/VR-EyeTracking/saliency" --equator_save_path "data/Cube_Folder/Equator/saliency" --poles_save_path ""data/Cube_Folder/Poles/saliency"  
 ```
 
 ### Camera motion detection
-To run the camera motion detection mechanism (CMDM) on the extracted ERP frames, use the cmdm.py script that is available here and run the following command:
+To run the camera motion detection mechanism (CMDM) on the extracted ERP frames, use the cmdm.py script that is available [here](https://github.com/IDT-ITI/CA-SUM-360/tree/main/camera_motion_detection_algorithm) and run the following command:
 ```
 python cmdm.py --frames_folder_path "data\output_frames" --parameter_1 0.5 
 ```
 
 ### Saliency detection
 
-To extract saliency maps for the ERP frames based on the ATSal method, download the pre-trained models [[ATSal-experts-Equator (364 MB)]](https://drive.google.com/drive/folders/1fTMrH00alyZ_hP7CaYenkzIkFevRRVz8) and [[ATSal-experts-Poles (364 MB)]](https://drive.google.com/drive/folders/1fTMrH00alyZ_hP7CaYenkzIkFevRRVz8), store them in the "Saliency_Detection/ATSal/attention/weights" directory, use the [inference.py](https://github.com/IDT-ITI/CA-SUM-360/tree/main/Saliency_Detection/ATSal) script and run the following command:
+To extract saliency maps for the ERP frames based on the ATSal method, download the pre-trained models [[ATSal-experts-Equator]](https://drive.google.com/drive/folders/1fTMrH00alyZ_hP7CaYenkzIkFevRRVz8) and [[ATSal-experts-Poles]](https://drive.google.com/drive/folders/1fTMrH00alyZ_hP7CaYenkzIkFevRRVz8), store them in the "Saliency_Detection/ATSal/attention/weights" directory, use the [inference.py](https://github.com/IDT-ITI/CA-SUM-360/tree/main/Saliency_Detection/ATSal) script and run the following command:
 ```
 python inference.py --gpu "cuda:0" --path_to_ERP_frames ".../data/<dataset-name>/ERP_frames" --load_gt "False" --path_to_extracted_saliency_maps "...data/<dataset-name>/extracted_saliency_maps"
 ```
@@ -132,7 +132,7 @@ The attention model of ATSal is initially trained and evaluated using a dataset 
 
 The attention model of ATSal is then trained using the 206 videos from the VR-EyeTracking dataset from [here](https://mtliba.github.io/Reproduced-VR-EyeTracking/). 140 of them were used for training (listed [here](data/VR-EyeTracking/train_split.txt)) and the remaining 66 of them for validation.
 
-Finally, to fine-tune the existing pre-trained models of the SalEMA Expert of ATSal (available [here](https://drive.google.com/drive/folders/1fTMrH00alyZ_hP7CaYenkzIkFevRRVz8)), we used the CMP frames of the same 206 videos from VR-EyeTracking (following the same split of data into training and validation set). Frames presenting the north and south regions of the ERP frames (stored in .../path/) are used to train the SalEMA Expert Poles model, while frames presenting the front, back, right and left regions of the ERP frames (stored in .../path/) are used to train the SalEMA Expert Equator model. 
+Finally, to fine-tune the existing pre-trained models of the SalEMA Expert of ATSal (available [here]([https://drive.google.com/drive/folders/1fTMrH00alyZ_hP7CaYenkzIkFevRRVz8](https://github.com/Linardos/SalEMA))), we used the CMP frames of the same 206 videos from VR-EyeTracking (following the same split of data into training and validation set). Frames presenting the north and south regions of the ERP frames (stored in .../path/) are used to train the SalEMA Expert Poles model, while frames presenting the front, back, right and left regions of the ERP frames (stored in .../path/) are used to train the SalEMA Expert Equator model. 
 
 To train SST-Sal, we used only the static videos from the VR-EyeTracking dataset. In total, we used 92 videos for training (listed [here](data/Static-VR-EyeTracking)) and 55 videos (listed [here](data/Static-VR-EyeTracking)) for validation.
 
@@ -140,7 +140,7 @@ For the train process of video summarization model we used 100 2D videos that we
 
 ### Train-Inference ΑTSal 
 ATSal attention model initialization :
-* [[intitial (374 MB)]](https://drive.google.com/file/d/1qT4tALLSGmsRfqf_dJ-1nhS_3iT4fFMg/view?usp=sharing)
+* [[intitial]](https://drive.google.com/file/d/1qT4tALLSGmsRfqf_dJ-1nhS_3iT4fFMg/view?usp=sharing)
 To train the attention model from scratch, you download the initial weights for the model and place them in the [weights](Saliency_Detection/ATSal/attention/weights) and run the follow command:
 ```
 cd Saliency_Detection/ATSal/attention
