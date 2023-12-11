@@ -14,6 +14,7 @@ from data_loader import RGB_dataset
 from configs import inference_args
 
 from torch.utils import data
+
 current_script_path = os.path.abspath(__file__)
 
 # Navigate to the parent directory (one level up)
@@ -28,18 +29,9 @@ def repackage_hidden(h):
     else:
         return tuple(repackage_hidden(v) for v in h)
 
-def load_expert(pt_model, new_model,device):
-    temp = torch.load(pt_model,map_location=device)['state_dict']
 
-    new_model.load_state_dict(temp)
-    return new_model
-def load_attention(pt_model, new_model,device):
-    temp = torch.load(pt_model,map_location=device)
 
-    new_model.load_state_dict(temp)
-    return new_model
 
-counter_val =0
 cc_metric = []
 sim_metric = []
 
@@ -205,6 +197,7 @@ def test(loader,model,output_path,load_gt):
 
 if __name__ =="__main__":
     torch.cuda.empty_cache()
+
     parser = inference_args()
     args = parser.parse_args()
 
@@ -229,18 +222,17 @@ if __name__ =="__main__":
     salema_copie1 = SalEMA()
     device = torch.device(gpu if torch.cuda.is_available() else "cpu")
     # load weight
-    att_model = load_attention(attention_model, att_model,device).cuda()
 
-    Poles = load_expert(expertPoles_model, salema_copie1,device).cuda()
-    Equator = load_expert(expertEquator_model, salema_copie,device).cuda()
-
+    att_model = torch.load(attention_model)
+    Poles = torch.load(expertPoles_model)
+    Equator = torch.load(expertEquator_model)
     model = {"attention": att_model, "poles": Poles, "equator": Equator}
 
-
+   
     path_to_frames_folder = os.path.join(grant_parent_directory,path_to_frames_folder)
 
     if os.path.exists(path_to_save_saliency_maps):
-        print(path_to_save_saliency_maps+"exists")
+        print(path_to_save_saliency_maps+" path exists")
     else:
         os.mkdir(path_to_save_saliency_maps)
     train_set = RGB_dataset(path_to_frames_folder,load_gt=load_gt,frames_per_data=clip_size)
