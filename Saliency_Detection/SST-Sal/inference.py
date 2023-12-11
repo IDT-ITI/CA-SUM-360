@@ -109,12 +109,12 @@ if __name__ == "__main__":
     args = inference_args().parse_args()
     gpu = args.gpu
     sst_sal = args.sst_sal
-    path_to_frames_folder = args.path_to_frames_folder
+    path_to_frames_folder = args.path_to_ERP_frames
     process = args.process
     resolution = args.resolution
     clip_size = args.clip_size
     batch_size = args.batch_size
-    path_to_save_saliency_maps = args.path_to_save_saliency_maps
+    path_to_save_saliency_maps = args.path_to_extracted_saliency_maps
     load_gt = args.load_gt
     device = torch.device(gpu if torch.cuda.is_available() else "cpu")
 
