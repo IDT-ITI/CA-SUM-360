@@ -74,24 +74,21 @@ The used data for training the video summarization model are available within th
 
 ## Processing Steps
 
-### Decomposition of 360-degrees video into ERP frames
-To decompose a 360-degrees video into a set of ERP frames use the frames_extractor.py script that is available here, and run one of the following commands (we recommend to store the extracted ERP frames in the default path ("data/output_frames"), for easier reference to these frames during the following processing steps):
+### ERP frame extraction and transformation
+To extract the ERP frames from a 360-degrees video use the frames_extractor.py script that is available here and run one of the following commands (we recommend to store the extracted ERP frames in the default path ("data/output_frames"), for easier reference to these frames during the following processing steps):
 
-If your 360-degrees video is in MP4 format, run the following command: 
+If the 360-degrees video is in MP4 format, run the following command: 
 ```
 python frames_extractor.py --video_input_type="360" --input_video_path "PATH/path_containing_the_360_videos" --output_folder "data/output_frames"
 ```
-If your 360-degrees video is in ERP format, run the following command:
+If the 360-degrees video is in ERP format, run the following command:
 ```
 python frames_extractor.py --video_input_type="erp" --input_video_path "PATH/path_containing_the_erp_videos" --output_folder "data/output_frames"  
 ```
   
-To convert your ERP frames to Cube frames, run the following command (This step is necessary only if you want to train the Expert Model of ATSal):  
+To produce the cubemap (CMP) frames and saliency maps that are utilized by the SalEMA expert model of ATSal, use the erp_to_cube.py script that is available here and run the following commands:  
 ```
 python erp_to_cube.py --path_to_erp_video_frames "data/VR-EyeTracking/frames" --equator_save_path "data/Cube_Folder/Equator/frames" --poles_save_path ""data/Cube_Folder/Poles/frames"
-```
-To convert the erp saliency_maps to cube saliency maps:  
-```
 python erp_to_cube.py --path_to_erp_video_frames "data/VR-EyeTracking/saliency" --equator_save_path "data/Cube_Folder/Equator/saliency" --poles_save_path ""data/Cube_Folder/Poles/saliency"  
 ```
 
