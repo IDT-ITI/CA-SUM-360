@@ -26,7 +26,6 @@ def test(test_data, model,load_gt ,device,output_path):
     ccall = []
     simall = []
 
-
     with torch.no_grad():
         if load_gt=="True":
 
@@ -73,6 +72,10 @@ def test(test_data, model,load_gt ,device,output_path):
         else:
             count = 0
             for j, video in enumerate(test_data):
+                if os.path.exists(output_path+ "/sst-sal_" + str(j)):
+                    print(path_to_save_saliency_maps + " path exists")
+                else:
+                    os.mkdir(output_path+ "/sst-sal_" + str(j))
                 for k, (x) in enumerate(video):
 
                     pred = model(x.to(device))
@@ -84,7 +87,7 @@ def test(test_data, model,load_gt ,device,output_path):
                             for i in range(0, Nframes):
                                 sal = np.array((pred[bs][i][0].cpu() - torch.min(pred[bs][i][0].cpu())) / (
                                         torch.max(pred[bs][i][0].cpu()) - torch.min(pred[bs][i][0].cpu())))
-                                cv2.imwrite(os.path.join(output_path, f'{count:04d}.png'), (sal * 255).astype(np.uint8))
+                                cv2.imwrite(os.path.join(output_path+ "/sst-sal_" + str(j), f'{count:04d}.png'), (sal * 255).astype(np.uint8))
                                 count += 1
 
 
@@ -93,14 +96,8 @@ def test(test_data, model,load_gt ,device,output_path):
                             for i in range(4, Nframes):
                                 sal = np.array((pred[bs][i][0].cpu() - torch.min(pred[bs][i][0].cpu())) / (
                                         torch.max(pred[bs][i][0].cpu()) - torch.min(pred[bs][i][0].cpu())))
-                                cv2.imwrite(os.path.join(output_path, f'{count:04d}.png'), (sal * 255).astype(np.uint8))
+                                cv2.imwrite(os.path.join(output_path+ "/sst-sal_" + str(j), f'{count:04d}.png'), (sal * 255).astype(np.uint8))
                                 count += 1
-
-
-                # print(np.mean(cc_metric))
-                # print(np.mean(sim_metric))
-
-
 
 
 
@@ -126,10 +123,13 @@ if __name__ == "__main__":
         videos = content.split(',')
     static_val_videos = [video.strip() for video in videos]
     path_to_frames_folder = os.path.join(grant_parent_directory,path_to_frames_folder)
+    path_to_save_saliency_maps = grant_parent_directory + "/" + path_to_save_saliency_maps
     if os.path.exists(path_to_save_saliency_maps):
-        print(path_to_save_saliency_maps+"exists")
+        print(path_to_save_saliency_maps + " path exists")
     else:
-        os.mkdir(path_to_save_saliency_maps)
+        path_to_save_saliency_maps = os.mkdir(path_to_save_saliency_maps)
+        print("path to save the saliency maps", path_to_save_saliency_maps)
+
     test_video_dataset = RGB(path_to_frames_folder,static_val_videos,load_gt,process=process,frames_per_data=clip_size,resolution=resolution)
     test_data = DataLoader(test_video_dataset, batch_size=batch_size, drop_last=True)
 
