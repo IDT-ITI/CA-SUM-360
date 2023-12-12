@@ -184,7 +184,7 @@ To evaluate the ATSal model, run the following command:
 cd Saliency_Detection/ATSal
 ```
 ```
-python inference.py --gpu "cuda:0" --path_to_frames_folder "data/VR-EyeTracking/validation/frames" --load_gt "True" --path_to_save_saliency_maps "outputs"
+python inference.py --gpu "cuda:0" --path_to_ERP_frames "data/VR-EyeTracking/erp_frames/frames" --load_gt "True" 
 ```
 
 To evaluate SST-Sal, run the following command:
@@ -192,7 +192,7 @@ To evaluate SST-Sal, run the following command:
 cd Saliency_Detection/SST-Sal
 ```
 ```
-python inference.py --gpu "cuda:0" --path_to_frames_validation_folder "data/VR-EyeTracking/validation/frames" --load_gt "True" --path_to_save_saliency_maps "outputs"
+python inference.py --gpu "cuda:0" --path_to_ERP_frames "data/VR-EyeTracking/erp_frames/frames" --load_gt "True" 
 ```
 
 
