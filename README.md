@@ -174,7 +174,7 @@ and run the following command line (example for equator):
 cd Saliency_Detection/ATSal/expert
 ```
 ```
-python TrainExpert.py --gpu "cuda:0" --path_to_frames_folder "data/cube-VR-EyeTracking/Equator/training/frames" --clip_size 10 --save_model_path "Saliency_Detection/ATSal/expert/weights"
+python TrainExpert.py --gpu "cuda:0" --path_to_training_cmp_frames "data/VR-EyeTracking/cmp_frames/equator/training/frames" --path_to_validation_cmp_frames "data/VR-EyeTracking/cmp_frames/equator/training/frames" --clip_size 10 --save_model_path "Saliency_Detection/ATSal/expert/weights"
 ```
 
 ### Train-Inference SST-Sal
