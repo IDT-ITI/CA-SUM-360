@@ -124,8 +124,8 @@ if __name__ == '__main__':
     criterion = KLWeightedLossSequence()
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 
-    train_path_txt = os.path.join(grant_parent_directory,"data/VR-EyeTracking/train_split.txt")
-    val_path_txt = os.path.join(grant_parent_directory, "data/VR-EyeTracking/val_split.txt")
+    train_path_txt = os.path.join(grant_parent_directory,"data/Static-VR-EyeTracking/train_split.txt")
+    val_path_txt = os.path.join(grant_parent_directory, "data/Static-VR-EyeTracking/val_split.txt")
     with open(train_path_txt, 'r') as file:
         # Read the content of the file and split it by commas
         content = file.read()
