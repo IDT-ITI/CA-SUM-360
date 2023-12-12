@@ -70,8 +70,6 @@ def test(loader,model,output_path,load_gt):
 
                 for idx in range(clip.size()[0]):
 
-
-
                     first_stream,r = model['attention'](clip[idx])
 
 
@@ -133,6 +131,8 @@ def test(loader,model,output_path,load_gt):
             cc_metric.append(np.mean(count_cc))
             sim_metric.append(np.mean(count_sim))
         else:
+
+            os.mkdir(path_to_save_saliency_maps+"/"+str(i))
             for j, (clip, frames) in enumerate(video):
 
                 clip = clip.type(torch.cuda.FloatTensor).transpose(0, 1)
@@ -188,7 +188,7 @@ def test(loader,model,output_path,load_gt):
                     x = saliency_map.numpy()
                     x = (x - np.min(x)) / (np.max(x) - np.min(x))
                     x = (x * 255).astype(np.uint8)
-                    cv2.imwrite(os.path.join(output_path, f"{counter:04d}.png"), x)
+                    cv2.imwrite(os.path.join(path_to_save_saliency_maps+"/"+str(i), f"{counter:04d}.png"), x)
 
                     counter += 1
 
@@ -230,12 +230,13 @@ if __name__ =="__main__":
 
 
     path_to_frames_folder = os.path.join(grant_parent_directory,path_to_frames_folder)
-
+    path_to_save_saliency_maps = grant_parent_directory+"/"+path_to_save_saliency_maps
     if os.path.exists(path_to_save_saliency_maps):
         print(path_to_save_saliency_maps+" path exists")
     else:
-        os.mkdir(path_to_save_saliency_maps)
+        path_to_save_saliency_maps = os.mkdir(path_to_save_saliency_maps)
         print("path to save the saliency maps", path_to_save_saliency_maps)
+
 
 
     if load_gt=="True":
