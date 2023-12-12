@@ -16,7 +16,7 @@ def inference_args():
 
     #Data loader parameters
     parser.add_argument('--path_to_ERP_frames', type=str,
-                        default=r'data/VR-EyeTracking/validation/frames',
+                        default=r'data/VR-EyeTracking/erp_frames/frames',
                         help='Path to the folder with the extracted ERP frames')
     parser.add_argument('--load_gt', type=str,
                         default='False',
