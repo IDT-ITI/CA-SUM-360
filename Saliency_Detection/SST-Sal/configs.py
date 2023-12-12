@@ -19,6 +19,7 @@ def training_args():
     parser.add_argument('--clip_size', type=int, default=20, help='Frames per data for data loader 20 ')
     parser.add_argument('--batch_size', type=int, default=1, help='Batch size for data loader')
     parser.add_argument('--epochs',type=int, default=200, help='Number of epochs')
+    parser.add_argument('--load_gt', type=str, default="True", help='True for evaluating-training,False for inference')
 
     #Optimizer
     parser.add_argument('--lr', type=int, default=1e-3,help='Learning rate for the ADAM optimizer')
@@ -38,17 +39,17 @@ def inference_args():
     # Model parameters
     parser.add_argument('--gpu', type=str, default="cuda:0",
                         help='Use of gpu, if not available chooses "cpu"')
-    parser.add_argument('--sst_sal', type=str, default="weights/SST_Sal.pth",
+    parser.add_argument('--sst_sal', type=str, default="weights/SST-Sal.pt",
                         help='SST-SAL.pth model weights, Default weights/SalEMA.pt')
 
 
     # Data loader parameters
 
     parser.add_argument('--path_to_ERP_frames', type=str,
-                        default=r'data/VR-EyeTracking/erp_frames/frames',
+                        default=r'data\VR-EyeTracking\erp_frames\frames',
                         help='Path to the folder with the extracted ERP validation frames')
     parser.add_argument('--process', type=str,
-                        default='test',
+                        default='train',
                         help='Process for data loader for inference.py')
     parser.add_argument('--resolution', type=int, nargs=2, default=[240, 320],
                         help='Resolution of the ERP images for the model')
