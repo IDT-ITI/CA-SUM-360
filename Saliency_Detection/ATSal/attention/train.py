@@ -123,7 +123,7 @@ if __name__ == "__main__":
     args = training_args().parse_args()
     gpu = args.gpu
     attention_model_path = args.attention_model
-    path_to_frames = args.path_to_frames_folder
+    path_to_frames = args.path_to_ERP_frames
 
     process = args.process
     resolution = args.resolution
@@ -157,10 +157,11 @@ if __name__ == "__main__":
     val_videos = [value.strip() for value in values]
 
     path_to_train_frames = os.path.join(grant_parent_directory,path_to_frames)
+
     train_set = RGB_dataset(path_to_train_frames,train_videos, process=process, frames_per_data=clip_size)
     train_loader = data.DataLoader(train_set, batch_size=batch_size,shuffle=True,drop_last=True)
 
-    validation_set = RGB_dataset(path_to_frames,val_videos, process=process, frames_per_data=clip_size)
+    validation_set = RGB_dataset(path_to_train_frames,val_videos, process=process, frames_per_data=clip_size)
     validation_loader = data.DataLoader(validation_set, batch_size=batch_size,drop_last=True)
 
     optimizer = torch.optim.Adam(att_model.parameters(),lr=lr,weight_decay=weight_decay)
