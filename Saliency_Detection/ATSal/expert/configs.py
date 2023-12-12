@@ -13,11 +13,11 @@ def training_args():
     parser.add_argument('-ema_loc',type=int, default=30, help='Input number of layer to place EMA on')
 
     #Data loader parameters
-    parser.add_argument('--path_to_frames_folder', type=str,
-                        default=r'data/cube-VR-EyeTracking/Equator/training/frames',
+    parser.add_argument('--path_to_training_cmp_frames', type=str,
+                        default=r'data/VR-EyeTracking/cmp_frames/equator/training/frames',
                         help='Path to the folder with the extracted CMP training frames')
-    parser.add_argument('--path_to_frames_validation_folder', type=str,
-                        default=r'data/cube-VR-EyeTracking/Equator/validation/frames',
+    parser.add_argument('--path_to_validation_cmp_frames', type=str,
+                        default=r'data/VR-EyeTracking/cmp_frames/equator/validation/frames',
                         help='Path to the folder with the extracted CMP validation frames')
     parser.add_argument('--process', type=str,
                         default='train',
