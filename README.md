@@ -91,8 +91,8 @@ python frames_extractor.py --video_input_type="erp" --input_video_path "PATH/pat
   
 To produce the cubemap (CMP) frames and saliency maps that are utilized by the SalEMA expert model of ATSal, use the [erp_to_cube.py](https://github.com/IDT-ITI/CA-SUM-360/blob/main/scripts/erp_to_cube.py) script and run the following commands:  
 ```
-python erp_to_cube.py --path_to_erp_video_frames "data/VR-EyeTracking/frames" --equator_save_path "data/Cube_Folder/Equator/frames" --poles_save_path ""data/Cube_Folder/Poles/frames"
-python erp_to_cube.py --path_to_erp_video_frames "data/VR-EyeTracking/saliency" --equator_save_path "data/Cube_Folder/Equator/saliency" --poles_save_path ""data/Cube_Folder/Poles/saliency"  
+python erp_to_cube.py --path_to_erp_video_frames "data/VR-EyeTracking/erp_frames/frames" --equator_save_path "data/VR-EyeTracking/cmp_frames/Equator/frames" --poles_save_path ""data/Cube_Folder/Poles/frames"
+python erp_to_cube.py --path_to_erp_video_frames "data/VR-EyeTracking/erp_frames/saliency" --equator_save_path "data/VR-EyeTracking/cmp_frames/Equator/saliency" --poles_save_path ""data/Cube_Folder/Poles/saliency"  
 ```
 
 ### Camera motion detection
