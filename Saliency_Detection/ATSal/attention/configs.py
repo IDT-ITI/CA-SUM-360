@@ -10,7 +10,7 @@ def training_args():
                         help='Attention model weights path, Default attention/weights/initial.pt')
 
     # Data loader parameters
-    parser.add_argument('--path_to_frames_folder', type=str,
+    parser.add_argument('--path_to_ERP_frames', type=str,
                         default=r'data/VR-EyeTracking/training/frames',
                         help='Path to the folder with the extracted ERP frames')
     parser.add_argument('--process', type=str,
