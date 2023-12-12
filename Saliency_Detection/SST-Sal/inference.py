@@ -124,11 +124,12 @@ if __name__ == "__main__":
     static_val_videos = [video.strip() for video in videos]
     path_to_frames_folder = os.path.join(grant_parent_directory,path_to_frames_folder)
     path_to_save_saliency_maps = grant_parent_directory + "/" + path_to_save_saliency_maps
-    if os.path.exists(path_to_save_saliency_maps):
-        print(path_to_save_saliency_maps + " path exists")
-    else:
-        path_to_save_saliency_maps = os.mkdir(path_to_save_saliency_maps)
-        print("path to save the saliency maps", path_to_save_saliency_maps)
+    if load_gt=="False":
+        if os.path.exists(path_to_save_saliency_maps):
+            print(path_to_save_saliency_maps + " path exists")
+        else:
+            path_to_save_saliency_maps = os.mkdir(path_to_save_saliency_maps)
+            print("path to save the saliency maps", path_to_save_saliency_maps)
 
     test_video_dataset = RGB(path_to_frames_folder,static_val_videos,load_gt,process=process,frames_per_data=clip_size,resolution=resolution)
     test_data = DataLoader(test_video_dataset, batch_size=batch_size, drop_last=True)
