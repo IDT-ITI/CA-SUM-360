@@ -10,7 +10,7 @@ def training_args():
 
     #Data loader parameters
     parser.add_argument('--path_to_ERP_frames', type=str,
-                        default=r'data/VR-EyeTracking/frames',
+                        default=r'data/VR-EyeTracking/erp_frames/frames',
                         help='Path to the folder with the extracted ERP training frames')
     parser.add_argument('--process', type=str,
                         default='train',
