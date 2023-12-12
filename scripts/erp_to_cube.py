@@ -270,11 +270,12 @@ out_state = {'F':None, 'R':None, 'B':None, 'L':None, 'U':None, 'D':None}
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='erp_to_cube')
-    parser.add_argument('--path_to_erp_video_frames',type=str,default=r"data/Vr-EyeTracking/erp_frames", help='Path to the folder that contains the video folders in erp frames')
-    parser.add_argument('--equator_save_path', type=str,default="data/VR-EyeTracking/cmp_frames/equator",
+    parser.add_argument('--path_to_erp_video_frames',type=str,default=r"data/VR-EyeTracking/erp_frames/frames", help='Path to the folder that contains the video folders in erp frames')
+    parser.add_argument('--equator_save_path', type=str,default="data/VR-EyeTracking/cmp_frames/equator/training/frames",
                         help='Equator path')
-    parser.add_argument('--poles_save_path', type=str, default=r'data/VR-EyeTracking/cmp_frames/poles',
+    parser.add_argument('--poles_save_path', type=str, default=r'data/VR-EyeTracking/cmp_frames/poles/training/frames',
                         help='Path to the input videos path')
+
 
 
     args = parser.parse_args()
@@ -310,43 +311,32 @@ if __name__ == '__main__':
     # Replace 'folder_path' with the path to the folder you want to empty
     length = len(list_of_videos)
 
-    if os.path.exists(equator_save_path+ f"/training"):
-        print(equator_save_path + f"/training"+ "exists")
-    else:
-        os.mkdir(equator_save_path+ f"/training")
-    if os.path.exists(equator_save_path+ f"/validation"):
-        print(equator_save_path + f"/validation"+ "exists")
-    else:
-        os.mkdir(equator_save_path+ f"/validation")
-    if os.path.exists(poles_save_path+ f"/training"):
-        print(poles_save_path + f"/training"+ "exists")
-    else:
-        os.mkdir(poles_save_path+ f"/training")
-    if os.path.exists(poles_save_path+ f"/validation"):
-        print(poles_save_path + f"/validation"+ "exists")
-    else:
-        os.mkdir(poles_save_path+ f"/validation")
 
-    if os.path.exists(equator_save_path + f"/training/0"):
+
+    equator_save_validation_path = equator_save_path.replace("training","validation")
+    poles_save_validation_path = poles_save_path.replace("training", "validation")
+
+    if os.path.exists(equator_save_path + f"/0"):
         print("exists")
     else:
         for r,video in enumerate(train_videos):
-            if os.path.exists(equator_save_path + f"/training/{r}"):
+            if os.path.exists(equator_save_path + f"/{r}"):
                 print("exists")
                 break
-            os.mkdir(equator_save_path + f"/training/{r}")
-            os.mkdir(equator_save_path + f"/training/{r+length}")
-            os.mkdir(equator_save_path + f"/training/{r+2*length}")
-            os.mkdir(equator_save_path + f"/training/{r+3*length}")
-            os.mkdir(poles_save_path + f"/training/{r}")
-            os.mkdir(poles_save_path + f"/training/{r + length}")
+            os.mkdir(equator_save_path + f"/{r}")
+            os.mkdir(equator_save_path + f"/{r+length}")
+            os.mkdir(equator_save_path + f"/{r+2*length}")
+            os.mkdir(equator_save_path + f"/{r+3*length}")
+            os.mkdir(poles_save_path + f"/{r}")
+            os.mkdir(poles_save_path + f"/{r + length}")
+
         for r,video in enumerate(validation_videos):
-            os.mkdir(equator_save_path + f"/validation/{r}")
-            os.mkdir(equator_save_path + f"/validation/{r + length}")
-            os.mkdir(equator_save_path + f"/validation/{r + 2 * length}")
-            os.mkdir(equator_save_path + f"/validation/{r + 3 * length}")
-            os.mkdir(poles_save_path + f"/validation/{r}")
-            os.mkdir(poles_save_path + f"/validation/{r + length}")
+            os.mkdir(equator_save_validation_path + f"/{r}")
+            os.mkdir(equator_save_validation_path+ f"/{r + length}")
+            os.mkdir(equator_save_validation_path + f"/{r + 2 * length}")
+            os.mkdir(equator_save_validation_path + f"/{r + 3 * length}")
+            os.mkdir(poles_save_validation_path + f"/{r}")
+            os.mkdir(poles_save_validation_path + f"/{r + length}")
 
     for r,video in enumerate(train_videos):
         path1 = path_to_erp_videos_frames +"/"+video
@@ -361,17 +351,17 @@ if __name__ == '__main__':
                 cmp_face = out[face_key]
                 if i==0:
                     print(equator_save_path + f"/training/{r}/{j:04d}.png")
-                    cv2.imwrite(equator_save_path + f"/training/{r}/{j:04d}.png",cmp_face)
+                    cv2.imwrite(equator_save_path + f"/{r}/{j:04d}.png",cmp_face)
                 elif i==1:
-                    cv2.imwrite(equator_save_path + f"/training/{r+length}/{j:04d}.png",cmp_face)
+                    cv2.imwrite(equator_save_path + f"/{r+length}/{j:04d}.png",cmp_face)
                 elif i==2:
-                    cv2.imwrite(equator_save_path + f"/training/{r+2*length}/{j:04d}.png",cmp_face)
+                    cv2.imwrite(equator_save_path + f"/{r+2*length}/{j:04d}.png",cmp_face)
                 elif i==3:
-                    cv2.imwrite(equator_save_path + f"/training/{r+3*length}/{j:04d}.png",cmp_face)
+                    cv2.imwrite(equator_save_path + f"/{r+3*length}/{j:04d}.png",cmp_face)
                 elif i==4:
-                    cv2.imwrite(poles_save_path + f"/training/{r}/{j:04d}.png",cmp_face)
+                    cv2.imwrite(poles_save_path + f"/{r}/{j:04d}.png",cmp_face)
                 else:
-                    cv2.imwrite(poles_save_path+ f"/training/{r+66}/{j:04d}.png", cmp_face)
+                    cv2.imwrite(poles_save_path+ f"/{r+length}/{j:04d}.png", cmp_face)
 
     for r,video in enumerate(validation_videos):
         path1 = path_to_erp_videos_frames +"/"+video
@@ -386,16 +376,16 @@ if __name__ == '__main__':
                 cmp_face = out[face_key]
                 if i==0:
                     print(equator_save_path + f"/{r}/{j:04d}.png")
-                    cv2.imwrite(equator_save_path + f"/validation/{r}/{j:04d}.png",cmp_face)
+                    cv2.imwrite( equator_save_validation_path + f"/{r}/{j:04d}.png",cmp_face)
                 elif i==1:
-                    cv2.imwrite(equator_save_path + f"/validation/{r+length}/{j:04d}.png",cmp_face)
+                    cv2.imwrite( equator_save_validation_path + f"/{r+length}/{j:04d}.png",cmp_face)
                 elif i==2:
-                    cv2.imwrite(equator_save_path + f"/validation/{r+2*length}/{j:04d}.png",cmp_face)
+                    cv2.imwrite( equator_save_validation_path + f"/{r+2*length}/{j:04d}.png",cmp_face)
                 elif i==3:
-                    cv2.imwrite(equator_save_path + f"/validation/{r+3*length}/{j:04d}.png",cmp_face)
+                    cv2.imwrite( equator_save_validation_path + f"/{r+3*length}/{j:04d}.png",cmp_face)
                 elif i==4:
-                    cv2.imwrite(poles_save_path + f"/validation/{r}/{j:04d}.png",cmp_face)
+                    cv2.imwrite( poles_save_validation_path+ f"/{r}/{j:04d}.png",cmp_face)
                 else:
-                    cv2.imwrite(poles_save_path+ f"/validation/{r+66}/{j:04d}.png", cmp_face)
+                    cv2.imwrite( poles_save_validation_path+ f"/{r+66}/{j:04d}.png", cmp_face)
 
 
