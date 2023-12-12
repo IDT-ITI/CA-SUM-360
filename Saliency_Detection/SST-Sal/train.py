@@ -104,7 +104,7 @@ if __name__ == '__main__':
     args = training_args().parse_args()
     gpu = args.gpu
     hidden_layers = args.hidden_layers
-    path_to_frames_folder = args.path_to_frames_folder
+    path_to_frames_folder = args.path_to_ERP_frames
     process = args.process
     resolution = args.resolution
     clip_size = args.clip_size
