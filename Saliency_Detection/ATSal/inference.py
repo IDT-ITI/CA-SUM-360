@@ -131,8 +131,11 @@ def test(loader,model,output_path,load_gt):
             cc_metric.append(np.mean(count_cc))
             sim_metric.append(np.mean(count_sim))
         else:
-
-            os.mkdir(path_to_save_saliency_maps+"/"+str(i))
+            if os.path.exists(path_to_save_saliency_maps+"/atsal_"+str(i)):
+                print(path_to_save_saliency_maps+"/atsal_"+str(i) + " path exists")
+            else:
+                os.mkdir(path_to_save_saliency_maps+"/atsal_"+str(i))
+            counter=0
             for j, (clip, frames) in enumerate(video):
 
                 clip = clip.type(torch.cuda.FloatTensor).transpose(0, 1)
@@ -188,7 +191,7 @@ def test(loader,model,output_path,load_gt):
                     x = saliency_map.numpy()
                     x = (x - np.min(x)) / (np.max(x) - np.min(x))
                     x = (x * 255).astype(np.uint8)
-                    cv2.imwrite(os.path.join(path_to_save_saliency_maps+"/"+str(i), f"{counter:04d}.png"), x)
+                    cv2.imwrite(os.path.join(path_to_save_saliency_maps+"/atsal_"+str(i), f"{counter:04d}.png"), x)
 
                     counter += 1
 
