@@ -1,5 +1,5 @@
 # An Integrated System for Spatio-Temporal Summarization of 360-degrees Videos
-## Pytorch implementation of CA-SUM-360
+## PyTorch implementation of CA-SUM-360
 * from **An Integrated System for Spatio-Temporal Summarization of 360-degrees Videos**
 * Written by Ioannis Kontostathis, Evlampios Apostolidis, Vasileios Mezaris
 * This software can be used for training the deep-learning models for saliency detection and video summarization that are integrated in our method for spatio-temporal summarization of 360-degrees videos, and perform the analysis of a given 360-degrees video in an end-to-end manner. In particular, the 360-degrees video is initially subjected to equirectangular projection (ERP) to form a set of omnidirectional planar (ERP) frames. This set of frames is then analysed by a camera motion detection mechanism (CMDM) which decides on whether the 360-degrees video was captured by a static or a moving camera. Based on this mechanism’s output, the ERP frames are then forwarded to one of the integrated methods for saliency detection ([ATSal](https://github.com/mtliba/ATSal/tree/master), [SST-Sal](https://github.com/edurnebernal/SST-Sal)), which produce a set of frame-level saliency maps. The ERP frames and the extracted saliency maps are given as input to a component that detects salient events (related to different parts of one or more activities shown in the 360◦ video), computes a saliency score per frame, and produces a 2D video presenting the detected events. The 2D video along with its frames’ saliency scores are fed to a video summarization method (variant of [CA-SUM](https://github.com/e-apostolidis/CA-SUM)) which estimates the importance of each event and forms the video summary.
@@ -75,7 +75,7 @@ To train the video summarization model, we used the data stored in [CA-SUM-360.h
 ```
 </div>
 
-## Processing Steps
+## Processing components
 
 ### ERP frame extraction and transformation
 To extract the ERP frames from a 360-degrees video use the [frames_extractor.py](https://github.com/IDT-ITI/CA-SUM-360/blob/main/scripts/frames_extractor.py) script and run one of the following commands (we recommend to store the extracted ERP frames in the default path ("data/output_frames"), for easier reference to these frames during the following processing steps):
@@ -128,11 +128,23 @@ To be added
 
 
 ## Training
-The attention model of ATSal is initially trained and evaluated using a dataset of 2140 ERP images, that have been created after applying common data augmentation operations (rotation, cropping, etc.) on 107 ERP images of the Salient360! and Sitzman datasets. 1840 of these images were used for training and the remaining 300 for validation (the corresponding ERP frames are listed [here](link)). To re-create this dataset: i) download the Salient360! dataset from [here](https://salient360.ls2n.fr/datasets/training-dataset/) (follow the instruction to download the dataset using an FTP client), ii) download the Sitzman dataset from [here](https://drive.google.com/drive/folders/1EJgxC6SzjehWi3bu8PRVHWJrkeZbAiqD), and iii) run the [augmentation.py](https://github.com/IDT-ITI/CA-SUM-360/blob/main/scripts/augmentation.py) script to perform the data augmentation process.
+The attention model of ATSal was initially trained using a dataset of 2140 ERP images, created after applying common data augmentation operations (rotation, cropping, etc.) on 107 ERP images of the Salient360! and Sitzman datasets; 1840 of these images were used for training and the remaining 300 for validation (the corresponding ERP frames are listed [here](link)). 
 
-The attention model of ATSal is then trained using the 206 videos from the VR-EyeTracking dataset from [here](https://mtliba.github.io/Reproduced-VR-EyeTracking/). 140 of them were used for training (listed [here](data/VR-EyeTracking/train_split.txt)) and the remaining 66 of them for validation.
+To re-create this dataset: i) download the Salient360! dataset from [here](https://salient360.ls2n.fr/datasets/training-dataset/) (follow the instruction to download the dataset using an FTP client), ii) download the Sitzman dataset from [here](https://drive.google.com/drive/folders/1EJgxC6SzjehWi3bu8PRVHWJrkeZbAiqD), and iii) run the [augmentation.py](https://github.com/IDT-ITI/CA-SUM-360/blob/main/scripts/augmentation.py) script to perform the data augmentation process, as follows:
 
-Finally, to fine-tune the existing pre-trained models of the SalEMA Expert of ATSal (available [here]([https://drive.google.com/drive/folders/1fTMrH00alyZ_hP7CaYenkzIkFevRRVz8](https://github.com/Linardos/SalEMA))), we used the CMP frames of the same 206 videos from VR-EyeTracking (following the same split of data into training and validation set). Frames presenting the north and south regions of the ERP frames (stored in .../path/) are used to train the SalEMA Expert Poles model, while frames presenting the front, back, right and left regions of the ERP frames (stored in .../path/) are used to train the SalEMA Expert Equator model. 
+```
+python augmentation.py .... to be defined
+```
+
+To train the attention model using this dataset, use the [train.py](https://github.com/IDT-ITI/CA-SUM-360/blob/main/Saliency_Detection/ATSal/attention/train.py) script and run the following command:
+
+```
+python train.py --gpu "cuda:0" --path_to_frames_folder "data/Salient360-Sitzman/training/frames" --model_storage_path "Saliency_Detection/ATSal/attention/weights" --batch_size 40
+```
+
+Following, the attention model of ATSal was trained using the 206 videos from the VR-EyeTracking dataset from [here](https://mtliba.github.io/Reproduced-VR-EyeTracking/); 140 of them were used for training (listed [here](data/VR-EyeTracking/train_split.txt)) and the remaining 66 of them for validation.
+
+Finally, pre-trained models of the SalEMA Expert of ATSal (available [here]([https://drive.google.com/drive/folders/1fTMrH00alyZ_hP7CaYenkzIkFevRRVz8](https://github.com/Linardos/SalEMA))) were trained using the CMP frames of the same 206 videos from VR-EyeTracking (following the same split of data into training and validation set). Frames presenting the north and south regions of the ERP frames (stored in .../path/) are used to train the SalEMA Expert Poles model, while frames presenting the front, back, right and left regions of the ERP frames (stored in .../path/) are used to train the SalEMA Expert Equator model. 
 
 To train SST-Sal, we used only the static videos from the VR-EyeTracking dataset. In total, we used 92 videos for training (listed [here](data/Static-VR-EyeTracking)) and 55 videos (listed [here](data/Static-VR-EyeTracking)) for validation.
 
