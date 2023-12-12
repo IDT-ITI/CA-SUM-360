@@ -6,15 +6,10 @@ import cv2
 
 from torch.utils.data import DataLoader, Dataset
 
-from torchvision import utils
-from tqdm import tqdm
-import torch as th
-from torch import nn
-
 
 class RGB_dataset(Dataset):
 
-    def __init__(self, root_path,load_gt,frames_per_data):
+    def __init__(self, root_path,video_names,load_gt,frames_per_data):
 
         self.root_path = root_path
         self.load_gt = load_gt
@@ -22,35 +17,35 @@ class RGB_dataset(Dataset):
         self.video_list = []
         self.dataset = []
 
-        video_names = os.listdir(root_path)
+        self.video_names = video_names
 
 
-        for i, file in enumerate(video_names):
+        for i, file in enumerate(self.video_names):
 
-            for i, file in enumerate(video_names):
 
-                png_files = []
 
-                frame_folder = os.path.join(self.root_path, file)
-                frames = os.listdir(frame_folder)
-                for j, fram in enumerate(frames):
+            png_files = []
 
-                    # if count % 3 == 0:
-                    if fram.lower().endswith(('.png', '.jpg')):
-                        png_files.append(frame_folder + "/" + fram)
-                    # count += 1
+            frame_folder = os.path.join(self.root_path, file)
+            frames = os.listdir(frame_folder)
+            for j, fram in enumerate(frames):
 
-                png_files = sorted(png_files)
+                # if count % 3 == 0:
+                if fram.lower().endswith(('.png', '.jpg')):
+                    png_files.append(frame_folder + "/" + fram)
+                # count += 1
 
-                fpd = self.frames_per_data + 20
+            png_files = sorted(png_files)
 
-                dat = []
+            fpd = self.frames_per_data + 20
 
-                for j in range(20, len(png_files), frames_per_data):
-                    dat.append(png_files[j:fpd])
-                    fpd = fpd + frames_per_data
+            dat = []
 
-                self.dataset.append(dat)
+            for j in range(20, len(png_files), frames_per_data):
+                dat.append(png_files[j:fpd])
+                fpd = fpd + frames_per_data
+
+            self.dataset.append(dat)
 
 
 
