@@ -19,7 +19,7 @@ def training_args():
     parser.add_argument('--clip_size', type=int, default=20, help='Frames per data for data loader 20 ')
     parser.add_argument('--batch_size', type=int, default=1, help='Batch size for data loader')
     parser.add_argument('--epochs',type=int, default=200, help='Number of epochs')
-    parser.add_argument('--load_gt', type=str, default="True", help='True for evaluating-training,False for inference')
+    parser.add_argument('--load_gt', type=str, default="False", help='True for evaluating-training,False for inference')
 
     #Optimizer
     parser.add_argument('--lr', type=int, default=1e-3,help='Learning rate for the ADAM optimizer')
@@ -49,7 +49,7 @@ def inference_args():
                         default=r'data\VR-EyeTracking\erp_frames\frames',
                         help='Path to the folder with the extracted ERP validation frames')
     parser.add_argument('--process', type=str,
-                        default='train',
+                        default='test',
                         help='Process for data loader for inference.py')
     parser.add_argument('--resolution', type=int, nargs=2, default=[240, 320],
                         help='Resolution of the ERP images for the model')
@@ -61,7 +61,7 @@ def inference_args():
 
     # Output_path
     parser.add_argument('--path_to_extracted_saliency_maps', type=str,
-                        default=r'outputs',
+                        default=r'data/extracted_saliency_maps',
                         help='Path to the folder for saving saliency maps')
 
 
