@@ -12,7 +12,7 @@ grant_parent_directory = os.path.dirname(parent_directory)
 def is_camera_moving(**kwargs):
     parameter_1 = kwargs['parameter_1']
     resolution = kwargs['resolution']
-    frame_folder_path= kwargs['frames_folder_path']
+    frame_folder_path= kwargs['path_to_ERP_frames']
     frame_folder_path = os.path.join(grant_parent_directory,frame_folder_path)
     list_videos = os.listdir(frame_folder_path)
 
@@ -104,5 +104,3 @@ if __name__ == "__main__":
 
 
     is_camera_moving(**vars(args))
-
-
