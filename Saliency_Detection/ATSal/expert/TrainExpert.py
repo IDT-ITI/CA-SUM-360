@@ -190,8 +190,8 @@ if __name__ == '__main__':
 
     lr = args.lr
     weight_decay = args.weight_decay
-    path_to_frames_folder = args.path_to_CMP_training_frames
-    path_to_frames_validation_folder = args.path_to_CMP_validation_frames
+    path_to_frames_folder = args.path_to_training_cmp_frames
+    path_to_frames_validation_folder = args.path_to_validation_cmp_frames
     process = args.process
     resolution = args.resolution
     clip_size = args.clip_size
