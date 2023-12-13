@@ -207,7 +207,7 @@ if __name__ == "__main__":
     epochs = args.epochs
     lr =args.lr
     weight_decay = args.weight_decay
-    data = args.data
+    data = args.dataset
 
 
     att_model = Sal_based_Attention_module()
@@ -221,7 +221,7 @@ if __name__ == "__main__":
     model = load_attention(attention_model_path, att_model,device)
 
     path_to_train_frames = os.path.join(grant_parent_directory,path_to_frames)
-    if data=="vreyetracking":
+    if data=="VR-EyeTracking":
 
         val_path_txt = os.path.join(grant_parent_directory, "data/VR-EyeTracking/validation_data_split.txt")
         train_path_txt = os.path.join(grant_parent_directory, "data/VR-EyeTracking/training_data_split.txt")
