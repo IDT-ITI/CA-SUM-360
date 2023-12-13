@@ -203,7 +203,7 @@ if __name__ == "__main__":
     resolution = args.resolution
     clip_size= args.clip_size
     batch_size = args.batch_size
-    path_to_save_weights = args.path_to_save_weights
+    path_to_save_weights = args.model_storage_path
     epochs = args.epochs
     lr =args.lr
     weight_decay = args.weight_decay
