@@ -18,6 +18,9 @@ def inference_args():
     parser.add_argument('--path_to_ERP_frames', type=str,
                         default=r'data/VR-EyeTracking/erp_frames/frames',
                         help='Path to the folder with the extracted ERP frames')
+    parser.add_argument('--dataset', type=str,
+                        default='VR-EyeTracking',
+                        help='If you want to test to your videos insert none, if you want to Sports-360 , then insert sports360, if you want vr-eyetracking , then insert vreyetracking')
     parser.add_argument('--load_gt', type=str,
                         default='False',
                         help='If you want to calculate metrics define it as True, else False')
