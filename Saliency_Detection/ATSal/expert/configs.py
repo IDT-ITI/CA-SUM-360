@@ -34,7 +34,7 @@ def training_args():
 
 
     #Output_path
-    parser.add_argument('--save_model_path', type=str,
+    parser.add_argument('--model_storage_path', type=str,
                         default=r'weights',
                         help='Path to the folder for the saved model per epoch')
 
