@@ -142,7 +142,7 @@ To train the attention model using this dataset, use the [train.py](https://gith
 python train.py --gpu "cuda:0" --path_to_frames_folder "data/Salient360-Sitzman/training/frames" --model_storage_path "Saliency_Detection/ATSal/attention/weights" --batch_size 40
 ```
 
-Following, the attention model of ATSal was trained using the 206 videos from the VR-EyeTracking dataset from [here](https://mtliba.github.io/Reproduced-VR-EyeTracking/); 140 of them were used for training (listed [here](data/VR-EyeTracking/train_split.txt)) and the remaining 66 of them for validation (videos 102.mp4, 131.mp4 were excluded due to the limited clarity in their ground-truth saliency maps). Run the following command to save the VR-EyeTracking erp frames to a specified folder:
+Following, the attention model of ATSal was trained using the 206 videos from the VR-EyeTracking dataset from [here](https://mtliba.github.io/Reproduced-VR-EyeTracking/); 140 of them were used for training (listed [here](data/VR-EyeTracking/train_split.txt)) and the remaining 66 of them for validation (videos 102.mp4, 131.mp4 were excluded due to the limited clarity in their ground-truth saliency maps listed [here](data/VR-EyeTracking/Missing saliency_erp_frames.txt) ). Run the following command to save the VR-EyeTracking erp frames to a specified folder:
 ```
 python frames_extractor.py --video_input_type erp --input_video_path "PATH/path_containing_VR-EyeTracking_erp_videos" --output_folder "data\
 VR-EyeTracking\erp_frames\frames"
