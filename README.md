@@ -142,8 +142,11 @@ To train the attention model using this dataset, use the [train.py](https://gith
 python train.py --gpu "cuda:0" --path_to_frames_folder "data/Salient360-Sitzman/training/frames" --model_storage_path "Saliency_Detection/ATSal/attention/weights" --batch_size 40
 ```
 
-Following, the attention model of ATSal was trained using the 206 videos from the VR-EyeTracking dataset from [here](https://mtliba.github.io/Reproduced-VR-EyeTracking/); 140 of them were used for training (listed [here](data/VR-EyeTracking/train_split.txt)) and the remaining 66 of them for validation.
-
+Following, the attention model of ATSal was trained using the 206 videos from the VR-EyeTracking dataset from [here](https://mtliba.github.io/Reproduced-VR-EyeTracking/); 140 of them were used for training (listed [here](data/VR-EyeTracking/train_split.txt)) and the remaining 66 of them for validation. Run the following command to save the VR-EyeTracking erp frames to a specified folder:
+```
+python frames_extractor.py --video_input_type erp --input_video_path "PATH/path_containing_VR-EyeTracking_erp_videos" --output_folder "data\
+VR-EyeTracking\erp_frames\frames"
+```
 Finally, pre-trained models of the SalEMA Expert of ATSal (available [here]([https://drive.google.com/drive/folders/1fTMrH00alyZ_hP7CaYenkzIkFevRRVz8](https://github.com/Linardos/SalEMA))) were trained using the CMP frames of the same 206 videos from VR-EyeTracking (following the same split of data into training and validation set). Frames presenting the north and south regions of the ERP frames (stored in .../path/) are used to train the SalEMA Expert Poles model, while frames presenting the front, back, right and left regions of the ERP frames (stored in .../path/) are used to train the SalEMA Expert Equator model. 
 
 To train SST-Sal, we used only the static videos from the VR-EyeTracking dataset. In total, we used 92 videos for training (listed [here](data/Static-VR-EyeTracking)) and 55 videos (listed [here](data/Static-VR-EyeTracking)) for validation.
