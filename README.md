@@ -128,7 +128,7 @@ To be added
 
 
 ## Training
-The attention model of ATSal was initially trained using a dataset of 2140 ERP images, created after applying common data augmentation operations (rotation, cropping, etc.) on 107 ERP images of the Salient360! and Sitzman datasets; 1840 of these images were used for training and the remaining 300 for validation (the corresponding augmentated ERP frames can be downloaded from [here]((https://drive.google.com/file/d/1BTxs6E3Wnk-nlVgu-lGzYgr1kmNse9T9/view?usp=sharing)). 
+The attention model of ATSal was initially trained using a dataset of 2140 ERP images, created after applying common data augmentation operations (rotation, cropping, etc.) on 107 ERP images of the Salient360! and Sitzman datasets; 1840 of these images were used for training and the remaining 300 for validation (the corresponding augmentated ERP frames can be downloaded from [here](https://drive.google.com/file/d/1BTxs6E3Wnk-nlVgu-lGzYgr1kmNse9T9/view?usp=sharing)). 
 
 To re-create this dataset: i) download the Salient360! dataset from [here](https://salient360.ls2n.fr/datasets/training-dataset/) (follow the instruction to download the dataset using an FTP client), ii) download the Sitzman dataset from [here](https://drive.google.com/drive/folders/1EJgxC6SzjehWi3bu8PRVHWJrkeZbAiqD), and iii) run the [augmentation.py](https://github.com/IDT-ITI/CA-SUM-360/blob/main/scripts/augmentation.py) script to perform the data augmentation process, as follows:
 
