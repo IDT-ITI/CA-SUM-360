@@ -215,7 +215,7 @@ if __name__ =="__main__":
     resolution = args.resolution
     clip_size = args.clip_size
     batch_size = args.batch_size
-    data = args.data
+    data = args.dataset
     #path to save saliency maps
     path_to_save_saliency_maps = args.path_to_extracted_saliency_maps
 
@@ -241,12 +241,12 @@ if __name__ =="__main__":
             path_to_save_saliency_maps = os.mkdir(path_to_save_saliency_maps)
             print("path to save the saliency maps", path_to_save_saliency_maps)
 
-    if data == "sports360":
+    if data == "Sports-360":
         static_videos = os.listdir(path_to_frames_folder)
         test_video_dataset = RGB_sports360(path_to_frames_folder, static_videos, load_gt,
                                            frames_per_data=clip_size)
         test_data = DataLoader(test_video_dataset, batch_size=batch_size, drop_last=True)
-    elif data == "vreyetracking":
+    elif data == "VR-EyeTracking":
         val_path_txt = os.path.join(grant_parent_directory, "data/VR-EyeTracking/validation_data_split.txt")
         with open(val_path_txt, 'r') as file:
             content = file.read()
