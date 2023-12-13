@@ -25,24 +25,105 @@ def load_attention(pt_model, new_model, device):
 
 
 
-def train(train_loader,validation_loader,optimizer,criterion, model,device,epochs,saved_model_path):
+def train(train_loader,validation_loader,data,optimizer,criterion, model,device,epochs,saved_model_path):
     model.train()
     model.to(device=device)
 
     criterion.cuda()
     print("Training process starts")
-    for epoch in range(epochs):
-        print(f"epoch {epoch}")
-        losses = []
-        nss_batch = []
-        avg_loss = 0
-        avg_nss = 0
-        counter = 0
-        for i, video in enumerate(train_loader):
-            for j,(frames,gtruth,fixation) in enumerate(video):
+    if data == "vreyetracking":
+        for epoch in range(epochs):
+            print(f"epoch {epoch}")
+            losses = []
 
-                #print(frames.shape)
-                #frames, gtruth, fixation = batch
+            avg_loss = 0
+
+            counter = 0
+            for i, video in enumerate(train_loader):
+                for j,(frames,gtruth,fixation) in enumerate(video):
+
+
+                    frames = frames.type(torch.cuda.FloatTensor).transpose(0,1)
+                    gtruth = gtruth.type(torch.cuda.FloatTensor).transpose(0,1)
+                    fixation = fixation.type(torch.cuda.FloatTensor).transpose(0,1)
+
+                    loss = torch.tensor(0)
+                    _nss = 0
+                    optimizer.zero_grad()
+                    counter += 1
+                    saliency_map, fixation_module = model(frames[0])
+
+                    for r in range(frames.size()[0]):
+
+                        total_loss = criterion(saliency_map[r], gtruth[0][r].to(device), fixation[0][r].to(device), fixation_module[r])
+
+                        loss = loss.item() + total_loss
+
+
+                    loss.backward()
+                    optimizer.step()
+
+                    avg_loss += loss.data / frames.size()[0]
+
+                losses.append(avg_loss.cpu() / counter)
+
+            print(f"train loss for epoch {epoch}  ",np.mean(losses))
+            model.eval()
+            val_losses = []
+
+            val_avg_loss = 0
+
+            val_counter = 0
+
+            for i, video in enumerate(validation_loader):
+
+
+                for j, (frames, gtruth, fixation) in enumerate(video):
+
+                    frames = frames.type(torch.cuda.FloatTensor).transpose(0, 1)
+                    gtruth = gtruth.type(torch.cuda.FloatTensor).transpose(0, 1)
+                    fixation = fixation.type(torch.cuda.FloatTensor).transpose(0, 1)
+
+                    loss = torch.tensor(0)
+                    _nss = 0
+                    optimizer.zero_grad()
+                    counter += 1
+                    saliency_map, fixation_module = model(frames[0])
+                    val_counter += 1
+                    with torch.no_grad():
+                        for r in range(frames.size()[0]):
+
+
+                            total_loss = criterion(saliency_map[r], gtruth[0][r].to(device), fixation[0][r].to(device), fixation_module[r])
+
+                            loss = loss.item() + total_loss
+
+
+
+
+                        val_avg_loss += loss.data / frames.size()[0]
+
+                    val_losses.append(val_avg_loss.cpu() / val_counter)
+
+            print(f'Epoch {epoch} finished with')
+            print("Train loss", np.mean(losses))
+            print("Val loss", np.mean(val_losses))
+            torch.save(model.state_dict(), saved_model_path+"/"+f'attention_{epoch}.pt')
+    else:
+        for epoch in range(epochs):
+            print(f"epoch {epoch}")
+            losses = []
+
+            avg_loss = 0
+
+            counter = 0
+
+            for j, batch in enumerate(train_loader):
+                frames,gtruth,fixation = batch
+
+                print(frames.shape)
+                print(gtruth.shape)
+                print(fixation.shape)
                 frames = frames.type(torch.cuda.FloatTensor)
                 gtruth = gtruth
                 fixation = fixation
@@ -51,15 +132,15 @@ def train(train_loader,validation_loader,optimizer,criterion, model,device,epoch
                 _nss = 0
                 optimizer.zero_grad()
                 counter += 1
+                saliency_map, fixation_module = model(frames)
                 for r in range(frames.size()[0]):
-                    saliency_map, fixation_module = model(frames[r])
+
                     # saliency_map, fixation_module = model(frame[r])
-                    saliency_map = saliency_map.squeeze(0)
-                    fixation_module = fixation_module.squeeze(0)
-                    total_loss = criterion(saliency_map, gtruth[r][0].to(device), fixation[r][0].to(device), fixation_module)
+
+                    total_loss = criterion(saliency_map[r], gtruth[r].to(device), fixation[r].to(device),
+                                           fixation_module[r])
 
                     loss = loss.item() + total_loss
-
 
                 loss.backward()
                 optimizer.step()
@@ -68,40 +149,33 @@ def train(train_loader,validation_loader,optimizer,criterion, model,device,epoch
 
             losses.append(avg_loss.cpu() / counter)
 
-        print(f"train loss for epoch {epoch}  ",np.mean(losses))
-        model.eval()
-        val_losses = []
-        nss_batch = []
-        val_avg_loss = 0
-        val_avg_nss = 0
-        val_counter = 0
- 
-        for i, video in enumerate(validation_loader):
+            print(f"train loss for epoch {epoch}  ", np.mean(losses))
+            model.eval()
+            val_losses = []
 
+            val_avg_loss = 0
 
-            for j, (frames, gtruth, fixation) in enumerate(video):
+            val_counter = 0
 
-
+            for j, batch in enumerate(validation_loader):
+                frames, gtruth, fixation = batch
                 frames = frames.type(torch.cuda.FloatTensor)
                 gtruth = gtruth
                 fixation = fixation
-
+                print(frames.shape)
+                print(gtruth.shape)
+                print(fixation.shape)
                 loss = torch.tensor(0)
-
 
                 val_counter += 1
                 with torch.no_grad():
+                    saliency_map, fixation_module = model(frames)
                     for r in range(frames.size()[0]):
-                        saliency_map, fixation_module = model(frames[r])
-                        # saliency_map, fixation_module = model(frame[r])
-                        saliency_map = saliency_map.squeeze(0)
-                        fixation_module = fixation_module.squeeze(0)
-                        total_loss = criterion(saliency_map, gtruth[r][0].to(device), fixation[r][0].to(device), fixation_module)
+
+                        total_loss = criterion(saliency_map[r], gtruth[r].to(device), fixation[r].to(device),
+                                           fixation_module[r])
 
                         loss = loss.item() + total_loss
-
-
-
 
                     val_avg_loss += loss.data / frames.size()[0]
 
@@ -110,7 +184,7 @@ def train(train_loader,validation_loader,optimizer,criterion, model,device,epoch
         print(f'Epoch {epoch} finished with')
         print("Train loss", np.mean(losses))
         print("Val loss", np.mean(val_losses))
-        torch.save(model.state_dict(), saved_model_path+"/"+f'attention_{epoch}.pt')
+        torch.save(model.state_dict(), saved_model_path + "/" + f'attention_{epoch}.pt')
 
 
 
@@ -134,7 +208,7 @@ if __name__ == "__main__":
     lr =args.lr
     weight_decay = args.weight_decay
     data = args.data
-    path_to_val_frames = args.path_to_validation_frames
+
 
     att_model = Sal_based_Attention_module()
 
@@ -146,9 +220,9 @@ if __name__ == "__main__":
 
     model = load_attention(attention_model_path, att_model,device)
 
-
     path_to_train_frames = os.path.join(grant_parent_directory,path_to_frames)
     if data=="vreyetracking":
+
         val_path_txt = os.path.join(grant_parent_directory, "data/VR-EyeTracking/validation_data_split.txt")
         train_path_txt = os.path.join(grant_parent_directory, "data/VR-EyeTracking/training_data_split.txt")
         with open(train_path_txt, 'r') as file:
@@ -168,7 +242,7 @@ if __name__ == "__main__":
 
         train_set = RGB_salient360_sitzman_loader(path_to_train_frames, process=process, frames_per_data=clip_size)
         train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True, drop_last=True)
-
+        path_to_val_frames = path_to_train_frames.replace("training","validation")
         validation_set = RGB_salient360_sitzman_loader(path_to_val_frames,  process=process, frames_per_data=clip_size)
         validation_loader = DataLoader(validation_set, batch_size=batch_size, drop_last=True)
 
@@ -178,4 +252,4 @@ if __name__ == "__main__":
 
     path_to_save_weights = os.path.join(grant_parent_directory,path_to_save_weights)
 
-    train(train_loader,validation_loader,optimizer,criterion,model,device,epochs=epochs,saved_model_path=path_to_save_weights)
+    train(train_loader,validation_loader,data,optimizer,criterion,model,device,epochs=epochs,saved_model_path=path_to_save_weights)
