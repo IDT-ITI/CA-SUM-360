@@ -191,19 +191,19 @@ python inference.py --gpu "cuda:0" --path_to_ERP_frames "data/360_Saliency_datas
 
 To extract saliency maps for the ERP frames based on the ATSal method, download the pre-trained models [[ATSal-Equator.pt]](https://drive.google.com/file/d/1P57U1hZLXAUiwBThq-T-65tZzMG6cm_l/view?usp=sharing) and [[ATSal-Poles.pt]](https://drive.google.com/file/d/1X65FopLF1-m2YtCWC4u0R68HDq0xV3CM/view?usp=sharing) and [[ATSal-Attention.pt]](https://drive.google.com/file/d/1Ke-Ad7lwME6kZdaW8_PUCU7MNklaeJRA/view?usp=sharing), store them in the "Saliency_Detection/ATSal/attention/weights" directory, use the [inference.py](https://github.com/IDT-ITI/CA-SUM-360/tree/main/Saliency_Detection/ATSal) script and run the following command:
 ```
-python inference.py --gpu "cuda:0" --path_to_ERP_frames ".../data/<dataset-name>/ERP_frames" --load_gt "False" --path_to_extracted_saliency_maps "...data/<dataset-name>/extracted_saliency_maps"
+python inference.py --gpu "cuda:0" --path_to_ERP_frames ".../data/<dataset-name>/erp_frames" --load_gt "False" --path_to_extracted_saliency_maps "...data/<dataset-name>/extracted_saliency_maps"
 ```
 
 To extract saliency maps for the ERP frames based on the SST-Sal method, download the pre-trained model [[SST-Sal weights]](https://drive.google.com/drive/folders/1fTMrH00alyZ_hP7CaYenkzIkFevRRVz8), store it in the "Saliency_Detection/SST-Sal/weights" directory, use the [inference.py](https://github.com/IDT-ITI/CA-SUM-360/tree/main/Saliency_Detection/SST-Sal) script and run the following command:
 ```
-python inference.py --gpu "cuda:0" --path_to_ERP_frames ".../data/<dataset-name>/ERP_frames" --load_gt "False" --path_to_extracted_saliency_maps "...data/<dataset-name>/extracted_saliency_maps"
+python inference.py --gpu "cuda:0" --path_to_ERP_frames ".../data/<dataset-name>/erp_frames" --load_gt "False" --path_to_extracted_saliency_maps "...data/<dataset-name>/extracted_saliency_maps"
 ```
 
 ### Salient event detection and 2D video production
 
 To detect the salient events in the 360-degrees video, and formulate the conventional 2D video that contains these events, use the [main.py](https://github.com/IDT-ITI/CA-SUM-360/blob/main/2D_Video_Production/main.py) script and run the following command:
 ```
-python main.py --path_to_ERP_frames ".../data/<dataset-name>/ERP_frames" --path_to_extracted_saliency_maps "...data/<dataset-name>/extracted_saliency_maps" --intensity_value 150 --dbscan_distance 1.2 --spatial_distance 100 --fill_loss 100
+python main.py --path_to_ERP_frames ".../data/<dataset-name>/erp_frames" --path_to_extracted_saliency_maps "...data/<dataset-name>/extracted_saliency_maps" --intensity_value 150 --dbscan_distance 1.2 --spatial_distance 100 --fill_loss 100
 ```
 The produced MPEG-4 video file and the computed saliency scores for its frames, will be stored in ...
 
