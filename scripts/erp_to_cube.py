@@ -294,8 +294,8 @@ if __name__ == '__main__':
     else:
         os.mkdir(poles_save_path)
 
-    train_path_txt = os.path.join(grant_parent_directory, "data/VR-EyeTracking/train_split.txt")
-    val_path_txt = os.path.join(grant_parent_directory, "data/VR-EyeTracking/val_split.txt")
+    train_path_txt = os.path.join(grant_parent_directory, "data/VR-EyeTracking/training_data_split.txt")
+    val_path_txt = os.path.join(grant_parent_directory, "data/VR-EyeTracking/validation_data_split.txt")
     with open(train_path_txt, 'r') as file:
         # Read the content of the file and split it by commas
         content = file.read()
@@ -316,13 +316,19 @@ if __name__ == '__main__':
     equator_save_validation_path = equator_save_path.replace("training","validation")
     poles_save_validation_path = poles_save_path.replace("training", "validation")
 
+    if os.path.exists(equator_save_validation_path):
+        print(equator_save_path + "exists")
+    else:
+        os.mkdir(equator_save_validation_path)
+    if os.path.exists(poles_save_validation_path):
+        print(poles_save_path + "exists")
+    else:
+        os.mkdir(poles_save_validation_path)
+
     if os.path.exists(equator_save_path + f"/0"):
         print("exists")
     else:
         for r,video in enumerate(train_videos):
-            if os.path.exists(equator_save_path + f"/{r}"):
-                print("exists")
-                break
             os.mkdir(equator_save_path + f"/{r}")
             os.mkdir(equator_save_path + f"/{r+length}")
             os.mkdir(equator_save_path + f"/{r+2*length}")
@@ -350,7 +356,6 @@ if __name__ == '__main__':
             for i,face_key in enumerate(out):
                 cmp_face = out[face_key]
                 if i==0:
-                    print(equator_save_path + f"/training/{r}/{j:04d}.png")
                     cv2.imwrite(equator_save_path + f"/{r}/{j:04d}.png",cmp_face)
                 elif i==1:
                     cv2.imwrite(equator_save_path + f"/{r+length}/{j:04d}.png",cmp_face)
@@ -362,7 +367,7 @@ if __name__ == '__main__':
                     cv2.imwrite(poles_save_path + f"/{r}/{j:04d}.png",cmp_face)
                 else:
                     cv2.imwrite(poles_save_path+ f"/{r+length}/{j:04d}.png", cmp_face)
-
+    length = len(validation_videos)
     for r,video in enumerate(validation_videos):
         path1 = path_to_erp_videos_frames +"/"+video
         list = os.listdir(path1)
