@@ -11,9 +11,10 @@ import torch
 from metrics import Metrics
 
 from data_loader import RGB_dataset
+from sports360_loader import RGB_sports360
 from configs import inference_args
 
-from torch.utils import data
+from torch.utils.data import DataLoader
 
 current_script_path = os.path.abspath(__file__)
 
@@ -52,14 +53,11 @@ def test(loader,model,output_path,load_gt):
 
 
     counter = 0
+    if load_gt == "True":
+        for i, video in enumerate(loader):
 
-    for i, video in enumerate(loader):
-
-        count_cc = []
-        count_sim = []
-
-        out_state = {'F': None, 'R': None, 'B': None, 'L': None, 'U': None, 'D': None}
-        if load_gt=="True":
+            count_cc = []
+            count_sim = []
             for j, (clip,sal,frames) in enumerate(video):
 
 
@@ -123,23 +121,24 @@ def test(loader,model,output_path,load_gt):
 
                     counter+=1
 
-            print("Video",i)
+
             print("Expert CC", np.mean(count_cc))
             print("Expert SIM", np.mean(count_sim))
 
 
             cc_metric.append(np.mean(count_cc))
             sim_metric.append(np.mean(count_sim))
-        else:
-            if os.path.exists(path_to_save_saliency_maps+"/atsal_"+str(i)):
-                print(path_to_save_saliency_maps+"/atsal_"+str(i) + " path exists")
+    else:
+
+        counter=0
+        for i, video in enumerate(loader):
+            if os.path.exists(path_to_save_saliency_maps + "/atsal_" + str(i)):
+                print(path_to_save_saliency_maps + "/atsal_" + str(i) + " path exists")
             else:
-                os.mkdir(path_to_save_saliency_maps+"/atsal_"+str(i))
-            counter=0
+                os.mkdir(path_to_save_saliency_maps + "/atsal_" + str(i))
             for j, (clip, frames) in enumerate(video):
 
                 clip = clip.type(torch.cuda.FloatTensor).transpose(0, 1)
-
 
                 out_state = {'F': None, 'R': None, 'B': None, 'L': None, 'U': None, 'D': None}
 
@@ -216,7 +215,7 @@ if __name__ =="__main__":
     resolution = args.resolution
     clip_size = args.clip_size
     batch_size = args.batch_size
-
+    data = args.data
     #path to save saliency maps
     path_to_save_saliency_maps = args.path_to_extracted_saliency_maps
 
@@ -233,33 +232,38 @@ if __name__ =="__main__":
 
 
     path_to_frames_folder = os.path.join(grant_parent_directory,path_to_frames_folder)
-    path_to_save_saliency_maps = grant_parent_directory+"/"+path_to_save_saliency_maps
-    if os.path.exists(path_to_save_saliency_maps):
-        print(path_to_save_saliency_maps+" path exists")
-    else:
-        path_to_save_saliency_maps = os.mkdir(path_to_save_saliency_maps)
-        print("path to save the saliency maps", path_to_save_saliency_maps)
+   
+    if load_gt=="False":
+        path_to_save_saliency_maps = grant_parent_directory + "/" + path_to_save_saliency_maps
+        if os.path.exists(path_to_save_saliency_maps):
+            print(path_to_save_saliency_maps + " path exists")
+        else:
+            path_to_save_saliency_maps = os.mkdir(path_to_save_saliency_maps)
+            print("path to save the saliency maps", path_to_save_saliency_maps)
 
-
-
-    if load_gt=="True":
-
+    if data == "sports360":
+        static_videos = os.listdir(path_to_frames_folder)
+        test_video_dataset = RGB_sports360(path_to_frames_folder, static_videos, load_gt,
+                                           frames_per_data=clip_size)
+        test_data = DataLoader(test_video_dataset, batch_size=batch_size, drop_last=True)
+    elif data == "vreyetracking":
         val_path_txt = os.path.join(grant_parent_directory, "data/VR-EyeTracking/validation_data_split.txt")
-
         with open(val_path_txt, 'r') as file:
             content = file.read()
             values = content.split(',')
         val_videos = [value.strip() for value in values]
-
-        videos_set = RGB_dataset(path_to_frames_folder,val_videos,load_gt,frames_per_data=clip_size)
-        loader = data.DataLoader(videos_set, batch_size=batch_size)
+        test_video_dataset = RGB_dataset(path_to_frames_folder, val_videos, load_gt,
+                                 frames_per_data=clip_size)
+        test_data = DataLoader(test_video_dataset, batch_size=batch_size, drop_last=True)
     else:
-        video_names = os.listdir(path_to_frames_folder)
-        videos_set = RGB_dataset(path_to_frames_folder,video_names, load_gt,frames_per_data=clip_size)
-        loader = data.DataLoader(videos_set, batch_size=batch_size)
+        static_videos = os.listdir(path_to_frames_folder)
+        test_video_dataset = RGB_dataset(path_to_frames_folder, static_videos, load_gt,
+                                 frames_per_data=clip_size)
+        test_data = DataLoader(test_video_dataset, batch_size=batch_size, drop_last=True)
+        
+        
     with torch.no_grad():
-
-        test(loader, model,output_path=path_to_save_saliency_maps,load_gt=load_gt)
+        test(test_data, model,output_path=path_to_save_saliency_maps,load_gt=load_gt)
 
 
 
