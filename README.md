@@ -165,11 +165,11 @@ To evaluate the ATSal model on VR-EyeTracking dataset, run the following command
 cd Saliency_Detection/ATSal
 ```
 ```
-python inference.py --gpu "cuda:0" --path_to_ERP_frames "data/VR-EyeTracking/erp_frames/frames" --load_gt "True" --data "vreyetracking" 
+python inference.py --gpu "cuda:0" --path_to_ERP_frames "data/VR-EyeTracking/erp_frames/frames" --load_gt "True" --dataset "VR-EyeTracking" 
 ```
 To evaluate the ATSal model on Sports-360 dataset, run the following command:
 ```
-python inference.py --gpu "cuda:0" --path_to_ERP_frames "../Path/360_Saliency_dataset_2018ECCV" --load_gt "True" --data "sports360" 
+python inference.py --gpu "cuda:0" --path_to_ERP_frames "../Path/360_Saliency_dataset_2018ECCV" --load_gt "True" --dataset "Sports-360" 
 ```
 
 To evaluate SST-Sal on VR-EyeTracking dataset, run the following command:
@@ -181,7 +181,7 @@ python inference.py --gpu "cuda:0" --path_to_ERP_frames "data/VR-EyeTracking/erp
 ```
 To evaluate SST-Sal on Sports-360 dataset, run the following command:
 ```
-python inference.py --gpu "cuda:0" --path_to_ERP_frames "data/360_Saliency_dataset_2018ECCV" --load_gt "True" --dataset "Sports-360"
+python inference.py --gpu "cuda:0" --path_to_ERP_frames "../Path/360_Saliency_dataset_2018ECCV" --load_gt "True" --dataset "Sports-360"
 ```
 
 
