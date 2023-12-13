@@ -5,10 +5,10 @@ from model import Sal_based_Attention_module
 import torch
 
 from data_loader import RGB_dataset
-
+from salient360_sitzman_loader import RGB_salient360_sitzman_loader
 
 from LossFunction import LOSS
-from torch.utils import data
+from torch.utils.data import DataLoader
 from configs import training_args
 current_script_path = os.path.abspath(__file__)
 
@@ -133,7 +133,8 @@ if __name__ == "__main__":
     epochs = args.epochs
     lr =args.lr
     weight_decay = args.weight_decay
-
+    data = args.data
+    path_to_val_frames = args.path_to_validation_frames
 
     att_model = Sal_based_Attention_module()
 
@@ -145,24 +146,32 @@ if __name__ == "__main__":
 
     model = load_attention(attention_model_path, att_model,device)
 
-    val_path_txt = os.path.join(grant_parent_directory, "data/VR-EyeTracking/validation_data_split.txt")
-    train_path_txt = os.path.join(grant_parent_directory, "data/VR-EyeTracking/training_data_split.txt")
-    with open(train_path_txt, 'r') as file:
-        content = file.read()
-        values = content.split(',')
-    train_videos = [value.strip() for value in values]
-    with open(val_path_txt, 'r') as file:
-        content = file.read()
-        values = content.split(',')
-    val_videos = [value.strip() for value in values]
 
     path_to_train_frames = os.path.join(grant_parent_directory,path_to_frames)
+    if data=="vreyetracking":
+        val_path_txt = os.path.join(grant_parent_directory, "data/VR-EyeTracking/validation_data_split.txt")
+        train_path_txt = os.path.join(grant_parent_directory, "data/VR-EyeTracking/training_data_split.txt")
+        with open(train_path_txt, 'r') as file:
+            content = file.read()
+            values = content.split(',')
+        train_videos = [value.strip() for value in values]
+        with open(val_path_txt, 'r') as file:
+            content = file.read()
+            values = content.split(',')
+        val_videos = [value.strip() for value in values]
+        train_set = RGB_dataset(path_to_train_frames,train_videos, process=process, frames_per_data=clip_size)
+        train_loader = DataLoader(train_set, batch_size=batch_size,shuffle=True,drop_last=True)
 
-    train_set = RGB_dataset(path_to_train_frames,train_videos, process=process, frames_per_data=clip_size)
-    train_loader = data.DataLoader(train_set, batch_size=batch_size,shuffle=True,drop_last=True)
+        validation_set = RGB_dataset(path_to_train_frames,val_videos, process=process, frames_per_data=clip_size)
+        validation_loader = DataLoader(validation_set, batch_size=batch_size,drop_last=True)
+    else:
 
-    validation_set = RGB_dataset(path_to_train_frames,val_videos, process=process, frames_per_data=clip_size)
-    validation_loader = data.DataLoader(validation_set, batch_size=batch_size,drop_last=True)
+        train_set = RGB_salient360_sitzman_loader(path_to_train_frames, process=process, frames_per_data=clip_size)
+        train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True, drop_last=True)
+
+        validation_set = RGB_salient360_sitzman_loader(path_to_val_frames,  process=process, frames_per_data=clip_size)
+        validation_loader = DataLoader(validation_set, batch_size=batch_size, drop_last=True)
+
 
     optimizer = torch.optim.Adam(att_model.parameters(),lr=lr,weight_decay=weight_decay)
     criterion = LOSS()
