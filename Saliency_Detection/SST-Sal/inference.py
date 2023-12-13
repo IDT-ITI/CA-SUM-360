@@ -2,8 +2,9 @@ import os
 import numpy as np
 import torch
 
+from sports360_loader import RGB_sports360
 from data_loader import RGB
-from models import SST_Sal
+
 from torch.utils.data import DataLoader
 import cv2
 from metrics import Metrics
@@ -36,7 +37,7 @@ def test(test_data, model,load_gt ,device,output_path):
 
                 for k,(x,y) in enumerate(video):
 
-
+                    print(x.shape)
                     pred = model(x.to(device))
 
                     batch_size, Nframes, _, _ = pred[:, :, 0, :, :].shape
@@ -50,8 +51,6 @@ def test(test_data, model,load_gt ,device,output_path):
                                 cc,sim= Metrics(pred[bs][i][0].cpu(),y[bs][i][0].cpu())
                                 cc_metric.append(cc)
                                 sim_metric.append(sim)
-
-
                     else:
                         for bs in range(0, batch_size):
                             for i in range(4, Nframes):
@@ -60,8 +59,7 @@ def test(test_data, model,load_gt ,device,output_path):
                                 cc_metric.append(cc)
                                 sim_metric.append(sim)
 
-                #print(np.mean(cc_metric))
-                #print(np.mean(sim_metric))
+
 
                 ccall.append(np.mean(cc_metric))
                 simall.append(np.mean(sim_metric))
@@ -114,16 +112,17 @@ if __name__ == "__main__":
     path_to_save_saliency_maps = args.path_to_extracted_saliency_maps
     load_gt = args.load_gt
     device = torch.device(gpu if torch.cuda.is_available() else "cpu")
-
+    data = args.data
     model = torch.load(sst_sal, map_location=device)
     val_path_txt = os.path.join(grant_parent_directory,"data/Static-VR-EyeTracking/val_split.txt")
     with open(val_path_txt, 'r') as file:
         # Read the content of the file and split it by commas
         content = file.read()
         videos = content.split(',')
-    static_val_videos = [video.strip() for video in videos]
+    static_videos = [video.strip() for video in videos]
     path_to_frames_folder = os.path.join(grant_parent_directory,path_to_frames_folder)
     path_to_save_saliency_maps = grant_parent_directory + "/" + path_to_save_saliency_maps
+    
     if load_gt=="False":
         if os.path.exists(path_to_save_saliency_maps):
             print(path_to_save_saliency_maps + " path exists")
@@ -131,8 +130,21 @@ if __name__ == "__main__":
             path_to_save_saliency_maps = os.mkdir(path_to_save_saliency_maps)
             print("path to save the saliency maps", path_to_save_saliency_maps)
 
-    test_video_dataset = RGB(path_to_frames_folder,static_val_videos,load_gt,process=process,frames_per_data=clip_size,resolution=resolution)
-    test_data = DataLoader(test_video_dataset, batch_size=batch_size, drop_last=True)
+
+    if data=="sports360":
+        static_videos = os.listdir(path_to_frames_folder)
+        test_video_dataset = RGB_sports360(path_to_frames_folder,static_videos,load_gt,process=process,frames_per_data=clip_size,resolution=resolution)
+        test_data = DataLoader(test_video_dataset, batch_size=batch_size, drop_last=True)
+    elif data=="vreyetracking":
+        test_video_dataset = RGB(path_to_frames_folder, static_videos, load_gt, process=process,
+                                 frames_per_data=clip_size, resolution=resolution)
+        test_data = DataLoader(test_video_dataset, batch_size=batch_size, drop_last=True)
+    else:
+        static_videos = os.listdir(path_to_frames_folder)
+        test_video_dataset = RGB(path_to_frames_folder, static_videos, load_gt, process=process,
+                                 frames_per_data=clip_size, resolution=resolution)
+        test_data = DataLoader(test_video_dataset, batch_size=batch_size, drop_last=True)
+
 
 
     test(test_data, model,load_gt, device,path_to_save_saliency_maps)
