@@ -112,7 +112,7 @@ if __name__ == "__main__":
     path_to_save_saliency_maps = args.path_to_extracted_saliency_maps
     load_gt = args.load_gt
     device = torch.device(gpu if torch.cuda.is_available() else "cpu")
-    data = args.data
+    data = args.dataset
     model = torch.load(sst_sal, map_location=device)
     val_path_txt = os.path.join(grant_parent_directory,"data/Static-VR-EyeTracking/val_split.txt")
     with open(val_path_txt, 'r') as file:
@@ -131,11 +131,11 @@ if __name__ == "__main__":
             print("path to save the saliency maps", path_to_save_saliency_maps)
 
 
-    if data=="sports360":
+    if data=="Sports-360":
         static_videos = os.listdir(path_to_frames_folder)
         test_video_dataset = RGB_sports360(path_to_frames_folder,static_videos,load_gt,process=process,frames_per_data=clip_size,resolution=resolution)
         test_data = DataLoader(test_video_dataset, batch_size=batch_size, drop_last=True)
-    elif data=="vreyetracking":
+    elif data=="VR-EyeTracking":
         test_video_dataset = RGB(path_to_frames_folder, static_videos, load_gt, process=process,
                                  frames_per_data=clip_size, resolution=resolution)
         test_data = DataLoader(test_video_dataset, batch_size=batch_size, drop_last=True)
