@@ -196,7 +196,7 @@ if __name__ == '__main__':
     resolution = args.resolution
     clip_size = args.clip_size
     batch_size = args.batch_size
-    save_model_path = args.save_model_path
+    save_model_path = args.model_storage_path
     epochs = args.epochs
 
     LEARN_ALPHA_ONLY = False
