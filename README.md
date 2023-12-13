@@ -128,7 +128,7 @@ If you wish to use the "ATSal-Attention-Pretrained" model, then store it within 
 python train.py --gpu "cuda:0" --path_to_ERP_frames "data/VR-EyeTracking/erp_frames/frames" --attention_model "weights/pretrained.pt" --model_storage_path "Saliency_Detection/ATSal/attention/weights" --batch_size 10 --weight_decay=1e-5
 ```
 
-Finally, existing pre-trained models of the SalEMA Expert of ATSal (available [here]([https://drive.google.com/drive/folders/1fTMrH00alyZ_hP7CaYenkzIkFevRRVz8](https://github.com/Linardos/SalEMA))) were trained using the CMP frames of the same 206 videos from VR-EyeTracking (following the same split of data into training and validation set). Frames presenting the north and south regions of the ERP frames (stored in .../path/) were used to train the SalEMA Expert Poles model, while frames presenting the front, back, right and left regions of the ERP frames (stored in .../path/) were used to train the SalEMA Expert Equator model. 
+Finally, existing pre-trained models of the SalEMA Expert of ATSal (available [here]([https://drive.google.com/drive/folders/1fTMrH00alyZ_hP7CaYenkzIkFevRRVz8](https://github.com/Linardos/SalEMA))) were trained using the CMP frames of the same 206 videos from VR-EyeTracking (following the same split of data into training and validation set). Frames presenting the north and south regions of the ERP frames ([here](data/VR-EyeTracking/cmp_frames/poles) were used to train the SalEMA Expert Poles model, while frames presenting the front, back, right and left regions of the ERP frames ([here](data/VR-EyeTracking/cmp_frames/equator)) were used to train the SalEMA Expert Equator model. 
 
 
 
