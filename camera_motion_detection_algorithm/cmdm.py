@@ -77,7 +77,7 @@ def is_camera_moving(**kwargs):
                     left_radius2 = np.sqrt(left_shift2[0] ** 2 + left_shift2[1] ** 2)
                     right_radius2 = np.sqrt(right_shift2[0] ** 2 + right_shift2[1] ** 2)
 
-                    sum = (top_radius+bottom_radius +left_radius1+right_radius1+left_radius2+right_radius2)/3
+                    sum = (top_radius+bottom_radius +left_radius1+right_radius1+left_radius2+right_radius2)/4
                     #check if there is big motion in the specified regions
                     if sum>parameter_1:
                         count+=1
