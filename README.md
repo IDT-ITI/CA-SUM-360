@@ -111,7 +111,7 @@ The attention model of ATSal was initially trained using a dataset of 2140 ERP i
 
 To train the attention model using the aforementioned dataset, download the initial instance of this model (called "ATSal-Attention-Initial" and released by the authors of the relevant paper) from [[here]](https://drive.google.com/file/d/1qT4tALLSGmsRfqf_dJ-1nhS_3iT4fFMg/view?usp=sharing), place it in the [weights](Saliency_Detection/ATSal/attention/weights) directory, use the [train.py](https://github.com/IDT-ITI/CA-SUM-360/blob/main/Saliency_Detection/ATSal/attention/train.py) script and run the following command:
 ```
-python train.py --gpu "cuda:0" --path_to_ERP_frames "data/Salient360-Sitzman/training/frames" --model_storage_path "Saliency_Detection/ATSal/attention/weights" --batch_size 40
+python train.py --gpu "cuda:0" --path_to_ERP_frames "data/Salient360-Sitzman/training/frames" --dataset "Salient360!-Sitzman" --model_storage_path "Saliency_Detection/ATSal/attention/weights" --batch_size 40
 ```
 
 This will result in a trained model that will be stored in the above "model_storage_path". In case that you wish to skip this training step, the weights of this trained attention model (called "ATSal-Attention-Pretrained") are available [here](https://drive.google.com/drive/folders/1fTMrH00alyZ_hP7CaYenkzIkFevRRVz8)
@@ -120,7 +120,7 @@ Following, the attention model was trained using 206 videos from the VR-EyeTrack
 
 To further train the attention model using the above dataset, use the [train.py](https://github.com/IDT-ITI/CA-SUM-360/blob/main/Saliency_Detection/ATSal/attention/train.py) script and run the following command:
 ```
-python train.py --gpu "cuda:0" --path_to_ERP_frames "data/VR-EyeTracking/erp_frames/frames" --model_storage_path "Saliency_Detection/ATSal/attention/weights" --batch_size 10 --weight_decay=1e-5
+python train.py --gpu "cuda:0" --path_to_ERP_frames "data/VR-EyeTracking/erp_frames/frames" --dataset "VR-EyeTracking" --model_storage_path "Saliency_Detection/ATSal/attention/weights" --batch_size 10 --weight_decay=1e-5
 ```
 
 If you wish to use the "ATSal-Attention-Pretrained" model, then store it within the above mentioned "model_storage_path" as "pretrained.pt", and run the following command:
@@ -177,11 +177,11 @@ To evaluate SST-Sal on VR-EyeTracking dataset, run the following command:
 cd Saliency_Detection/SST-Sal
 ```
 ```
-python inference.py --gpu "cuda:0" --path_to_ERP_frames "data/VR-EyeTracking/erp_frames/frames" --load_gt "True" --data "vreyetracking"
+python inference.py --gpu "cuda:0" --path_to_ERP_frames "data/VR-EyeTracking/erp_frames/frames" --load_gt "True" --dataset "VR-EyeTracking"
 ```
 To evaluate SST-Sal on Sports-360 dataset, run the following command:
 ```
-python inference.py --gpu "cuda:0" --path_to_ERP_frames "data/VR-EyeTracking/erp_frames/frames" --load_gt "True" --data "sports360"
+python inference.py --gpu "cuda:0" --path_to_ERP_frames "data/360_Saliency_dataset_2018ECCV" --load_gt "True" --dataset "Sports-360"
 ```
 
 
