@@ -13,6 +13,7 @@ def training_args():
     parser.add_argument('--path_to_ERP_frames', type=str,
                         default=r'data\VR-EyeTracking\erp_frames\frames',
                         help='Path to the folder with the extracted ERP frames')
+    
     parser.add_argument('--process', type=str,
                         default='train',
                         help='Process for data loader for train.py')
@@ -20,7 +21,9 @@ def training_args():
                         help='Resolution of the ERP images for the model')
     parser.add_argument('--clip_size', type=int, default=1, help='Frames per data for data loader')
     parser.add_argument('--batch_size', type=int, default=1, help='Batch size for data loader')
-
+    parser.add_argument('--dataset',type=str,
+                        default='VR-EyeTracking',
+                        help='if your dataset is VR-Eyetracking or Salient360!-sitzman')
     #optimizer
     parser.add_argument('--lr', type=float, default=1e-5, help='Learning Rate for ADAM optimizer')
     parser.add_argument('--weight_decay', type=float, default=1e-4, help='Weight Decay for ADAM optimizer')
