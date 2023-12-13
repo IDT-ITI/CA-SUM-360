@@ -111,7 +111,7 @@ if __name__ == '__main__':
     batch_size = args.batch_size
     epochs = args.epochs
     lr = args.lr
-    save_model_path = args.save_model_path
+    save_model_path = args.model_storage_path
     load_gt = args.load_gt
 
 
