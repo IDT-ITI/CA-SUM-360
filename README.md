@@ -128,7 +128,7 @@ To be added
 
 
 ## Training
-The attention model of ATSal was initially trained using a dataset of 2140 ERP images, created after applying common data augmentation operations (rotation, cropping, etc.) on 107 ERP images of the Salient360! and Sitzman datasets; 1840 of these images were used for training and the remaining 300 for validation (the corresponding ERP frames are listed [here](link)). 
+The attention model of ATSal was initially trained using a dataset of 2140 ERP images, created after applying common data augmentation operations (rotation, cropping, etc.) on 107 ERP images of the Salient360! and Sitzman datasets; 1840 of these images were used for training and the remaining 300 for validation (the corresponding augmentated ERP frames can be downloaded from [here]((https://drive.google.com/file/d/1BTxs6E3Wnk-nlVgu-lGzYgr1kmNse9T9/view?usp=sharing)). 
 
 To re-create this dataset: i) download the Salient360! dataset from [here](https://salient360.ls2n.fr/datasets/training-dataset/) (follow the instruction to download the dataset using an FTP client), ii) download the Sitzman dataset from [here](https://drive.google.com/drive/folders/1EJgxC6SzjehWi3bu8PRVHWJrkeZbAiqD), and iii) run the [augmentation.py](https://github.com/IDT-ITI/CA-SUM-360/blob/main/scripts/augmentation.py) script to perform the data augmentation process, as follows:
 
@@ -190,25 +190,32 @@ cd Saliency_Detection/SST-Sal
 python train.py python train.py --gpu "cuda:0" --hidden_layers 9 --path_to_training_folder "data/VR-EyeTracking/training/frames" --path_to_validation_folder = "data/VR-EyeTracking/validation/frames" --save_model_path "Saliency_Detection/SST-Sal/weights"
 ```
 
-  
-# Evaluation
-By following the above Data Structure and placing the dataset,weights in the data,weights folder:
-
-To evaluate the ATSal model, run the following command:
+## Evaluation
+For VR-EyeTracking dataset, the folders that contains the erp frames of each video and the saliency_maps of each video should be in a same folder.
+To evaluate the ATSal model on VR-EyeTracking dataset, run the following command:
 ```
 cd Saliency_Detection/ATSal
 ```
 ```
-python inference.py --gpu "cuda:0" --path_to_ERP_frames "data/VR-EyeTracking/erp_frames/frames" --load_gt "True" 
+python inference.py --gpu "cuda:0" --path_to_ERP_frames "data/VR-EyeTracking/erp_frames/frames" --load_gt "True" --data "vreyetracking" 
+```
+To evaluate the ATSal model on Sports-360 dataset, run the following command:
+```
+python inference.py --gpu "cuda:0" --path_to_ERP_frames "../Path/360_Saliency_dataset_2018ECCV" --load_gt "True" --data "sports360" 
 ```
 
-To evaluate SST-Sal, run the following command:
+To evaluate SST-Sal on VR-EyeTracking dataset, run the following command:
 ```
 cd Saliency_Detection/SST-Sal
 ```
 ```
-python inference.py --gpu "cuda:0" --path_to_ERP_frames "data/VR-EyeTracking/erp_frames/frames" --load_gt "True" 
+python inference.py --gpu "cuda:0" --path_to_ERP_frames "data/VR-EyeTracking/erp_frames/frames" --load_gt "True" --data "vreyetracking"
 ```
+To evaluate SST-Sal on Sports-360 dataset, run the following command:
+```
+python inference.py --gpu "cuda:0" --path_to_ERP_frames "data/VR-EyeTracking/erp_frames/frames" --load_gt "True" --data "sports360"
+```
+
 
 
 ## License
