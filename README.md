@@ -166,7 +166,7 @@ Given the extracted saliency maps for the videos of the VR-EyeTracking and Sport
 ```
 python main.py --path_to_ERP_frames ".../data/<dataset-name>/erp_frames" --path_to_extracted_saliency_maps "...data/<dataset-name>/extracted_saliency_maps" --intensity_value 150 --dbscan_distance 1.2 --spatial_distance 100 --fill_loss 100
 ```
-The produced MPEG-4 video files and the computed saliency scores for their frames, will be stored in [here](https://github.com/IDT-ITI/CA-SUM-360/tree/main/2D_Video_Production)
+The produced MPEG-4 video files and the computed saliency scores for their frames, will be stored [here](https://github.com/IDT-ITI/CA-SUM-360/tree/main/2D_Video_Production)
 
 
 ### Video summarization
