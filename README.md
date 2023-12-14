@@ -162,11 +162,11 @@ python inference.py --gpu "cuda:0" --path_to_ERP_frames "../Path/360_Saliency_da
 
 ### Salient event detection and 2D video production
 
-To detect the salient events in the 360-degrees video, and formulate the conventional 2D video that contains these events, use the [main.py](https://github.com/IDT-ITI/CA-SUM-360/blob/main/2D_Video_Production/main.py) script and run the following command:
+Given the extracted saliency maps for the videos of the VR-EyeTracking and Sports-360 datasets, to detect salient events and produced the conventional 2D video that presents these events, use the [main.py](https://github.com/IDT-ITI/CA-SUM-360/blob/main/2D_Video_Production/main.py) script and run the following command:
 ```
 python main.py --path_to_ERP_frames ".../data/<dataset-name>/erp_frames" --path_to_extracted_saliency_maps "...data/<dataset-name>/extracted_saliency_maps" --intensity_value 150 --dbscan_distance 1.2 --spatial_distance 100 --fill_loss 100
 ```
-The produced MPEG-4 video file and the computed saliency scores for its frames, will be stored in ...
+The produced MPEG-4 video files and the computed saliency scores for their frames, will be stored in ...
 
 
 ### Video summarization
