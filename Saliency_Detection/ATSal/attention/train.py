@@ -36,7 +36,6 @@ def train(train_loader,validation_loader,data,optimizer,criterion, model,device,
             for i, video in enumerate(train_loader):
                 for j,(frames,gtruth,fixation) in enumerate(video):
 
-
                     frames = frames.type(torch.cuda.FloatTensor).transpose(0,1)
                     gtruth = gtruth.type(torch.cuda.FloatTensor).transpose(0,1)
                     fixation = fixation.type(torch.cuda.FloatTensor).transpose(0,1)
@@ -204,7 +203,7 @@ if __name__ == "__main__":
 
     path_to_train_frames = os.path.join(grant_parent_directory,path_to_frames)
   
-    if data=="vreyetracking":
+    if data=="VR-EyeTracking":
 
         val_path_txt = os.path.join(grant_parent_directory, "data/VR-EyeTracking/validation_data_split.txt")
         train_path_txt = os.path.join(grant_parent_directory, "data/VR-EyeTracking/training_data_split.txt")
@@ -222,7 +221,6 @@ if __name__ == "__main__":
         validation_set = RGB_dataset(path_to_train_frames,val_videos, process=process, frames_per_data=clip_size)
         validation_loader = DataLoader(validation_set, batch_size=batch_size,drop_last=True)
     else:
-
         train_set = RGB_salient360_sitzman_loader(path_to_train_frames, process=process, frames_per_data=clip_size)
         train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True, drop_last=True)
         path_to_val_frames = path_to_train_frames.replace("training","validation")
