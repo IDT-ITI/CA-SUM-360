@@ -22,7 +22,7 @@ def training_args():
     parser.add_argument('--batch_size', type=int, default=10, help='Batch size for data loader')
 
     parser.add_argument('--dataset',type=str,
-                        default='Vr-EyeTracking',
+                        default='VR-EyeTracking',
                         help='if your dataset is Vr-EyeTracking or Salient360!-Sitzman')
 
     #optimizer
