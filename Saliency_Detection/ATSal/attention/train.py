@@ -25,7 +25,7 @@ def train(train_loader,validation_loader,data,optimizer,criterion, model,device,
     criterion.cuda()
     print("Training process starts")
     best_loss=100
-    if data == "vreyetracking":
+    if data == "VR-EyeTracking":
         for epoch in range(epochs):
             print(f"epoch {epoch}")
             losses = []
