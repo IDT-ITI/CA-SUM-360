@@ -23,7 +23,7 @@ def training_args():
     parser.add_argument('--batch_size', type=int, default=1, help='Batch size for data loader')
     parser.add_argument('--dataset',type=str,
                         default='VR-EyeTracking',
-                        help='if your dataset is VR-Eyetracking or Salient360!-sitzman')
+                        help='if your dataset is VR-Eyetracking or Salient360!-Sitzman')
     #optimizer
     parser.add_argument('--lr', type=float, default=1e-5, help='Learning Rate for ADAM optimizer')
     parser.add_argument('--weight_decay', type=float, default=1e-4, help='Weight Decay for ADAM optimizer')
