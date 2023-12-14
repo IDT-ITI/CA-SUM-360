@@ -100,6 +100,7 @@ def train(train_loader,validation_loader,data,optimizer,criterion, model,device,
             print("Val loss", np.mean(val_losses))
 
             if np.mean(val_losses) < best_loss:
+                best_loss = np.mean(val_losses)
                 torch.save(model, saved_model_path + "/" + f'Attention.pt')
     else:
         for epoch in range(epochs):
@@ -170,6 +171,7 @@ def train(train_loader,validation_loader,data,optimizer,criterion, model,device,
         print("Train loss", np.mean(losses))
         print("Val loss", np.mean(val_losses))
         if np.mean(val_losses) < best_loss:
+            best_loss = np.mean(val_losses)
             torch.save(model, saved_model_path + "/" + f'initial.pt')
 
 
