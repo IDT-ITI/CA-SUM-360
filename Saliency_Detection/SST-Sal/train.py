@@ -31,7 +31,7 @@ def train_(train_loader, val_loader, model, device, criterion, optimizer, EPOCHS
     criterion.cuda(device)
 
 
-
+    best_loss=100
     # Training loop
     for epoch in range(EPOCHS):
         print(f"Training in epoch {epoch}")
@@ -83,20 +83,14 @@ def train_(train_loader, val_loader, model, device, criterion, optimizer, EPOCHS
 
         print("epoch",epoch)
         print("Train Loss",avg_loss_train / counter_train)
-        print("test Loss",avg_loss_val / counter_val)
+        print("val Loss",avg_loss_val / counter_val)
 
         scheduler.step(avg_loss_val / counter_val)
 
         # Save model
-
-        torch.save(model, save_model_path+ '/' + str(epoch) + '_model.pt')
-
-
-
-
-
-
-
+        if (avg_loss_val / counter_val<best_loss):
+            best_loss = avg_loss_val / counter_val
+            torch.save(model, save_model_path+ '/SST-Sal.pt')
 
 if __name__ == '__main__':
 
