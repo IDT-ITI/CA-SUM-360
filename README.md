@@ -63,7 +63,7 @@ To train and evaluate the saliency detection models, we used the following datas
 * A re-produced version of the VR-EyeTraking dataset, that is publicly-available [here](https://mtliba.github.io/Reproduced-VR-EyeTracking/)
 * The Sport-360 dataset (only for testing), that is publicly-available [here](https://www.terabox.com/sharing/init?surl=nmn4Pb_wmceMmO7QHSiB9Q) (password:4p8t)
 
-To train the video summarization model, we used the data stored in [CA-SUM-360.h5](.....). The HDF5 file has the following structure:
+To train the video summarization model, we used the created [360VideoSumm](https://github.com/IDT-ITI/CA-SUM-360/blob/main/data/Video-Summarization/360VideoSumm.h5). The associated HDF5 file has the following structure:
 ```Text
 /key
     /change_points            2D-array with shape (num_segments, 2), where each row stores the indices of the starting and ending frame of a video segment
@@ -171,10 +171,37 @@ The produced MPEG-4 video files and the computed saliency scores for their frame
 
 ### Video summarization
 
-To be added
+To train the utilized video summarization method we employed 100 conventional 2D videos that were produced after following the previously described processing steps. These videos are created after processing: 46 360-degrees videos of the VR-EyeTracking dataset and 19 video from the Sports-360 dataset that were captured using a fixed camera, and after processing 11, 18 and 6 360-degrees videos of the VR-EyeTracking, Sports-360 and Salient360! datasets, respectively, that were captured by a moving camera. The created dataset was divided into a training set (80% of the video samples) and a testing set (the remaining 20% of the video samples), as show in the relevant [json file](https://github.com/IDT-ITI/CA-SUM-360/blob/main/data/Video-Summarization/data_split.json).
 
-For the train process of video summarization model we used 100 2D videos that were produced from the 2D Video Production aglorithm and scores in terms of frame level saliency using the methods from Saliency Detection. These videos relate to 46 360 videos of the VR-EyeTracking dataset and 19 from Sports-360 that were captured using a fixed camera, and 11, 18 and 6 360 videos of the VR-EyeTracking the Sports-360 and the Salient360! datasets, respectively, that were captured by a moving camera.
+For training the method, use the [main.py]() script and run the following command:
+```bash
+for sigma in $(seq 0.5 0.1 0.9); do
+    python model/main.py --split_index 0 --n_epochs 400 --batch_size 80 --video_type '360VideoSumm' --reg_factor '$sigma'
+done
+```
+where `$sigma` refers to the length regularization factor, a hyper-parameter of the utilized method that relates to the length of the generated summary.
 
+Please note that after each training epoch the algorithm performs an evaluation step, using the trained model to compute the importance scores for the frames of each video of the test set. These scores are then used by the provided [evaluation](evaluation) scripts to assess the overall performance of the model.
+
+The progress of the training can be monitored via the TensorBoard platform and by:
+- opening a command line (cmd) and running: `tensorboard --logdir=/path/to/log-directory --host=localhost`
+- opening a browser and pasting the returned URL from cmd. </div>
+
+After the end of the training process, the selection of a well-trained model of the utilized video summarization method is based on a two-step process. First, we keep one trained model per considered value for the length regularization factor sigma, by selecting the model (i.e., the epoch) that minimizes the training loss. Then, we choose the best-performing model (i.e., the sigma value) through a mechanism that involves a fully-untrained model of the architecture and is based on transductive inference. To automatically select a well-trained model, define:
+ - the [`base_path`](evaluation/evaluate_factor.sh#L7) in [`evaluate_factor`](evaluation/evaluate_factor.sh),
+ - the [`base_path`](evaluation/choose_best_model.py#L12) and [`annot_path`](evaluation/choose_best_model.py#L34) in [`choose_best_model`](evaluation/choose_best_model.py),
+
+and run [`evaluate_exp.sh`](evaluation/evaluate_exp.sh) via
+```bash
+sh evaluation/evaluate_exp.sh '$exp_num' '$dataset' '$eval_method'
+```
+where, `$exp_num` is the number of the current evaluated experiment, `$dataset` refers to the dataset being used, and `$eval_method` describe the used approach for computing the overall F-Score after comparing the generated summary with all the available user summaries (i.e., 'max' for SumMe and 'avg' for TVSum).
+
+For further details about the adopted structure of directories in our implementation, please check line [#7](evaluation/evaluate_factor.sh#L7) and line [#13](evaluation/evaluate_factor.sh#L13) of [`evaluate_factor.sh`](evaluation/evaluate_factor.sh). </div>
+
+Finally, to use the selected model for creating the summaries of the test videos, use the [inference.py]() script and run the following command:
+
+(TO BE ADDED)
 
 ## License
 This code is provided for academic, non-commercial use only. Please also check for any restrictions applied in the code parts and datasets used here from other sources. For the materials not covered by any such restrictions, redistribution and use in source and binary forms, with or without modification, are permitted for academic non-commercial use provided that the following conditions are met:
