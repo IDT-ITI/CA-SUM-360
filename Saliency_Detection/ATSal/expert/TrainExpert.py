@@ -18,15 +18,7 @@ parent_directory = os.path.dirname(current_script_path)
 parent_directory = os.path.dirname(parent_directory)
 grant_parent_directory = os.path.dirname(parent_directory)
 grant_parent_directory = os.path.dirname(grant_parent_directory)
-def load_weights(pt_model, device='cpu'):
-    temp = torch.load(pt_model, map_location=device)['state_dict']
-    from collections import OrderedDict
-    checkpoint = OrderedDict()
-    for key in temp.keys():
-        new_key = key.replace("module.", "")
-        checkpoint[new_key] = temp[key]
 
-    return checkpoint
 def repackage_hidden(h):
     """Wraps hidden states in new Tensors, to detach them from their history."""
     if isinstance(h, torch.Tensor):
@@ -36,11 +28,11 @@ def repackage_hidden(h):
 
 
 
-def main(train_loader,val_loader,model,criterion,optimizer,temporal,dtype,saved_model_path,epochs):
+def main(train_loader,val_loader,model,criterion,optimizer,temporal,dtype,saved_model_path,epochs,keyword):
 
     for epoch in range(epochs):
 
-
+        best_loss = 100
         train_loss, optimizer = train(train_loader, model, criterion, optimizer, epoch, dtype)
 
         print("Epoch {}/{} done with train loss {}\n".format(epoch, epochs, train_loss))
@@ -49,22 +41,20 @@ def main(train_loader,val_loader,model,criterion,optimizer,temporal,dtype,saved_
         print("Running validation..")
         val_loss = validate(val_loader, model, criterion, epoch, temporal, dtype)
         print("Validation loss: {}".format(val_loss))
-        torch.save({
-            'epoch': epoch + 1,
-            'state_dict': model.cpu().state_dict(),
-            'optimizer': optimizer.state_dict()
-        }, saved_model_path+f"/eq{epoch}.pt")
+        if keyword=="Equator":
+            if train_loss<best_loss:
+                best_loss = train_loss
+                torch.save(model, saved_model_path+f"/{keyword}.pt")
+        else:
+            if train_loss<best_loss:
+                best_loss = train_loss
+                torch.save(model, saved_model_path+f"/{keyword}.pt")
+            
         model = model.cuda()
 
 
 
 
-
-    torch.save({
-        'epoch': epoch + 1,
-        'state_dict': model.cpu().state_dict(),
-        'optimizer': optimizer.state_dict()
-    },saved_model_path+ "/Poles.pt")
 
 
 
@@ -76,14 +66,11 @@ def train(train_loader, model, criterion, optimizer, epoch, dtype):
     print("Now commencing epoch {}".format(epoch))
     for i, video in enumerate(train_loader):
 
-        # print(type(video))
         accumulated_losses = []
 
 
         state = None  # Initially no hidden state
         for j, (clip, gtruths) in enumerate(video):
-
-
 
             optimizer.zero_grad()
 
@@ -93,13 +80,11 @@ def train(train_loader, model, criterion, optimizer, epoch, dtype):
             # print(clip.size()) #works! torch.Size([5, 1, 1, 360, 640])
             loss = 0
             for idx in range(clip.size()[0]):
-                # print(clip[idx].size())
 
-                # Compute output
                 state, saliency_map = model.forward(input_=clip[idx],prev_state=state)  # Based on the number of epoch the model will unfreeze deeper layers moving on to shallow ones
 
-                saliency_map = saliency_map.squeeze(0)  # Target is 3 dimensional (grayscale image)
-                # because of upsampling we need to concatenate another column of zeroes. The original number is odd so it is impossible for upsampling to get an odd number as it scales by 2
+                saliency_map = saliency_map.squeeze(0)
+
 
                 loss = loss + criterion(saliency_map, gtruths[idx])
 
@@ -112,10 +97,10 @@ def train(train_loader, model, criterion, optimizer, epoch, dtype):
             # Clip gradient to avoid explosive gradients. Gradients are accumulated so I went for a threshold that depends on clip length. Note that the loss that is stored in the score for printing does not include this clipping.
             nn.utils.clip_grad_norm_(model.parameters(), 10 * clip.size()[0])
 
-            # Update parameters
+
             optimizer.step()
 
-            # Repackage to avoid backpropagating further through time
+
             state = repackage_hidden(state)
 
 
@@ -196,17 +181,20 @@ if __name__ == '__main__':
     resolution = args.resolution
     clip_size = args.clip_size
     batch_size = args.batch_size
-    save_model_path = args.model_storage_path
+    save_model_path = args.save_model_path
+    
     epochs = args.epochs
 
     LEARN_ALPHA_ONLY = False
 
     print("Commencing training on dataset")
-    path_to_frames_folder = os.path.join(grant_parent_directory,path_to_frames_folder)
+    #path_to_frames_folder = os.path.join(grant_parent_directory,path_to_frames_folder)
+
     train_videos = os.listdir(path_to_frames_folder)
     train_set = Multiexpert_dataset(root_path=path_to_frames_folder,video_names=train_videos,process=process,frames_per_data=clip_size,resolution=resolution)
     print("Size of train set is {}".format(len(train_set)))
     train_loader = data.DataLoader(train_set,batch_size=batch_size,shuffle=True,drop_last=True)
+
     validation_videos = os.listdir(path_to_frames_validation_folder)
     val_set = Multiexpert_dataset(root_path=path_to_frames_validation_folder,video_names=validation_videos, process=process, frames_per_data=clip_size,resolution=resolution)
     print("Size of validation set is {}".format(len(val_set)))
@@ -214,17 +202,15 @@ if __name__ == '__main__':
 
 
     temporal = True
-    model = Equator(alpha_parameter,ema_loc)
 
+    model = torch.load("salEMA30.pt")
     criterion = nn.BCELoss()
 
 
     optimizer = torch.optim.Adam([
         {'params': model.salgan.parameters(), 'lr': lr, 'weight_decay': weight_decay},
         {'params': model.alpha, 'lr': 0.1}])
-    expert_model = os.path.join(parent_directory, expert_model)
-    checkpoint = load_weights(expert_model,device='cpu')
-    model.load_state_dict(checkpoint, strict=False)
+
 
 
     assert torch.cuda.is_available(), \
@@ -236,6 +222,11 @@ if __name__ == '__main__':
     criterion = criterion.cuda()
     train_losses = []
     val_losses = []
-    print(model.salgan.parameters())
+
     save_model_path = os.path.join(grant_parent_directory,save_model_path)
-    main(train_loader,val_loader,model,criterion,optimizer,temporal,dtype,save_model_path,epochs)
+    keyword = "poles"
+    if keyword in path_to_frames_folder:
+        keyword = "Poles"
+    else:
+        keyword = "Equator"
+    main(train_loader,val_loader,model,criterion,optimizer,temporal,dtype,save_model_path,epochs,keyword)
