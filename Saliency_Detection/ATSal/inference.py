@@ -30,9 +30,6 @@ def repackage_hidden(h):
     else:
         return tuple(repackage_hidden(v) for v in h)
 
-
-
-
 cc_metric = []
 sim_metric = []
 
@@ -48,9 +45,6 @@ def test(loader,model,output_path,load_gt):
 
     model['equator'].to(device)
     model['equator'].eval()
-
-
-
 
     counter = 0
     if load_gt == "True":
@@ -125,7 +119,6 @@ def test(loader,model,output_path,load_gt):
             print("Expert CC", np.mean(count_cc))
             print("Expert SIM", np.mean(count_sim))
 
-
             cc_metric.append(np.mean(count_cc))
             sim_metric.append(np.mean(count_sim))
     else:
@@ -195,8 +188,6 @@ def test(loader,model,output_path,load_gt):
                     counter += 1
 
 
-
-
 if __name__ =="__main__":
     torch.cuda.empty_cache()
 
@@ -229,7 +220,6 @@ if __name__ =="__main__":
     Poles = torch.load(expertPoles_model)
     Equator = torch.load(expertEquator_model)
     model = {"attention": att_model, "poles": Poles, "equator": Equator}
-
 
     path_to_frames_folder = os.path.join(grant_parent_directory,path_to_frames_folder)
    
