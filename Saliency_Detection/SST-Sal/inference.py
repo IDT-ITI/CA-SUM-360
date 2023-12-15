@@ -28,48 +28,37 @@ def test(test_data, model,load_gt ,device,output_path):
     simall = []
 
     with torch.no_grad():
+        cc_metric = []
+        sim_metric = []
         if load_gt=="True":
 
             for j,video in enumerate(test_data):
-
-                cc_metric = []
-                sim_metric = []
-
+                print(j)
                 for k,(x,y) in enumerate(video):
 
-                    print(x.shape)
+
                     pred = model(x.to(device))
 
                     batch_size, Nframes, _, _ = pred[:, :, 0, :, :].shape
 
-                    if k ==0:
+                    for bs in range(0,batch_size):
 
-                        for bs in range(0,batch_size):
+                        for i in range(0,Nframes):
 
-                            for i in range(0,Nframes):
-
-                                cc,sim= Metrics(pred[bs][i][0].cpu(),y[bs][i][0].cpu())
-                                cc_metric.append(cc)
-                                sim_metric.append(sim)
-                    else:
-                        for bs in range(0, batch_size):
-                            for i in range(4, Nframes):
-
-                                cc, sim = Metrics(pred[bs][i][0].cpu(), y[bs][i][0].cpu())
-                                cc_metric.append(cc)
-                                sim_metric.append(sim)
-
-
+                            cc,sim= Metrics(pred[bs][i][0].cpu(),y[bs][i][0].cpu())
+                            cc_metric.append(cc)
+                            sim_metric.append(sim)
 
                 ccall.append(np.mean(cc_metric))
                 simall.append(np.mean(sim_metric))
 
-            print(np.mean(ccall))
-            print(np.mean(simall))
+                print(np.mean(cc_metric))
+                print(np.mean(np.mean(sim_metric)))
 
         else:
             count = 0
             for j, video in enumerate(test_data):
+                print(j)
                 if os.path.exists(output_path+ "/sst-sal_" + str(j)):
                     print(path_to_save_saliency_maps + " path exists")
                 else:
@@ -87,8 +76,9 @@ def test(test_data, model,load_gt ,device,output_path):
                                         torch.max(pred[bs][i][0].cpu()) - torch.min(pred[bs][i][0].cpu())))
                                 cv2.imwrite(os.path.join(output_path+ "/sst-sal_" + str(j), f'{count:04d}.png'), (sal * 255).astype(np.uint8))
                                 count += 1
-
-
+                                cc, sim = Metrics(pred[bs][i][0].cpu(), y[bs][i][0].cpu())
+                                cc_metric.append(cc)
+                                sim_metric.append(sim)
                     else:
                         for bs in range(0, batch_size):
                             for i in range(4, Nframes):
@@ -96,6 +86,11 @@ def test(test_data, model,load_gt ,device,output_path):
                                         torch.max(pred[bs][i][0].cpu()) - torch.min(pred[bs][i][0].cpu())))
                                 cv2.imwrite(os.path.join(output_path+ "/sst-sal_" + str(j), f'{count:04d}.png'), (sal * 255).astype(np.uint8))
                                 count += 1
+                                ccall.append(np.mean(cc_metric))
+                                simall.append(np.mean(sim_metric))
+
+                print(np.mean(cc_metric))
+                print(np.mean(np.mean(sim_metric)))
 
 
 
@@ -122,14 +117,13 @@ if __name__ == "__main__":
     static_videos = [video.strip() for video in videos]
     path_to_frames_folder = os.path.join(grant_parent_directory,path_to_frames_folder)
     path_to_save_saliency_maps = grant_parent_directory + "/" + path_to_save_saliency_maps
-    
+
     if load_gt=="False":
         if os.path.exists(path_to_save_saliency_maps):
             print(path_to_save_saliency_maps + " path exists")
         else:
             path_to_save_saliency_maps = os.mkdir(path_to_save_saliency_maps)
             print("path to save the saliency maps", path_to_save_saliency_maps)
-
 
     if data=="Sports-360":
         static_videos = os.listdir(path_to_frames_folder)

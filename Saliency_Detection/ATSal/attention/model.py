@@ -29,9 +29,9 @@ def make_conv_layers(cfg):
     in_channels = 3
     for v in cfg:
         if v == 'M_2':
-            layers += [Downsample(kernel_size=2)]
+            layers += [MaxPool2d(kernel_size=2)]
         elif v == 'M_4':
-            layers += [Downsample(kernel_size=4)]
+            layers += [MaxPool2d(kernel_size=4)]
         else:
             conv = Conv2d(in_channels, v, kernel_size=3, padding=1)
             layers += [conv, ReLU(inplace=True)]
@@ -119,12 +119,12 @@ class Sal_based_Attention_module(nn.Module):
 
         self.encoder = torch.nn.Sequential(*Based_Attention_Module)
         self.attention_module = torch.nn.Sequential(*[
-            Downsample(kernel_size=2),
+            MaxPool2d(kernel_size=2),
             Conv2d(512, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
             ReLU(),
             Conv2d(64, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
             ReLU(),
-            Downsample(kernel_size=2),
+            MaxPool2d(kernel_size=2),
             Conv2d(128, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
             ReLU(),
             Conv2d(64, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),

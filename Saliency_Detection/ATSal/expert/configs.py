@@ -6,8 +6,8 @@ def training_args():
     parser.add_argument('--gpu', type=str, default="cuda:0",
                         help='Use of gpu, if not available chooses "cpu"')
 
-    parser.add_argument('--expert_model', type=str, default="weights/SalEMA30.pt",
-                        help='Expert Equator/Poles model weights path, Default weights/SalEMA.pt')
+    parser.add_argument('--expert_model', type=str, default="weights/salEMA30.pt",
+                        help='Expert Equator/Poles model weights path, Default weights/salEMA30.pt')
     parser.add_argument('--alpha_parameter', type=float, default=0.1,
                         help='Initial value for parameter Alpha of the model')
     parser.add_argument('-ema_loc',type=int, default=30, help='Input number of layer to place EMA on')

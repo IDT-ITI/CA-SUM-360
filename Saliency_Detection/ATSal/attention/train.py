@@ -17,21 +17,15 @@ parent_directory = os.path.dirname(current_script_path)
 parent_directory = os.path.dirname(parent_directory)
 grant_parent_directory = os.path.dirname(parent_directory)
 grant_parent_directory = os.path.dirname(grant_parent_directory)
-def load_attention(pt_model, new_model, device):
-    temp = torch.load(pt_model, map_location=device)
 
-    new_model.load_state_dict(temp)
-    return new_model
-
-
-
-def train(train_loader,validation_loader,data,optimizer,criterion, model,device,epochs,saved_model_path):
+def train(train_loader,validation_loader,data,optimizer,criterion, model,device,epochs,saved_model_path,attention_model_path):
     model.train()
     model.to(device=device)
 
     criterion.cuda()
     print("Training process starts")
-    if data == "vreyetracking":
+    best_loss=100
+    if data == "VR-EyeTracking":
         for epoch in range(epochs):
             print(f"epoch {epoch}")
             losses = []
@@ -41,7 +35,6 @@ def train(train_loader,validation_loader,data,optimizer,criterion, model,device,
             counter = 0
             for i, video in enumerate(train_loader):
                 for j,(frames,gtruth,fixation) in enumerate(video):
-
 
                     frames = frames.type(torch.cuda.FloatTensor).transpose(0,1)
                     gtruth = gtruth.type(torch.cuda.FloatTensor).transpose(0,1)
@@ -59,7 +52,6 @@ def train(train_loader,validation_loader,data,optimizer,criterion, model,device,
 
                         loss = loss.item() + total_loss
 
-
                     loss.backward()
                     optimizer.step()
 
@@ -76,8 +68,6 @@ def train(train_loader,validation_loader,data,optimizer,criterion, model,device,
             val_counter = 0
 
             for i, video in enumerate(validation_loader):
-
-
                 for j, (frames, gtruth, fixation) in enumerate(video):
 
                     frames = frames.type(torch.cuda.FloatTensor).transpose(0, 1)
@@ -108,7 +98,10 @@ def train(train_loader,validation_loader,data,optimizer,criterion, model,device,
             print(f'Epoch {epoch} finished with')
             print("Train loss", np.mean(losses))
             print("Val loss", np.mean(val_losses))
-            torch.save(model.state_dict(), saved_model_path+"/"+f'attention_{epoch}.pt')
+
+            if np.mean(val_losses) < best_loss:
+                best_loss = np.mean(val_losses)
+                torch.save(model, saved_model_path + "/" + f'Attention.pt')
     else:
         for epoch in range(epochs):
             print(f"epoch {epoch}")
@@ -120,10 +113,6 @@ def train(train_loader,validation_loader,data,optimizer,criterion, model,device,
 
             for j, batch in enumerate(train_loader):
                 frames,gtruth,fixation = batch
-
-                print(frames.shape)
-                print(gtruth.shape)
-                print(fixation.shape)
                 frames = frames.type(torch.cuda.FloatTensor)
                 gtruth = gtruth
                 fixation = fixation
@@ -162,9 +151,6 @@ def train(train_loader,validation_loader,data,optimizer,criterion, model,device,
                 frames = frames.type(torch.cuda.FloatTensor)
                 gtruth = gtruth
                 fixation = fixation
-                print(frames.shape)
-                print(gtruth.shape)
-                print(fixation.shape)
                 loss = torch.tensor(0)
 
                 val_counter += 1
@@ -184,10 +170,9 @@ def train(train_loader,validation_loader,data,optimizer,criterion, model,device,
         print(f'Epoch {epoch} finished with')
         print("Train loss", np.mean(losses))
         print("Val loss", np.mean(val_losses))
-        torch.save(model.state_dict(), saved_model_path + "/" + f'attention_{epoch}.pt')
-
-
-
+        if np.mean(val_losses) < best_loss:
+            best_loss = np.mean(val_losses)
+            torch.save(model, saved_model_path + "/" + f'initial.pt')
 
 
 
@@ -210,17 +195,16 @@ if __name__ == "__main__":
     data = args.dataset
 
 
-    att_model = Sal_based_Attention_module()
 
     device = torch.device(gpu if torch.cuda.is_available() else "cpu")
 
     print("The model will be running on", device, "device")
-
+   
     attention_model_path =os.path.join(parent_directory, attention_model_path)
-
-    model = load_attention(attention_model_path, att_model,device)
+    model = torch.load(attention_model_path)
 
     path_to_train_frames = os.path.join(grant_parent_directory,path_to_frames)
+  
     if data=="VR-EyeTracking":
 
         val_path_txt = os.path.join(grant_parent_directory, "data/VR-EyeTracking/validation_data_split.txt")
@@ -239,7 +223,6 @@ if __name__ == "__main__":
         validation_set = RGB_dataset(path_to_train_frames,val_videos, process=process, frames_per_data=clip_size)
         validation_loader = DataLoader(validation_set, batch_size=batch_size,drop_last=True)
     else:
-
         train_set = RGB_salient360_sitzman_loader(path_to_train_frames, process=process, frames_per_data=clip_size)
         train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True, drop_last=True)
         path_to_val_frames = path_to_train_frames.replace("training","validation")
@@ -247,9 +230,9 @@ if __name__ == "__main__":
         validation_loader = DataLoader(validation_set, batch_size=batch_size, drop_last=True)
 
 
-    optimizer = torch.optim.Adam(att_model.parameters(),lr=lr,weight_decay=weight_decay)
+    optimizer = torch.optim.Adam(model.parameters(),lr=lr,weight_decay=weight_decay)
     criterion = LOSS()
 
     path_to_save_weights = os.path.join(grant_parent_directory,path_to_save_weights)
 
-    train(train_loader,validation_loader,data,optimizer,criterion,model,device,epochs=epochs,saved_model_path=path_to_save_weights)
+    train(train_loader,validation_loader,data,optimizer,criterion,model,device,epochs=epochs,saved_model_path=path_to_save_weights,attention_model_path=attention_model_path)

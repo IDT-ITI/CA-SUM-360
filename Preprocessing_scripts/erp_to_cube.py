@@ -307,7 +307,7 @@ if __name__ == '__main__':
         values = content.split(',')
     validation_videos = [value.strip() for value in values]
 
-    list_of_videos = os.listdir(path_to_erp_videos_frames)
+    list_of_videos = os.listdir(os.path.join(grant_parent_directory, path_to_erp_videos_frames))
     # Replace 'folder_path' with the path to the folder you want to empty
     length = len(list_of_videos)
 

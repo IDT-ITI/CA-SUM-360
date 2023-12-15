@@ -30,11 +30,10 @@ def inference_args():
 
     #Output_path
     parser.add_argument('--path_to_extracted_saliency_maps', type=str,
-                        default=r'data/extracted_saliency_maps',
+                        default=r'data/VR-EyeTracking/extracted_saliency_maps',
                         help='Path to the folder for the extracted saliency_maps')
 
     return parser
-
 
 
 if __name__ == '__main__':
