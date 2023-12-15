@@ -171,12 +171,12 @@ The produced MPEG-4 video files and the computed saliency scores for their frame
 
 ### Video summarization
 
-To train the utilized video summarization method we employed 100 conventional 2D videos that were produced after following the previously described processing steps. These videos are created after processing: 46 360-degrees videos of the VR-EyeTracking dataset and 19 video from the Sports-360 dataset that were captured using a fixed camera, and after processing 11, 18 and 6 360-degrees videos of the VR-EyeTracking, Sports-360 and Salient360! datasets, respectively, that were captured by a moving camera. The created dataset was divided into a training set (80% of the video samples) and a testing set (the remaining 20% of the video samples), as show in the relevant [json file](https://github.com/IDT-ITI/CA-SUM-360/blob/main/data/Video-Summarization/data_split.json).
+To train the utilized video summarization method we employed 100 conventional 2D videos that were produced after following the previously described processing steps. These videos were created after processing 46 and 19 360-degrees videos of the VR-EyeTracking and Sports-360 datasets, respectively, that were captured using a fixed camera, and 11, 18 and 6 360-degrees videos of the VR-EyeTracking, Sports-360 and Salient360! datasets, respectively, that were captured by a moving camera. The created dataset was divided into a training set (80% of the video samples) and a testing set (the remaining 20% of the video samples), as show in the relevant [json file](https://github.com/IDT-ITI/CA-SUM-360/blob/main/data/Video-Summarization/data_split.json).
 
-For training the method, use the [main.py]() script and run the following command:
+For training the method, use the [main.py](https://github.com/IDT-ITI/CA-SUM-360/blob/main/Video_Summarization/model/main.py) script and run the following command (alternatively, open a terminal, load the virtual environment and run "bash run_360videosumm.sh"):
 ```bash
 for sigma in $(seq 0.5 0.1 0.9); do
-    python model/main.py --split_index 0 --n_epochs 400 --batch_size 80 --video_type '360VideoSumm' --reg_factor '$sigma'
+    python model/main.py --reg_factor '$sigma'
 done
 ```
 where `$sigma` refers to the length regularization factor, a hyper-parameter of the utilized method that relates to the length of the generated summary.
