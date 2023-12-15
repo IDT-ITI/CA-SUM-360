@@ -31,7 +31,7 @@ def training_args():
 
     parser.add_argument('--epochs', type=int, default=90, help='90 epochs for train on Salient360-Sitzman dataset,10 for VR-EyeTracking')
     # Output_path
-    parser.add_argument('--path_to_save_weights', type=str,
+    parser.add_argument('--model_storage_path', type=str,
                         default=r'Saliency_Detection/ATSal/weights',
                         help='Path to save the checkpoint_weights')
 
