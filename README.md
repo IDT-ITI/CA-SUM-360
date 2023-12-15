@@ -146,7 +146,7 @@ python inference.py --gpu "cuda:0" --path_to_ERP_frames "../Path/360_Saliency_da
 
 #### SST-Sal method
 
-For the training of the SST-Sal method, we used only a subset of the videos in the VR-EyeTracking dataset, that were captured by a static camera. In total, we used 92 videos for training (listed [here](data/Static-VR-EyeTracking)) and 55 videos (listed [here](data/Static-VR-EyeTracking)) for validation. To train the SST-Sal method, use the [train.py](https://github.com/IDT-ITI/CA-SUM-360/blob/main/Saliency_Detection/SST-Sal/train.py) script and run the following command: 
+For the training of the SST-Sal method, we used only a subset of the videos in the VR-EyeTracking dataset, that were captured by a static camera. In total, we used 92 videos for training (listed [here](https://github.com/IDT-ITI/CA-SUM-360/blob/main/data/Static-VR-EyeTracking/train_split.txt)) and 55 videos (listed [here](https://github.com/IDT-ITI/CA-SUM-360/blob/main/data/Static-VR-EyeTracking/val_split.txt)) for validation. To train the SST-Sal method, use the [train.py](https://github.com/IDT-ITI/CA-SUM-360/blob/main/Saliency_Detection/SST-Sal/train.py) script and run the following command: 
 ```
 python train.py --gpu "cuda:0" --hidden_layers 9 --path_to_ERP_frames "data/VR-EyeTracking/erp_frames/frames" --model_storage_path "Saliency_Detection/SST-Sal/weights"
 ```
