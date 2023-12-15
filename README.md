@@ -111,7 +111,7 @@ The attention model of ATSal was initially trained using a dataset of 2140 ERP i
 
 To train the attention model using the aforementioned dataset, download the initial instance of this model (called "ATSal-Attention-Initial") from [[here]](https://drive.google.com/file/d/15-pl9drbAZSYnL-5b-C63K7-JUE8nAsJ/view?usp=sharing), place it in the [weights](Saliency_Detection/ATSal/attention/weights) directory, use the [train.py](https://github.com/IDT-ITI/CA-SUM-360/blob/main/Saliency_Detection/ATSal/attention/train.py) script and run the following command:
 ```
-python train.py --gpu "cuda:0" --path_to_ERP_frames "data/Salient360-Sitzman/training/frames" --dataset "Salient360!-Sitzman" --model_storage_path "Saliency_Detection/ATSal/attention/weights" --batch_size 40
+python train.py --gpu "cuda:0" --path_to_ERP_frames "data/Salient360-Sitzman/training/frames" --dataset "Salient360!-Sitzman" --model_storage_path "Saliency_Detection/ATSal/attention/weights" --batch_size 80
 ```
 
 This will result in a trained model that will be stored in the above "model_storage_path". In case that you wish to skip this training step, the weights of this trained attention model (called "ATSal-Attention-Pretrained") are available [here](https://drive.google.com/file/d/13yy42FPF4dS_Gz7wrZjsbbt-kVM3ZpiN/view?usp=sharing)
