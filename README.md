@@ -137,7 +137,7 @@ python TrainExpert.py --gpu "cuda:0" --path_to_training_cmp_frames "data/VR-EyeT
 
 Finally, to evaluate the fully-trained ATSal method on the VR-EyeTracking dataset and extract the saliency maps for the testing videos, download the full-trained attention model [here](https://drive.google.com/file/d/1Ke-Ad7lwME6kZdaW8_PUCU7MNklaeJRA/view?usp=sharing), the SalEMA Equator model [here](https://drive.google.com/file/d/1P57U1hZLXAUiwBThq-T-65tZzMG6cm_l/view?usp=sharing), the SalEMA Poles model [here](https://drive.google.com/file/d/1X65FopLF1-m2YtCWC4u0R68HDq0xV3CM/view?usp=sharing), place it in the [weights](Saliency_Detection/ATSal/attention/weights) directory, use the [inference.py](https://github.com/IDT-ITI/CA-SUM-360/blob/main/Saliency_Detection/ATSal/inference.py) script and run the following command:
 ```
-python inference.py --gpu "cuda:0" --path_to_ERP_frames "data/VR-EyeTracking/erp_frames/frames" --load_gt "True" --dataset "VR-EyeTracking" --path_to_extracted_saliency_maps "...data/VR-EyeTracking/extracted_saliency_maps"
+python inference.py --gpu "cuda:0" --path_to_ERP_frames "data/VR-EyeTracking/erp_frames/frames" --load_gt "True" --dataset "VR-EyeTracking" --path_to_extracted_saliency_maps "data/VR-EyeTracking/extracted_saliency_maps"
 ```
 Moreover, to evaluate the fully-trained ATSal method on the Sports-360 dataset and extract the saliency maps for the testing videos, use the [inference.py](https://github.com/IDT-ITI/CA-SUM-360/blob/main/Saliency_Detection/ATSal/inference.py) script and run the following command:
 ```
