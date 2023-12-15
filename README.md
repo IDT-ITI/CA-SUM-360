@@ -78,7 +78,7 @@ To train the video summarization model, we used the created [360VideoSumm](https
 ## Pre-processing step
 
 ### ERP frame extraction and transformation
-To extract the ERP frames from a 360-degrees video use the [frames_extractor.py](https://github.com/IDT-ITI/CA-SUM-360/blob/main/scripts/frames_extractor.py) script and run one of the following commands (we recommend to store the extracted ERP frames in the default path ("data/output_frames"), for easier reference to these frames during the following processing steps):
+To extract the ERP frames from a 360-degrees video use the [frames_extractor.py](https://github.com/IDT-ITI/CA-SUM-360/blob/main/Preprocessing_scripts/frames_extractor.py) script and run one of the following commands (we recommend to store the extracted ERP frames in the default path ("data/output_frames"), for easier reference to these frames during the following processing steps):
 
 If the 360-degrees video is in MP4 format, run the following command: 
 ```
@@ -89,7 +89,7 @@ If the 360-degrees video is in ERP format, run the following command:
 python frames_extractor.py --video_input_type "erp" --input_video_path "PATH/path_containing_the_erp_videos" --output_folder "data/erp_videos"  
 ```
   
-To produce the cubemap (CMP) frames and saliency maps that are utilized by the SalEMA expert model of ATSal, use the [erp_to_cube.py](https://github.com/IDT-ITI/CA-SUM-360/blob/main/scripts/erp_to_cube.py) script and run the following commands:  
+To produce the cubemap (CMP) frames and saliency maps that are utilized by the SalEMA expert model of ATSal, use the [erp_to_cube.py](https://github.com/IDT-ITI/CA-SUM-360/blob/main/Preprocessing_scripts/erp_to_cube.py) script and run the following commands:  
 ```
 python erp_to_cube.py --path_to_erp_video_frames "data/VR-EyeTracking/erp_frames/frames" --equator_save_path "data/VR-EyeTracking/cmp_frames/equator/training/frames" --poles_save_path "data/VR-EyeTracking/cmp_frames/poles/training/frames"
 python erp_to_cube.py --path_to_erp_video_frames "data/VR-EyeTracking/erp_frames/saliency" --equator_save_path "data/VR-EyeTracking/cmp_frames/equator/training/saliency" --poles_save_path data/VR-EyeTracking/cmp_frames/poles/training/saliency"  
@@ -98,7 +98,7 @@ python erp_to_cube.py --path_to_erp_video_frames "data/VR-EyeTracking/erp_frames
 ## Processing steps
 
 ### Camera motion detection
-To run the camera motion detection mechanism (CMDM) on the extracted ERP frames, use the [cmdm.py](https://github.com/IDT-ITI/CA-SUM-360/blob/main/camera_motion_detection_algorithm/cmdm.py) script and run the following command:
+To run the camera motion detection mechanism (CMDM) on the extracted ERP frames, use the [cmdm.py](https://github.com/IDT-ITI/CA-SUM-360/blob/main/Camera_Motion_Detection/cmdm.py) script and run the following command:
 ```
 python cmdm.py --path_to_frames_folder "data\output_frames" --parameter_1 0.5 
 ```
