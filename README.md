@@ -61,7 +61,7 @@ To train and evaluate the saliency detection models, we used the following datas
 * The Salient360! dataset, that is publicly-available [here](https://salient360.ls2n.fr/datasets/training-dataset/) (follow the instructions to download the dataset using an FTP client)
 * The Sitzman dataset that, is publicly-available [here](https://drive.google.com/drive/folders/1EJgxC6SzjehWi3bu8PRVHWJrkeZbAiqD)
 * A re-produced version of the VR-EyeTraking dataset, that is publicly-available [here](https://mtliba.github.io/Reproduced-VR-EyeTracking/)
-* The Sport-360 dataset (only for testing), that is publicly-available [here](https://www.terabox.com/sharing/init?surl=nmn4Pb_wmceMmO7QHSiB9Q) (password:4p8t)
+* The Sport-360 dataset (only for testing), that is publicly-available [here](https://github.com/vhchuong1997/Saliency-prediction-for-360-degree-video)
 
 To train the video summarization model, we used the created [360VideoSumm](https://github.com/IDT-ITI/CA-SUM-360/blob/main/data/Video-Summarization/360VideoSumm.h5). The associated HDF5 file has the following structure:
 ```Text
@@ -78,7 +78,7 @@ To train the video summarization model, we used the created [360VideoSumm](https
 ## Pre-processing step
 
 ### ERP frame extraction and transformation
-To extract the ERP frames from a 360-degrees video use the [frames_extractor.py](https://github.com/IDT-ITI/CA-SUM-360/blob/main/scripts/frames_extractor.py) script and run one of the following commands (we recommend to store the extracted ERP frames in the default path ("data/output_frames"), for easier reference to these frames during the following processing steps):
+To extract the ERP frames from a 360-degrees video use the [frames_extractor.py](https://github.com/IDT-ITI/CA-SUM-360/blob/main/Preprocessing_scripts/frames_extractor.py) script and run one of the following commands (we recommend to store the extracted ERP frames in the default path ("data/output_frames"), for easier reference to these frames during the following processing steps):
 
 If the 360-degrees video is in MP4 format, run the following command: 
 ```
@@ -89,7 +89,7 @@ If the 360-degrees video is in ERP format, run the following command:
 python frames_extractor.py --video_input_type "erp" --input_video_path "PATH/path_containing_the_erp_videos" --output_folder "data/erp_videos"  
 ```
   
-To produce the cubemap (CMP) frames and saliency maps that are utilized by the SalEMA expert model of ATSal, use the [erp_to_cube.py](https://github.com/IDT-ITI/CA-SUM-360/blob/main/scripts/erp_to_cube.py) script and run the following commands:  
+To produce the cubemap (CMP) frames and saliency maps that are utilized by the SalEMA expert model of ATSal, use the [erp_to_cube.py](https://github.com/IDT-ITI/CA-SUM-360/blob/main/Preprocessing_scripts/erp_to_cube.py) script and run the following commands:  
 ```
 python erp_to_cube.py --path_to_erp_video_frames "data/VR-EyeTracking/erp_frames/frames" --equator_save_path "data/VR-EyeTracking/cmp_frames/equator/training/frames" --poles_save_path "data/VR-EyeTracking/cmp_frames/poles/training/frames"
 python erp_to_cube.py --path_to_erp_video_frames "data/VR-EyeTracking/erp_frames/saliency" --equator_save_path "data/VR-EyeTracking/cmp_frames/equator/training/saliency" --poles_save_path data/VR-EyeTracking/cmp_frames/poles/training/saliency"  
@@ -98,7 +98,7 @@ python erp_to_cube.py --path_to_erp_video_frames "data/VR-EyeTracking/erp_frames
 ## Processing steps
 
 ### Camera motion detection
-To run the camera motion detection mechanism (CMDM) on the extracted ERP frames, use the [cmdm.py](https://github.com/IDT-ITI/CA-SUM-360/blob/main/camera_motion_detection_algorithm/cmdm.py) script and run the following command:
+To run the camera motion detection mechanism (CMDM) on the extracted ERP frames, use the [cmdm.py](https://github.com/IDT-ITI/CA-SUM-360/blob/main/Camera_Motion_Detection/cmdm.py) script and run the following command:
 ```
 python cmdm.py --path_to_frames_folder "data\output_frames" --parameter_1 0.5 
 ```
@@ -132,7 +132,7 @@ Regarding the SalEMA Expert of ATSal, we further trained an existing model of it
 
 ```
 python TrainExpert.py --gpu "cuda:0" --path_to_training_cmp_frames "data/VR-EyeTracking/cmp_frames/equator/training/frames" --path_to_validation_cmp_frames "data/VR-EyeTracking/cmp_frames/equator/training/frames" --clip_size 10 --model_storage_path "Saliency_Detection/ATSal/expert/weights"
-python TrainExpert.py --gpu "cuda:0" --path_to_training_cmp_frames "data/VR-EyeTracking/cmp_frames/poles/training/frames" --path_to_validation_cmp_frames "data/VR-EyeTracking/cmp_frames/poles/training/frames" --clip_size 10 --model_storage_path "Saliency_Detection/ATSal/expert/weights"
+python TrainExpert.py --gpu "cuda:0" --path_to_training_cmp_frames "data/VR-EyeTracking/cmp_frames/poles/training/frames" --path_to_validation_cmp_frames "data/VR-EyeTracking/cmp_frames/poles/training/frames" --clip_size 80 --model_storage_path "Saliency_Detection/ATSal/expert/weights"
 ```
 
 Finally, to evaluate the fully-trained ATSal method on the VR-EyeTracking dataset and extract the saliency maps for the testing videos, download the full-trained attention model [here](https://drive.google.com/file/d/1Ke-Ad7lwME6kZdaW8_PUCU7MNklaeJRA/view?usp=sharing), the SalEMA Equator model [here](https://drive.google.com/file/d/1P57U1hZLXAUiwBThq-T-65tZzMG6cm_l/view?usp=sharing), the SalEMA Poles model [here](https://drive.google.com/file/d/1X65FopLF1-m2YtCWC4u0R68HDq0xV3CM/view?usp=sharing), place it in the [weights](https://github.com/IDT-ITI/CA-SUM-360/tree/main/Saliency_Detection/ATSal/weights) directory, use the [inference.py](https://github.com/IDT-ITI/CA-SUM-360/blob/main/Saliency_Detection/ATSal/inference.py) script and run the following command:
@@ -171,37 +171,37 @@ The produced MPEG-4 video files and the computed saliency scores for their frame
 
 ### Video summarization
 
-To train the utilized video summarization method we employed 100 conventional 2D videos that were produced after following the previously described processing steps. These videos are created after processing: 46 360-degrees videos of the VR-EyeTracking dataset and 19 video from the Sports-360 dataset that were captured using a fixed camera, and after processing 11, 18 and 6 360-degrees videos of the VR-EyeTracking, Sports-360 and Salient360! datasets, respectively, that were captured by a moving camera. The created dataset was divided into a training set (80% of the video samples) and a testing set (the remaining 20% of the video samples), as show in the relevant [json file](https://github.com/IDT-ITI/CA-SUM-360/blob/main/data/Video-Summarization/data_split.json).
+To train the utilized video summarization method we employed 100 conventional 2D videos that were produced after following the previously described processing steps. These videos were created after processing 46 and 19 360-degrees videos of the VR-EyeTracking and Sports-360 datasets, respectively, that were captured using a fixed camera, and 11, 18 and 6 360-degrees videos of the VR-EyeTracking, Sports-360 and Salient360! datasets, respectively, that were captured by a moving camera. The created dataset was divided into a training set (80% of the video samples) and a testing set (the remaining 20% of the video samples), as show in the relevant [json file](https://github.com/IDT-ITI/CA-SUM-360/blob/main/data/Video-Summarization/data_split.json).
 
-For training the method, use the [main.py]() script and run the following command:
+For training the method, use the [main.py](https://github.com/IDT-ITI/CA-SUM-360/blob/main/Video_Summarization/model/main.py) script and run the following command (alternatively, open a terminal, load the virtual environment and run "bash run_360videosumm.sh"):
 ```bash
 for sigma in $(seq 0.5 0.1 0.9); do
-    python model/main.py --split_index 0 --n_epochs 400 --batch_size 80 --video_type '360VideoSumm' --reg_factor '$sigma'
+    python model/main.py --reg_factor '$sigma'
 done
 ```
 where `$sigma` refers to the length regularization factor, a hyper-parameter of the utilized method that relates to the length of the generated summary.
-
-Please note that after each training epoch the algorithm performs an evaluation step, using the trained model to compute the importance scores for the frames of each video of the test set. These scores are then used by the provided [evaluation](evaluation) scripts to assess the overall performance of the model.
 
 The progress of the training can be monitored via the TensorBoard platform and by:
 - opening a command line (cmd) and running: `tensorboard --logdir=/path/to/log-directory --host=localhost`
 - opening a browser and pasting the returned URL from cmd. </div>
 
-After the end of the training process, the selection of a well-trained model of the utilized video summarization method is based on a two-step process. First, we keep one trained model per considered value for the length regularization factor sigma, by selecting the model (i.e., the epoch) that minimizes the training loss. Then, we choose the best-performing model (i.e., the sigma value) through a mechanism that involves a fully-untrained model of the architecture and is based on transductive inference. To automatically select a well-trained model, define:
+After each training epoch the algorithm stores the parameters of the trained model and performs an evaluation step, where it uses the model to compute the importance scores for the frames of each video of the test set. These scores are used to select a well-trained model of the summarization method, based on transductive inference. In particular, after the end of the training process, the selection of a well-trained model is based on a two-step process. First, we keep one trained model per considered value for the length regularization factor sigma, by selecting the model (i.e., the epoch) that minimizes the training loss. Then, we choose the best-performing model (i.e., the sigma value) through a mechanism that involves a fully-untrained model of the architecture and is based on transductive inference. To automatically select a well-trained model, define:
  - the [`base_path`](evaluation/evaluate_factor.sh#L7) in [`evaluate_factor`](evaluation/evaluate_factor.sh),
- - the [`base_path`](evaluation/choose_best_model.py#L12) and [`annot_path`](evaluation/choose_best_model.py#L34) in [`choose_best_model`](evaluation/choose_best_model.py),
+ - the [`base_path`](evaluation/choose_best_model.py#L11) in [`choose_best_model`](evaluation/choose_best_model.py),
 
 and run [`evaluate_exp.sh`](evaluation/evaluate_exp.sh) via
 ```bash
-sh evaluation/evaluate_exp.sh '$exp_num' '$dataset' '$eval_method'
+sh evaluation/evaluate_exp.sh '$exp_num' '$dataset'
 ```
-where, `$exp_num` is the number of the current evaluated experiment, `$dataset` refers to the dataset being used, and `$eval_method` describe the used approach for computing the overall F-Score after comparing the generated summary with all the available user summaries (i.e., 'max' for SumMe and 'avg' for TVSum).
+where, `$exp_num` is the number of the current evaluated experiment, and `$dataset` refers to the dataset being used (should be set as 360VideoSumm).
 
-For further details about the adopted structure of directories in our implementation, please check line [#7](evaluation/evaluate_factor.sh#L7) and line [#13](evaluation/evaluate_factor.sh#L13) of [`evaluate_factor.sh`](evaluation/evaluate_factor.sh). </div>
+For further details about the adopted structure of directories in our implementation, please check line [#7](evaluation/evaluate_factor.sh#L7) and line [#13](evaluation/evaluate_factor.sh#L12) of [`evaluate_factor.sh`](evaluation/evaluate_factor.sh). </div>
 
-Finally, to use the selected model for creating the summaries of the test videos, use the [inference.py]() script and run the following command:
-
-(TO BE ADDED)
+Finally, the selected model (indicated by the value of the sigma factor and the training epoch) can be used for creating the summaries of the test videos. For this, define the [`model_path`](Video_Summarization/inference/inference.py#71), the [`split_file`](Video_Summarization/inference/inference.py#74) and the [`dataset_path`](Video_Summarization/inference/inference.py#80) in [`inference`](Video_Summarization/inference/inference.py), and run the following command:
+```
+python inference/inference.py
+```
+The output of this process indicates the fragments and frames of each testing video, that should be used for building the video summaries.
 
 ## License
 This code is provided for academic, non-commercial use only. Please also check for any restrictions applied in the code parts and datasets used here from other sources. For the materials not covered by any such restrictions, redistribution and use in source and binary forms, with or without modification, are permitted for academic non-commercial use provided that the following conditions are met:

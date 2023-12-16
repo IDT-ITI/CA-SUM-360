@@ -20,22 +20,19 @@ grant_parent_directory = os.path.dirname(grant_parent_directory)
 
 
 def test(test_data, model,load_gt ,device,output_path):
-
-
     model.to(device)
     model.eval()
     ccall = []
     simall = []
 
     with torch.no_grad():
-        cc_metric = []
-        sim_metric = []
-        if load_gt=="True":
 
+        if load_gt=="True":
             for j,video in enumerate(test_data):
                 print(j)
+                cc_metric = []
+                sim_metric = []
                 for k,(x,y) in enumerate(video):
-
 
                     pred = model(x.to(device))
 
@@ -53,12 +50,14 @@ def test(test_data, model,load_gt ,device,output_path):
                 simall.append(np.mean(sim_metric))
 
                 print(np.mean(cc_metric))
-                print(np.mean(np.mean(sim_metric)))
+                print(np.mean(sim_metric))
 
         else:
             count = 0
             for j, video in enumerate(test_data):
                 print(j)
+                cc_metric = []
+                sim_metric = []
                 if os.path.exists(output_path+ "/sst-sal_" + str(j)):
                     print(path_to_save_saliency_maps + " path exists")
                 else:
@@ -89,11 +88,12 @@ def test(test_data, model,load_gt ,device,output_path):
                                 ccall.append(np.mean(cc_metric))
                                 simall.append(np.mean(sim_metric))
 
+                ccall.append(np.mean(cc_metric))
+                simall.append(np.mean(sim_metric))
+                
                 print(np.mean(cc_metric))
-                print(np.mean(np.mean(sim_metric)))
-
-
-
+                print(np.mean(sim_metric))
+        
 if __name__ == "__main__":
 
     args = inference_args().parse_args()
