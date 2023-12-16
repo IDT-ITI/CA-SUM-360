@@ -181,27 +181,27 @@ done
 ```
 where `$sigma` refers to the length regularization factor, a hyper-parameter of the utilized method that relates to the length of the generated summary.
 
-Please note that after each training epoch the algorithm performs an evaluation step, using the trained model to compute the importance scores for the frames of each video of the test set. These scores are then used by the provided [evaluation](evaluation) scripts to assess the overall performance of the model.
-
 The progress of the training can be monitored via the TensorBoard platform and by:
 - opening a command line (cmd) and running: `tensorboard --logdir=/path/to/log-directory --host=localhost`
 - opening a browser and pasting the returned URL from cmd. </div>
 
-After the end of the training process, the selection of a well-trained model of the utilized video summarization method is based on a two-step process. First, we keep one trained model per considered value for the length regularization factor sigma, by selecting the model (i.e., the epoch) that minimizes the training loss. Then, we choose the best-performing model (i.e., the sigma value) through a mechanism that involves a fully-untrained model of the architecture and is based on transductive inference. To automatically select a well-trained model, define:
+After each training epoch the algorithm stores the parameters of the trained model and performs an evaluation step, where it uses the model to compute the importance scores for the frames of each video of the test set. These scores are used to select a well-trained model of the summarization method, based on transductive inference. In particular, after the end of the training process, the selection of a well-trained model is based on a two-step process. First, we keep one trained model per considered value for the length regularization factor sigma, by selecting the model (i.e., the epoch) that minimizes the training loss. Then, we choose the best-performing model (i.e., the sigma value) through a mechanism that involves a fully-untrained model of the architecture and is based on transductive inference. To automatically select a well-trained model, define:
  - the [`base_path`](evaluation/evaluate_factor.sh#L7) in [`evaluate_factor`](evaluation/evaluate_factor.sh),
- - the [`base_path`](evaluation/choose_best_model.py#L12) and [`annot_path`](evaluation/choose_best_model.py#L34) in [`choose_best_model`](evaluation/choose_best_model.py),
+ - the [`base_path`](evaluation/choose_best_model.py#L11) in [`choose_best_model`](evaluation/choose_best_model.py),
 
 and run [`evaluate_exp.sh`](evaluation/evaluate_exp.sh) via
 ```bash
-sh evaluation/evaluate_exp.sh '$exp_num' '$dataset' '$eval_method'
+sh evaluation/evaluate_exp.sh '$exp_num' '$dataset'
 ```
-where, `$exp_num` is the number of the current evaluated experiment, `$dataset` refers to the dataset being used, and `$eval_method` describe the used approach for computing the overall F-Score after comparing the generated summary with all the available user summaries (i.e., 'max' for SumMe and 'avg' for TVSum).
+where, `$exp_num` is the number of the current evaluated experiment, and `$dataset` refers to the dataset being used (should be set as 360VideoSumm).
 
-For further details about the adopted structure of directories in our implementation, please check line [#7](evaluation/evaluate_factor.sh#L7) and line [#13](evaluation/evaluate_factor.sh#L13) of [`evaluate_factor.sh`](evaluation/evaluate_factor.sh). </div>
+For further details about the adopted structure of directories in our implementation, please check line [#7](evaluation/evaluate_factor.sh#L7) and line [#13](evaluation/evaluate_factor.sh#L12) of [`evaluate_factor.sh`](evaluation/evaluate_factor.sh). </div>
 
-Finally, to use the selected model for creating the summaries of the test videos, use the [inference.py]() script and run the following command:
-
-(TO BE ADDED)
+Finally, the selected model (indicated by the value of the sigma factor and the training epoch) can be used for creating the summaries of the test videos. For this, define the [`model_path`](Video_Summarization/inference/inference.py#71), the [`split_file`](Video_Summarization/inference/inference.py#74) and the [`dataset_path`](Video_Summarization/inference/inference.py#80) in [`inference`](Video_Summarization/inference/inference.py), and run the following command:
+```
+python inference/inference.py
+```
+The output of this process indicates the fragments and frames of each testing video, that should be used for building the video summaries.
 
 ## License
 This code is provided for academic, non-commercial use only. Please also check for any restrictions applied in the code parts and datasets used here from other sources. For the materials not covered by any such restrictions, redistribution and use in source and binary forms, with or without modification, are permitted for academic non-commercial use provided that the following conditions are met:
