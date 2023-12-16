@@ -195,7 +195,7 @@ sh evaluation/evaluate_exp.sh '$exp_num' '$dataset'
 ```
 where, `$exp_num` is the number of the current evaluated experiment, and `$dataset` refers to the dataset being used (should be set as 360VideoSumm).
 
-For further details about the adopted structure of directories in our implementation, please check line [#7](Video_Summarization/evaluation/evaluate_factor.sh#L7) and line [#13](Video_Summarization/evaluation/evaluate_factor.sh#L12) of [`evaluate_factor.sh`](Video_Summarization/evaluation/evaluate_factor.sh). </div>
+For further details about the adopted structure of directories in our implementation, please check line [#7](Video_Summarization/evaluation/evaluate_factor.sh#L7) and line [#12](Video_Summarization/evaluation/evaluate_factor.sh#L12) of [`evaluate_factor.sh`](Video_Summarization/evaluation/evaluate_factor.sh). </div>
 
 Finally, the selected model (indicated by the value of the sigma factor and the training epoch) can be used for creating the summaries of the test videos. For this, define the [`model_path`](Video_Summarization/inference/inference.py#L71), the [`split_file`](Video_Summarization/inference/inference.py#L74) and the [`dataset_path`](Video_Summarization/inference/inference.py#L80) in [`inference`](Video_Summarization/inference/inference.py), and run the following command:
 ```
