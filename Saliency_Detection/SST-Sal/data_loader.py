@@ -21,16 +21,13 @@ class RGB(Dataset):
                 frame_folder = os.path.join(self.path_to_frames, file)
 
                 if os.path.exists(frame_folder):
-
+                    print(frame_folder)
                     img_files = []
-
-
                     frames = os.listdir(frame_folder)
 
                     for j, fram in enumerate(frames):
                         if fram.lower().endswith(('.png','.jpg')):
                             img_files.append(frame_folder + "/" + fram)
-
 
                     img_files = sorted(img_files)
                     fpd = 20 + self.frames_per_data
@@ -39,22 +36,19 @@ class RGB(Dataset):
 
                         self.dataset.append(img_files[j:fpd])
                         fpd = fpd+ self.frames_per_data
-
         else:
 
             for i, file in enumerate(self.video_names):
 
                 frame_folder = os.path.join(self.path_to_frames, file)
                 if os.path.exists(frame_folder):
-
                     img_files = []
-
-
                     frames = os.listdir(frame_folder)
 
                     for j, fram in enumerate(frames):
                         if fram.lower().endswith(('.png', '.jpg')):
                             img_files.append(frame_folder + "/" + fram)
+                            print(frame_folder + "/" + fram)
 
 
                     img_files = sorted(img_files)
@@ -62,6 +56,7 @@ class RGB(Dataset):
                     data=[]
                     for j in range(20, len(img_files), self.frames_per_data-4): #apply this -4 factor to have smoother results in the final saliency maps, as SST-Sal predicts in sequences of 20 frames
                         data.append(img_files[j:fpd])
+
 
                         fpd = fpd + self.frames_per_data-4
                     self.dataset.append(data)
@@ -74,18 +69,19 @@ class RGB(Dataset):
     def __getitem__(self, idx):
         if torch.is_tensor(idx):
             idx = idx.tolist()
-        frames = self.dataset[idx]
+        gts = self.dataset[idx]
 
         frame_img = []
         label = []
         final = []
         if self.process =="train":
-            for i, path_to_frame in enumerate(frames):
+            for i, path_to_gt in enumerate(gts):
 
+                parts = path_to_gt.rsplit('saliency', 1)
 
-
-                path_to_gt = path_to_frame.replace('frames', 'saliency')
-
+                if len(parts) > 1:
+                    # Replace only the last occurrence of 'frames'
+                    path_to_frame = parts[0] + 'frames' + parts[1]
 
                 img_frame = cv2.imread(path_to_frame)
 
@@ -114,13 +110,18 @@ class RGB(Dataset):
             final.append((torch.cat(frame_img, 0), torch.cat(label, 0)))
         else:
             if self.load_gt == "True":
-                for i, path_to_frames in enumerate(frames):
+                for i, path_to_frames in enumerate(gts):
                     frame_img = []
                     label = []
 
                     for path_to_frame in path_to_frames:
 
-                        path_to_gt = path_to_frame.replace('frames', 'saliency')
+                        parts = path_to_frame.rsplit('frames', 1)
+
+                        if len(parts) > 1:
+                            # Replace only the last occurrence of 'frames'
+                            path_to_gt = parts[0] + 'saliency' + parts[1]
+
 
                         img_frame = cv2.imread(path_to_frame)
 
@@ -150,7 +151,6 @@ class RGB(Dataset):
             else:
                 for i, path_to_frames in enumerate(frames):
                     frame_img = []
-                    label = []
 
                     for path_to_frame in path_to_frames:
 
