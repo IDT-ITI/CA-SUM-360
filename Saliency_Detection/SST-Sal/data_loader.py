@@ -21,7 +21,7 @@ class RGB(Dataset):
                 frame_folder = os.path.join(self.path_to_frames, file)
 
                 if os.path.exists(frame_folder):
-                    print(frame_folder)
+
                     img_files = []
                     frames = os.listdir(frame_folder)
 
@@ -33,7 +33,6 @@ class RGB(Dataset):
                     fpd = 20 + self.frames_per_data
 
                     for j in range(20, len(img_files),self.frames_per_data):
-
                         self.dataset.append(img_files[j:fpd])
                         fpd = fpd+ self.frames_per_data
         else:
@@ -48,8 +47,7 @@ class RGB(Dataset):
                     for j, fram in enumerate(frames):
                         if fram.lower().endswith(('.png', '.jpg')):
                             img_files.append(frame_folder + "/" + fram)
-                            print(frame_folder + "/" + fram)
-
+                          
 
                     img_files = sorted(img_files)
                     fpd = self.frames_per_data+20
@@ -60,7 +58,6 @@ class RGB(Dataset):
 
                         fpd = fpd + self.frames_per_data-4
                     self.dataset.append(data)
-
 
 
     def __len__(self):
@@ -110,19 +107,19 @@ class RGB(Dataset):
             final.append((torch.cat(frame_img, 0), torch.cat(label, 0)))
         else:
             if self.load_gt == "True":
-                for i, path_to_frames in enumerate(gts):
+                for i, path_to_gts in enumerate(gts):
                     frame_img = []
                     label = []
 
-                    for path_to_frame in path_to_frames:
+                    for path_to_gt in path_to_gts:
 
-                        parts = path_to_frame.rsplit('frames', 1)
+                        parts = path_to_gt.rsplit('saliency', 1)
 
                         if len(parts) > 1:
                             # Replace only the last occurrence of 'frames'
-                            path_to_gt = parts[0] + 'saliency' + parts[1]
+                            path_to_frame = parts[0] + 'frames' + parts[1]
 
-
+                   
                         img_frame = cv2.imread(path_to_frame)
 
                         if img_frame.shape[1] != self.resolution[1] or img_frame.shape[0] != self.resolution[0]:
@@ -149,12 +146,10 @@ class RGB(Dataset):
 
                     final.append((torch.cat(frame_img, 0), torch.cat(label, 0)))
             else:
-                for i, path_to_frames in enumerate(frames):
+                for i, path_to_frames in enumerate(gts):
                     frame_img = []
 
                     for path_to_frame in path_to_frames:
-
-
 
                         img_frame = cv2.imread(path_to_frame)
 
@@ -169,7 +164,6 @@ class RGB(Dataset):
                         img_frame = img_frame.permute(2, 0, 1)
                         img_frame = img_frame.unsqueeze(0)
                         frame_img.append(img_frame)
-
 
                     final.append(torch.cat(frame_img, 0))
 
