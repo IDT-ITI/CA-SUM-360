@@ -4,7 +4,7 @@ from torch.utils import data
 from torch.autograd import Variable
 from data_loader import Multiexpert_dataset
 from metrics import Metrics
-from ExpertModel import Poles, Equator
+from models import Poles, Equator
 from torch import nn
 import math
 import os
