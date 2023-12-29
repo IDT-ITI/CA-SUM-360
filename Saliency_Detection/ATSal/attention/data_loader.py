@@ -73,7 +73,7 @@ class RGB_dataset(Dataset):
             idx = idx.tolist()
         'Generates one sample of data'
         #print(video_index)
-        path_to_frame = self.dataset[idx]
+        path_to_gt = self.dataset[idx]
         frames = self.dataset[idx]
         #print(frames)
 
@@ -83,8 +83,8 @@ class RGB_dataset(Dataset):
             data = []
             list_of_gt = []
             list_of_fx = []
-            path_to_gt = path_to_frame.replace('frames', 'saliency')
-            path_to_fx = path_to_frame.replace('frames', 'fixation')
+            path_to_frame = path_to_gt.replace('saliency','frames')
+            path_to_fx = path_to_gt.replace('saliency', 'fixation')
 
 
             X = cv2.imread(path_to_frame)
@@ -125,15 +125,14 @@ class RGB_dataset(Dataset):
 
         else:
 
-            for paths_to_frame in frames:
+            for paths_to_gt in frames:
                 data = []
                 list_of_gt = []
 
                 path_list = []
-                for path_to_frame in paths_to_frame:
+                for path_to_gt in paths_to_gt:
 
-
-                    path_to_gt = path_to_frame.replace('frames', 'saliency')
+                    path_to_frame = path_to_gt.replace('saliency','frames')
 
 
                     path_list.append(path_to_frame)
@@ -161,8 +160,6 @@ class RGB_dataset(Dataset):
 
                     img_gt = img_gt.unsqueeze(0)
                     list_of_gt.append(img_gt.unsqueeze(0))
-
-
 
                 data_tensor = torch.cat(data, 0)
                 gt_tensor = torch.cat(list_of_gt, 0)
