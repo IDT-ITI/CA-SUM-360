@@ -22,7 +22,7 @@ def inference_args():
                         default='VR-EyeTracking',
                         help='If you want to test to your videos insert none, if you want to Sports-360 , then insert sports360, if you want vr-eyetracking , then insert vreyetracking')
     parser.add_argument('--load_gt', type=str,
-                        default='False',
+                        default='True',
                         help='If you want to calculate metrics define it as True, else False')
     parser.add_argument('--resolution', type=int, nargs=2, default=[320, 640], help='Resolution of the ERP images for the model')
     parser.add_argument('--clip_size', type=int, default=10, help='Frames per data for data loader')
