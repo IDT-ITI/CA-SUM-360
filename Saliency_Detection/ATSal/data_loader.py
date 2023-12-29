@@ -53,13 +53,13 @@ class RGB_dataset(Dataset):
   
         samples=[]
         if self.load_gt =="True":
-            for paths_to_frame in frames:
+            for paths_to_gts in frames:
                 data = []
                 list_of_gt = []
                 path_list = []
-                for path_to_frame in paths_to_frame:
+                for path_to_gt in paths_to_gts:
 
-                    path_to_gt = path_to_frame.replace('frames', 'saliency')
+                    path_to_frame = path_to_gt.replace('saliency','frames')
 
 
                     path_list.append(path_to_frame)
@@ -101,6 +101,7 @@ class RGB_dataset(Dataset):
                 data = []
                 path_list = []
                 for path_to_frame in paths_to_frame:
+
                     path_list.append(path_to_frame)
 
                     X = cv2.imread(path_to_frame)
