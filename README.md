@@ -109,7 +109,7 @@ python cmdm.py --path_to_frames_folder "data\output_frames" --parameter_1 0.5
 
 The attention model of ATSal was initially trained using a dataset of 2140 ERP images, created after applying common data augmentation operations (rotation, cropping, flipping etc.) on 107 ERP images of the Salient360! and Sitzman datasets; 1840 of these images were used for training and the remaining 300 for validation. This dataset is available [here](https://drive.google.com/file/d/1BTxs6E3Wnk-nlVgu-lGzYgr1kmNse9T9/view?usp=sharing). 
 
-To train the attention model using the aforementioned dataset, download the initial instance of this model (called "ATSal-Attention-Initial") from [[here]](https://drive.google.com/file/d/15-pl9drbAZSYnL-5b-C63K7-JUE8nAsJ/view?usp=sharing), place it in the [weights](https://github.com/IDT-ITI/CA-SUM-360/tree/main/Saliency_Detection/ATSal/weights) directory, use the [train.py](https://github.com/IDT-ITI/CA-SUM-360/blob/main/Saliency_Detection/ATSal/attention/train.py) script and run the following command:
+To train the attention model using the aforementioned dataset, download the initial instance of this model (called "ATSal-Attention-Initial") from [[here]](https://drive.google.com/file/d/13G6ZC3wqXou3UyNR5BJ_sVRGSroEj4IN/view?usp=sharing), place it in the [weights](https://github.com/IDT-ITI/CA-SUM-360/tree/main/Saliency_Detection/ATSal/weights) directory, use the [train.py](https://github.com/IDT-ITI/CA-SUM-360/blob/main/Saliency_Detection/ATSal/attention/train.py) script and run the following command:
 ```
 python train.py --gpu "cuda:0" --path_to_ERP_frames "data/Salient360-Sitzman/training/frames" --dataset "Salient360!-Sitzman" --model_storage_path "Saliency_Detection/ATSal/attention/weights" --batch_size 80
 ```
