@@ -17,7 +17,7 @@ def args():
                         default=r'outputs_fovs',
                         help='Path to save subvideos frames')
     parser.add_argument('--resolution', type=int, nargs=2, default=[1080, 1920], help='Resolution parameter')
-    # Your code here
+
     return parser
 if __name__ == '__main__':
 
