@@ -214,15 +214,33 @@ This software is provided by the authors "as is" and any express or implied warr
 This work was supported by the EU's Horizon Europe and Horizon 2020 research and innovation programmes under grant agreements 101070109 TransMIXR and 951911 AI4Media, respectively.
 
 ## Citation
-If you find our method useful in your work or you use some materials provided in this repo, please cite the following publication where our method and materials were presented: 
+<div align="justify">
+If you find our method useful in your work or you use some materials provided in this repo, please cite the following publication: 
 
+I. Kontostathis, E. Apostolidis, V. Mezaris, "<b>An Integrated System for Spatio-Temporal Summarization of 360-degrees Videos</b>", Proc. 30th Int. Conf. on MultiMedia Modeling (MMM 2024), Amsterdam, NL, Jan.-Feb. 2024.
+</div>
+
+The accepted version of this paper is available on ArXiv at: https://arxiv.org/abs/2312.02576
+
+BibTeX:
 ````
-@inproceedings{kontostathis2024summarization,
-    title={An Integrated System for Spatio-Temporal Summarization of 360-degrees Videos},
-    author={Kontostathis, Ioannis and Apostolidis, Evlampios and Mezaris, Vasileios},
-    year={2024},
-    month={Jan.-Feb.},
-    booktitle={Proc. 30th Int. Conf. on MultiMedia Modeling (MMM 2024)}
+@InProceedings{10.1007/978-3-031-53302-0_15,
+    author="Kontostathis, Ioannis
+    and Apostolidis, Evlampios
+    and Mezaris, Vasileios",
+    editor="Rudinac, Stevan
+    and Hanjalic, Alan
+    and Liem, Cynthia
+    and Worring, Marcel
+    and J{\'o}nsson, Bj{\"o}rn Þ{\'o}r
+    and Liu, Bei
+    and Yamakata, Yoko",
+    title="An Integrated System for Spatio-temporal Summarization of 360-Degrees Videos",
+    booktitle="MultiMedia Modeling",
+    year="2024",
+    publisher="Springer Nature Switzerland",
+    address="Cham",
+    pages="202--215"
 }
 ````
 
